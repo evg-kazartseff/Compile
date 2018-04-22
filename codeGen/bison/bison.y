@@ -25,12 +25,12 @@
 
 %type <str> ID CONST_INT CONST_DOUBLE
 %type <type> INT CHAR DOUBLE TYPE
-%type <expr> EXPR CONST DEFVAR UNDEFVAR BODY COND IFELSE ELSEIF MARK GOTO
+%type <expr> EXPR CONST DEFVAR UNDEFVAR BODY COND IFELSE ELSEIF MARK GOTO ATOM
 %type <expr> VAR EVAL ANYVAR
 
 %%
-START:  ATOM { }
-        | START ATOM { }
+START:  ATOM { ast->AddToLink(AST::typeLink, $1); }
+        | START ATOM { ast->AddToLink(AST::typeLink, $2); }
 
 BODY:   ATOM { }
         | BODY ATOM { }

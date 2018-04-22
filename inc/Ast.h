@@ -31,6 +31,7 @@ namespace AST {
         typeEval,
         typeJump,
         typeMark,
+        typeLink,
         typeErr
     } nodeEnum;
 
@@ -157,17 +158,19 @@ namespace AST {
     class LinkAST : public BaseAST {
         std::vector<BaseAST*>* Childs = nullptr;
     public:
-        explicit LinkAST() = default;
+        explicit LinkAST(int type)
+                : BaseAST(type) {  this->Childs = new std::vector<BaseAST*>(); }
         explicit LinkAST(std::vector<BaseAST*>* childs)
                 : Childs(childs) {}
         void AddChild(BaseAST* child);
+        std::string Generate_code() final;
+        void Dfs() final;
     };
 
     class Ast {
-        BaseAST* tree;
+        LinkAST* tree;
     public:
         Ast();
-        void EndParse(BaseAST* tree);
         BaseAST* GetIntNumberExpr(int type, int val);
         BaseAST* GetDoubleNumberExpr(int type, double val);
         BaseAST* GetVariableExpr(int type, std::string name);
@@ -175,6 +178,7 @@ namespace AST {
         BaseAST* GetEval(int type, std::string id, BaseAST* expr);
         BaseAST* GetJump(int type, std::string id);
         BaseAST* GetMark(int type, std::string id);
+        void AddToLink(int type, BaseAST* childe);
         void DFS();
     };
 }

@@ -9,10 +9,6 @@
 
 AST::Ast::Ast() {}
 
-void AST::Ast::EndParse(BaseAST* tree) {
-    this->tree = tree;
-}
-
 AST::BaseAST* AST::Ast::GetIntNumberExpr(int type, int val) {
     return new IntNumberExprAST(type, val);
 }
@@ -30,13 +26,20 @@ AST::BaseAST* AST::Ast::GetBinaryExpr(int type, char op, BaseAST* lhs, BaseAST* 
 }
 
 void AST::LinkAST::AddChild(BaseAST* child) {
-    if (!this->Childs) this->Childs = new std::vector<BaseAST*>();
     this->Childs->push_back(child);
+}
+
+std::string AST::LinkAST::Generate_code() {
+    return std::__cxx11::string();
+}
+
+void AST::LinkAST::Dfs() {
+
 }
 
 void AST::Ast::DFS() {
     if (this->tree == nullptr) return;
-    ///Дописать обход дерева
+    this->tree->Dfs(); /// С этого метода начинать обход дерева
 }
 
 AST::BaseAST* AST::Ast::GetEval(int type, std::string id, AST::BaseAST* expr) {
@@ -49,6 +52,12 @@ AST::BaseAST* AST::Ast::GetJump(int type, std::string id) {
 
 AST::BaseAST* AST::Ast::GetMark(int type, std::string id) {
     return new MarkAST(type, id);
+}
+
+void AST::Ast::AddToLink(int type, BaseAST* childe) {
+    if (!this->tree)
+        this->tree = new LinkAST(type); /// используем синглтон для однократной инициализации
+    this->tree->AddChild(childe);
 }
 
 std::string AST::IntNumberExprAST::Generate_code() {
