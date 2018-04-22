@@ -2,7 +2,7 @@
 // Created by evgenii on 06.03.18.
 //
 
-#include "HashTable.h"
+#include "../inc/HashTable.h"
 
 void HashEntry::AddValueNode(std::string value) {
     HashNode* look = this->LookupValueNode(value);
