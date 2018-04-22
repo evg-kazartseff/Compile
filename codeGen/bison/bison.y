@@ -13,7 +13,7 @@
 %}
 
 %token INT CHAR DOUBLE
-%token IF ELSE PRINT FOR LEX_ERROR RETURN
+%token for ELSE PRINT FOR LEX_ERROR RETURN
 %token ID CONST_INT CONST_DOUBLE
 
 %union {
@@ -22,51 +22,61 @@
     AST::BaseAST* expr;
 }
 
-%type <type> INT CHAR DOUBLE TYPE
 %type <str> ID CONST_INT CONST_DOUBLE
-%type <expr> EXPR CONST CALC
+%type <type> INT CHAR DOUBLE TYPE
+%type <expr> EXPR CONST DEFVAR UNDEFVAR BODY COND
 
 %%
-START: BODY {}
+START:  ATOM { }
+        | START ATOM { }
 
-BODY: ATOM
-      | ATOM BODY {}
+BODY:   ATOM { }
+        | BODY ATOM { }
 
-ATOM: DEFVAR | UNDEFVAR | CALL | LOOP | RETURN
+ATOM:   DEFVAR { }
+        | UNDEFVAR { }
+        | LOOP { }
+        | RETURN { }
 
-DEFAVR: TYPE ID '=' EXPR';' {}
-UNDEF: TYPE ID';' {}
-CALL: ID'('COND')'';' {}
+DEFVAR: TYPE ID '=' EXPR';' { }
 
-LOOP: 'for''('DEFVAR';'COND';'EXPR')' ATOM ';' {}
-       | 'for''('DEFVAR';'COND';'EXPR')' '{' BODY '}' {}
+UNDEFVAR: TYPE ID';' { }
 
-EXPR: EXPR '+' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '+', $1, $3)); }
-      | EXPR '-' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '-', $1, $3)); }
-      | EXPR '*' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '*', $1, $3)); }
-      | EXPR '/' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '/', $1, $3)); }
-      | CONST { $$ = $1; }
+LOOP:   for '(' DEFVAR ';' COND ';' EXPR ')' ATOM ';' { }
+        | for '(' DEFVAR ';' COND ';' EXPR ')' '{' BODY '}' { }
 
-CONST: CONST_INT { $$ = ast->GetIntNumberExpr(AST::typeIvar, atoi($1)); }
-       | CONST_DOUBLE { $$ = ast->GetDoubleNumberExpr(AST::typeDvar, atof($1)); }
+COND:   CONST { }
+        | CONST '<' COND { }
+        | CONST '>' COND { }
+        | CONST "==" COND { }
 
-TYPE: INT {$$ = $1;}
-      | CHAR {$$ = $1;}
-      | DOUBLE {$$ = $1;}
+
+EXPR:   EXPR '+' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '+', $1, $3)); }
+        | EXPR '-' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '-', $1, $3)); }
+        | EXPR '*' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '*', $1, $3)); }
+        | EXPR '/' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '/', $1, $3)); }
+        | CONST { $$ = $1; }
+
+CONST:  CONST_INT { $$ = ast->GetIntNumberExpr(AST::typeIvar, atoi($1)); }
+        | CONST_DOUBLE { $$ = ast->GetDoubleNumberExpr(AST::typeDvar, atof($1)); }
+
+TYPE:   INT {$$ = $1;}
+        | CHAR {$$ = $1;}
+        | DOUBLE {$$ = $1;}
 %%
 
 void yyerror(const char *errmsg) {
-    fprintf(stderr, "Line %d: %s\n", yylineno, errmsg);
+    fprintf(stderr, "Position (%d, %d): %s\n", yylineno, ch, errmsg);
 }
 
 int main(int argc, char** argv) {
     if(argc < 2) {
-        printf("\nNot enough arguments. Please specify filename.\n");
-        return -1;
+        fprintf(stderr, "\nNot enough arguments. Please specify filename.\n");
+        return EXIT_FAILURE;
     }
     if((yyin = fopen(argv[1], "r")) == nullptr) {
         printf("\nCannot open file %s.\n", argv[1]);
-        return -1;
+        return EXIT_FAILURE;
     }
     ast = new AST::AST();
     ch = 1;
@@ -75,5 +85,5 @@ int main(int argc, char** argv) {
     yyparse();
     fclose(yyin);
     delete hash_table;
-    return 0;
+    return EXIT_SUCCESS;
 }
