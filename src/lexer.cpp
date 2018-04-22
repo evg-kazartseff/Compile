@@ -1,6 +1,6 @@
-#line 2 "/home/evgenii/projects/ToPL/src/lexer.cpp"
+#line 2 "/home/direnol/SourceWork/Compile/src/lexer.cpp"
 
-#line 4 "/home/evgenii/projects/ToPL/src/lexer.cpp"
+#line 4 "/home/direnol/SourceWork/Compile/src/lexer.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -520,8 +520,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "/home/evgenii/projects/ToPL/src/flex/flex.l"
-#line 4 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 1 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
+#line 4 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 #include <stdio.h>
 #include <string.h>
 #include "AST.h"
@@ -532,7 +532,7 @@ char *yytext;
 
     HashTable* hash_table = new HashTable(HASHTABLESIZE);
     int ch = 1;
-#line 536 "/home/evgenii/projects/ToPL/src/lexer.cpp"
+#line 536 "/home/direnol/SourceWork/Compile/src/lexer.cpp"
 
 #define INITIAL 0
 
@@ -750,9 +750,9 @@ YY_DECL
 		}
 
 	{
-#line 24 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 24 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 
-#line 756 "/home/evgenii/projects/ToPL/src/lexer.cpp"
+#line 756 "/home/direnol/SourceWork/Compile/src/lexer.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -822,14 +822,14 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 25 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 25 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     ch = 1;
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 29 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 29 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     ch += yyleng;
 }
@@ -837,22 +837,22 @@ YY_RULE_SETUP
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 33 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 33 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     ch += yyleng;
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 37 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 37 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     ch += yyleng;
-    //return 0; //RETURN;
+    return RETURN;
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 42 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 42 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     ch += yyleng;
     return IF;
@@ -860,7 +860,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 47 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 47 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     ch += yyleng;
     return ELSE;
@@ -868,7 +868,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 52 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 52 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     ch += yyleng;
     return PRINT;
@@ -876,7 +876,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 57 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 57 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     ch += yyleng;
     return FOR;
@@ -884,7 +884,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 62 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 62 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     ch += yyleng;
     yylval.type = INT;
@@ -893,7 +893,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 68 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 68 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     ch += yyleng;
     yylval.type = CHAR;
@@ -902,7 +902,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 74 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 74 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     ch += yyleng;
     yylval.type = DOUBLE;
@@ -911,7 +911,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 80 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 80 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     ch += yyleng;
     yylval.str = strdup(yytext);
@@ -920,7 +920,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 86 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 86 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     ch += yyleng;
     yylval.str = strdup(yytext);
@@ -929,12 +929,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 92 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 92 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
-    /*hash_table->CreateEntry(yytext);
-    HashNode* node;
-    node = hash_table->LookupEntry(yytext);
-    printf("###IDENTIFIER (%d, %d): %s\n", yylineno, ch, node->getValue().c_str());*/
+    hash_table->CreateEntry(yytext);
     yylval.str = strdup(yytext);
     ch += yyleng;
     return ID;
@@ -942,22 +939,21 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 102 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 99 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
-    //printf("DELIMITER (%d, %d): %s\n", yylineno, ch, yytext);
     ch += yyleng;
 }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 107 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 103 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     ch += yyleng;
 }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 111 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 107 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     ch += yyleng;
     return *yytext;
@@ -965,18 +961,19 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 116 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 112 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 {
     printf("Unknown character (%d, %d): %s\n", yylineno, ch, yytext);
     ch += yyleng;
+    return LEX_ERROR;
 }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 120 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 117 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 ECHO;
 	YY_BREAK
-#line 980 "/home/evgenii/projects/ToPL/src/lexer.cpp"
+#line 977 "/home/direnol/SourceWork/Compile/src/lexer.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1989,6 +1986,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 120 "/home/evgenii/projects/ToPL/src/flex/flex.l"
+#line 117 "/home/direnol/SourceWork/Compile/codeGen/flex/flex.l"
 
 

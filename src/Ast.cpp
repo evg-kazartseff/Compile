@@ -2,7 +2,7 @@
 // Created by evgenii on 31.03.18.
 //
 
-#include "Ast.h"
+#include "../inc/Ast.h"
 #include <utility>
 #include <typeindex>
 #include <search.h>

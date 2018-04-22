@@ -6,20 +6,25 @@ message(STATUS "GCC: Enabled c++17 support")
 
 FIND_PACKAGE(FLEX REQUIRED)
 FIND_PACKAGE(BISON)
-SET(FlexInput ${CMAKE_SOURCE_DIR}/src/flex/flex.l)
+
+SET(FlexInput ${CMAKE_SOURCE_DIR}/codeGen/flex/flex.l)
 SET(FlexOutput ${CMAKE_SOURCE_DIR}/src/lexer.cpp)
 IF(FLEX_FOUND)
     FLEX_TARGET(lexer ${FlexInput} ${FlexOutput})
 ENDIF()
-SET(BisonInput ${CMAKE_SOURCE_DIR}/src/bison/bison.y)
+
+SET(BisonInput ${CMAKE_SOURCE_DIR}/codeGen/bison/bison.y)
 SET(BisonOutput_cpp ${CMAKE_SOURCE_DIR}/src/parser.cpp)
-SET(BisonOutput_h ${CMAKE_SOURCE_DIR}/src/parser.h)
+SET(BisonOutput_h ${CMAKE_SOURCE_DIR}/inc/parser.h)
 IF(BISON_FOUND)
     BISON_TARGET(parser ${BisonInput} ${BisonOutput_cpp} DEFINES_FILE ${BisonOutput_h})
 ENDIF()
+
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build/bin)
 ADD_FLEX_BISON_DEPENDENCY(lexer parser)
 
+set(SRC src/HashTable.cpp  src/Ast.cpp   src/Asm.cpp )
+set(INC inc/HashTable.h inc/Ast.h inc/Asm.h)
 
-add_executable(compile src/HashTable.cpp src/HashTable.h src/Ast.cpp src/Ast.h ${BISON_parser_OUTPUTS} ${FLEX_lexer_OUTPUTS} src/Asm.cpp src/Asm.h)
+add_executable(compile  ${SRC} ${INC} ${BISON_parser_OUTPUTS} ${FLEX_lexer_OUTPUTS})
 target_link_libraries(compile fl y m)
