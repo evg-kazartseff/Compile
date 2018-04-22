@@ -36,7 +36,7 @@ SIGN [-+]
 
 "return" {
     ch += yyleng;
-    //return 0; //RETURN;
+    return RETURN;
 }
 
 "if" {
@@ -90,17 +90,13 @@ SIGN [-+]
 }
 
 {ID} {
-    /*hash_table->CreateEntry(yytext);
-    HashNode* node;
-    node = hash_table->LookupEntry(yytext);
-    printf("###IDENTIFIER (%d, %d): %s\n", yylineno, ch, node->getValue().c_str());*/
+    hash_table->CreateEntry(yytext);
     yylval.str = strdup(yytext);
     ch += yyleng;
     return ID;
 }
 
 {DELIM} {
-    //printf("DELIMITER (%d, %d): %s\n", yylineno, ch, yytext);
     ch += yyleng;
 }
 
@@ -116,5 +112,6 @@ SIGN [-+]
 . {
     printf("Unknown character (%d, %d): %s\n", yylineno, ch, yytext);
     ch += yyleng;
+    return LEX_ERROR;
 }
 %%

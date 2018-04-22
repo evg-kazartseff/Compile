@@ -24,12 +24,28 @@
 
 %type <type> INT CHAR DOUBLE TYPE
 %type <str> ID CONST_INT CONST_DOUBLE
-%type <expr> EXPR CONST
+%type <expr> EXPR CONST CALC
 
 %%
-START: EXPR { double v = ast->ParseBinaryExpr($1); printf("%f\n", v); }
+START: BODY {}
 
-EXPR: CONST '+' CONST { $$ = ast->GetBinaryExpr(AST::typeOpr, '+', $1, $3); }
+BODY: ATOM
+      | ATOM BODY {}
+
+ATOM: DEFVAR | UNDEFVAR | CALL | LOOP | RETURN
+
+DEFAVR: TYPE ID '=' EXPR';' {}
+UNDEF: TYPE ID';' {}
+CALL: ID'('COND')'';' {}
+
+LOOP: 'for''('DEFVAR';'COND';'EXPR')' ATOM ';' {}
+       | 'for''('DEFVAR';'COND';'EXPR')' '{' BODY '}' {}
+
+EXPR: EXPR '+' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '+', $1, $3)); }
+      | EXPR '-' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '-', $1, $3)); }
+      | EXPR '*' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '*', $1, $3)); }
+      | EXPR '/' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '/', $1, $3)); }
+      | CONST { $$ = $1; }
 
 CONST: CONST_INT { $$ = ast->GetIntNumberExpr(AST::typeIvar, atoi($1)); }
        | CONST_DOUBLE { $$ = ast->GetDoubleNumberExpr(AST::typeDvar, atof($1)); }

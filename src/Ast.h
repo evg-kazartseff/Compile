@@ -31,12 +31,16 @@ namespace AST {
         typeErr
     } nodeEnum;
 
+    class Ast;
+
     /// BaseAST - Базовый класс для всех узлов выражений.
     class BaseAST {
     public:
         int Type = 0;
+        virtual std::string Generate_code() = 0;
+        virtual void Dfs() = 0;
         BaseAST() = default;
-        BaseAST(int type) {this->Type = type;};
+        explicit BaseAST(int type) { this->Type = type; };
         virtual ~BaseAST() = default;
     };
 
@@ -45,15 +49,18 @@ namespace AST {
     public:
         int Val;
     public:
-        explicit IntNumberExprAST(int type, int val) : BaseAST(type), Val(val) {}
+        IntNumberExprAST(int type, int val) : BaseAST(type), Val(val) {}
+        std::string Generate_code() final;
+        void Dfs() final;
     };
 
     /// DoubleNumberExprAST - Класс узла выражения для числовых литералов (Например, "1.2").
     class DoubleNumberExprAST : public BaseAST {
-    public:
         double Val;
     public:
-        explicit DoubleNumberExprAST(int type, double val) : BaseAST(type), Val(val) {}
+        DoubleNumberExprAST(int type, double val) : BaseAST(type), Val(val) {}
+        std::string Generate_code() final;
+        void Dfs() final;
     };
 
     /// VariableExprAST - Класс узла выражения для переменных (например, "a").
@@ -61,6 +68,8 @@ namespace AST {
         std::string Name;
     public:
         VariableExprAST(int type, std::string name) : BaseAST(type), Name(std::move(name)) {}
+        std::string Generate_code() final;
+        void Dfs() final;
     };
 
     /// BinaryExprAST - Класс узла выражения для бинарных операторов.
@@ -69,8 +78,10 @@ namespace AST {
         char Op;
         BaseAST *LHS, *RHS;
     public:
-        BinaryExprAST(int type, char op, BaseAST *lhs, BaseAST *rhs)
+        BinaryExprAST(int type, char op, BaseAST* lhs, BaseAST* rhs)
                 : BaseAST(type), Op(op), LHS(lhs), RHS(rhs) {}
+        std::string Generate_code() final;
+        void Dfs() final;
     };
 
     /// CallExprAST - Класс узла выражения для вызова функции.
@@ -80,6 +91,8 @@ namespace AST {
     public:
         CallExprAST(std::string callee, std::vector<BaseAST*> &args)
                 : Callee(std::move(callee)), Args(args) {}
+        std::string Generate_code() final;
+        void Dfs() final;
     };
 
     /// PrototypeAST - Этот класс представляет "прототип" для функции,
@@ -89,17 +102,19 @@ namespace AST {
     public:
         std::string Name;
         BaseAST* Args = nullptr;
+
         PrototypeAST() = default;
+
         PrototypeAST(std::string name, BaseAST* args)
                 : Name(std::move(name)), Args(args) {}
     };
 
     /// FunctionAST - Представляет определение самой функции
     class FunctionAST : public BaseAST {
-        BaseAST *Prototype;
-        BaseAST *Body;
+        BaseAST* Prototype;
+        BaseAST* Body;
     public:
-        FunctionAST(BaseAST* prototype, BaseAST *body)
+        FunctionAST(BaseAST* prototype, BaseAST* body)
                 : Prototype(prototype), Body(body) {}
     };
 
@@ -107,23 +122,23 @@ namespace AST {
     class LinkAST : public BaseAST {
         std::vector<BaseAST*>* Childs = nullptr;
     public:
-        explicit LinkAST() {}
+        explicit LinkAST() = default;
         explicit LinkAST(std::vector<BaseAST*>* childs)
                 : Childs(childs) {}
         void AddChild(BaseAST* child);
     };
 
-    class AST {
+    class Ast {
         BaseAST* tree;
     public:
-        AST();
+        Ast();
         void EndParse(BaseAST* tree);
         BaseAST* GetIntNumberExpr(int type, int val);
         BaseAST* GetDoubleNumberExpr(int type, double val);
         BaseAST* GetVariableExpr(int type, std::string name);
-        BaseAST* GetBinaryExpr(int type, char op, BaseAST *lhs, BaseAST *rhs);
-        double ParseBinaryExpr(BaseAST* Expr);
+        BaseAST* GetBinaryExpr(int type, char op, BaseAST* lhs, BaseAST* rhs);
+        BaseAST* ParseBinaryExpr(BaseAST* Expr);
+        void DFS();
     };
 }
-
 #endif //COMPILE_AST_H

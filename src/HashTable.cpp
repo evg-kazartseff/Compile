@@ -88,7 +88,7 @@ size_t HashTable::GetHash(char* key) {
     while ((c = *key++))
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
-    return 1;//hash % this->size;
+    return hash % this->size;
 }
 
 HashNode* HashTable::LookupEntry(char* value) {

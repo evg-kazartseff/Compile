@@ -30,8 +30,8 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-#ifndef YY_YY_HOME_EVGENII_PROJECTS_TOPL_SRC_PARSER_H_INCLUDED
-# define YY_YY_HOME_EVGENII_PROJECTS_TOPL_SRC_PARSER_H_INCLUDED
+#ifndef YY_YY_HOME_EVGENII_PROJECTS_COMPILE_SRC_PARSER_H_INCLUDED
+# define YY_YY_HOME_EVGENII_PROJECTS_COMPILE_SRC_PARSER_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -65,13 +65,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 19 "/home/evgenii/projects/ToPL/src/bison/bison.y" /* yacc.c:1909  */
+#line 19 "/home/evgenii/projects/Compile/src/bison/bison.y" /* yacc.c:1909  */
 
     int type;
     char* str;
     AST::BaseAST* expr;
 
-#line 75 "/home/evgenii/projects/ToPL/src/parser.h" /* yacc.c:1909  */
+#line 75 "/home/evgenii/projects/Compile/src/parser.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -84,4 +84,4 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_HOME_EVGENII_PROJECTS_TOPL_SRC_PARSER_H_INCLUDED  */
+#endif /* !YY_YY_HOME_EVGENII_PROJECTS_COMPILE_SRC_PARSER_H_INCLUDED  */
