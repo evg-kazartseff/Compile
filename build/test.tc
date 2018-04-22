@@ -1,0 +1,8 @@
+int a;
+int b = 3 + 1;
+// int c = b + 2;
+less:
+
+if (a) c = 2 + 2;;
+
+goto less;

@@ -34,6 +34,7 @@ void AST::LinkAST::AddChild(BaseAST* child) {
     this->Childs->push_back(child);
 }
 
+// TODO Add parse variable as 'var', 'tmp'
 AST::BaseAST* AST::Ast::ParseBinaryExpr(BaseAST* Expr) {
     BinaryExprAST* bin = nullptr;
     if ((bin = dynamic_cast<BinaryExprAST*>(Expr))) {

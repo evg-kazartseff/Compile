@@ -15,7 +15,7 @@
 
 DIGIT[0-9]
 LETTER[a-zA-Z]
-DELIM[();{},]
+DELIM[();{},:]
 WS[ \t]
 ID ("_"|{LETTER})("_"|{LETTER}|{DIGIT})*
 OP [-+*/<>?!%=~]
@@ -103,6 +103,7 @@ SIGN [-+]
 
 {DELIM} {
     ch += yyleng;
+    return *yytext;
 }
 
 {WS}+ {

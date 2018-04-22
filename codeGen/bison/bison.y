@@ -26,6 +26,7 @@
 %type <str> ID CONST_INT CONST_DOUBLE
 %type <type> INT CHAR DOUBLE TYPE
 %type <expr> EXPR CONST DEFVAR UNDEFVAR BODY COND IFELSE ELSEIF MARK GOTO
+%type <expr> VAR EVAL
 
 %%
 START:  ATOM { }
@@ -41,35 +42,42 @@ ATOM:   DEFVAR { }
         | GOTO { }
         | MARK { }
         | IFELSE { }
+        | EVAL { }
 
 DEFVAR: TYPE ID '=' EXPR';' { }
 
-UNDEFVAR: TYPE ID';' { }
+UNDEFVAR: TYPE ID ';' { }
 
 LOOP:   FOR '(' DEFVAR ';' COND ';' EXPR ')' ATOM ';' { }
         | FOR '(' DEFVAR ';' COND ';' EXPR ')' '{' BODY '}' { }
 
-COND:   CONST { }
-        | CONST '<' COND { }
-        | CONST '>' COND { }
-        | CONST "==" COND { }
+COND:   VAR { }
+        | VAR '<' COND { }
+        | VAR '>' COND { }
+        | VAR "==" COND { }
 
 MARK:   ID ':' { }
 
 GOTO:   JUMP ID ';' { }
 
-IFELSE: IF '(' COND ')' ATOM { }
+IFELSE: IF '(' COND ')' ATOM ';' { }
         | IF '(' COND ')' '{' BODY '}' { }
-        | IFELSE ELSEIF { }
+        | IF '(' COND ')' '{' BODY '}' ELSEIF { }
 
 ELSEIF: ELSE '{' BODY '}' { }
-        | ELSE ATOM { }
+        | ELSE ATOM ';' { }
 
-EXPR:   EXPR '+' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '+', $1, $3)); }
-        | EXPR '-' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '-', $1, $3)); }
-        | EXPR '*' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '*', $1, $3)); }
-        | EXPR '/' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '/', $1, $3)); }
-        | CONST { $$ = $1; }
+EVAL: ID '=' EXPR ';' { }
+
+EXPR:   EXPR '+' VAR { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '+', $1, $3)); }
+        | EXPR '-' VAR { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '-', $1, $3)); }
+        | EXPR '*' VAR { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '*', $1, $3)); }
+        | EXPR '/' VAR { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '/', $1, $3)); }
+        | VAR { $$ = $1; }
+
+
+VAR:    CONST { $$ = $1; }
+        | ID { $$ = ast->GetVariableExpr(AST::typeIvar, $1); }
 
 CONST:  CONST_INT { $$ = ast->GetIntNumberExpr(AST::typeIvar, atoi($1)); }
         | CONST_DOUBLE { $$ = ast->GetDoubleNumberExpr(AST::typeDvar, atof($1)); }
@@ -80,7 +88,7 @@ TYPE:   INT {$$ = $1;}
 %%
 
 void yyerror(const char *errmsg) {
-    fprintf(stderr, "Position (%d, %d): %s\n", yylineno, ch, errmsg);
+    fprintf(stderr, "Position (%d, %d): [%s] %s\n", yylineno, ch, yytext, errmsg);
 }
 
 int main(int argc, char** argv) {
@@ -99,5 +107,6 @@ int main(int argc, char** argv) {
     yyparse();
     fclose(yyin);
     delete hash_table;
+    delete ast;
     return EXIT_SUCCESS;
 }
