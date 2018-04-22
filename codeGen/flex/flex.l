@@ -77,6 +77,11 @@ SIGN [-+]
     return DOUBLE;
 }
 
+"goto" {
+    ch += yyleng;
+    return JUMP;
+}
+
 {SIGN}?{DIGIT}+ {
     ch += yyleng;
     yylval.str = strdup(yytext);

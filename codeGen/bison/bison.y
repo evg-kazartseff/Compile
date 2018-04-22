@@ -15,6 +15,7 @@
 %token INT CHAR DOUBLE
 %token IF ELSE PRINT FOR LEX_ERROR RETURN
 %token ID CONST_INT CONST_DOUBLE
+%token JUMP
 
 %union {
     int type;
@@ -24,7 +25,7 @@
 
 %type <str> ID CONST_INT CONST_DOUBLE
 %type <type> INT CHAR DOUBLE TYPE
-%type <expr> EXPR CONST DEFVAR UNDEFVAR BODY COND
+%type <expr> EXPR CONST DEFVAR UNDEFVAR BODY COND IFELSE ELSEIF MARK GOTO
 
 %%
 START:  ATOM { }
@@ -37,6 +38,9 @@ ATOM:   DEFVAR { }
         | UNDEFVAR { }
         | LOOP { }
         | RETURN { }
+        | GOTO { }
+        | MARK { }
+        | IFELSE { }
 
 DEFVAR: TYPE ID '=' EXPR';' { }
 
@@ -50,6 +54,16 @@ COND:   CONST { }
         | CONST '>' COND { }
         | CONST "==" COND { }
 
+MARK:   ID ':' { }
+
+GOTO:   JUMP ID ';' { }
+
+IFELSE: IF '(' COND ')' ATOM { }
+        | IF '(' COND ')' '{' BODY '}' { }
+        | IFELSE ELSEIF { }
+
+ELSEIF: ELSE '{' BODY '}' { }
+        | ELSE ATOM { }
 
 EXPR:   EXPR '+' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '+', $1, $3)); }
         | EXPR '-' CONST { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '-', $1, $3)); }
