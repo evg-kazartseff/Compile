@@ -3,7 +3,7 @@ int b = 3 + 1;
 // int c = b + 2;
 less:
 
-if (a) c = 2 + 2;;
+if (a) c = 2 + 2;
 
 goto less;
 
@@ -12,3 +12,5 @@ if (a) {
 } else {
     goto less;
 }
+
+for (int i = 0; i < 1; i = 1 + 2; ) goto less;

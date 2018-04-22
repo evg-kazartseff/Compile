@@ -26,7 +26,7 @@
 %type <str> ID CONST_INT CONST_DOUBLE
 %type <type> INT CHAR DOUBLE TYPE
 %type <expr> EXPR CONST DEFVAR UNDEFVAR BODY COND IFELSE ELSEIF MARK GOTO
-%type <expr> VAR EVAL
+%type <expr> VAR EVAL ANYVAR
 
 %%
 START:  ATOM { }
@@ -44,12 +44,16 @@ ATOM:   DEFVAR { }
         | IFELSE { }
         | EVAL { }
 
-DEFVAR: TYPE ID '=' EXPR';' { }
+DEFVAR: TYPE ID '=' EXPR ';' { }
 
 UNDEFVAR: TYPE ID ';' { }
 
-LOOP:   FOR '(' DEFVAR ';' COND ';' EXPR ')' ATOM ';' { }
-        | FOR '(' DEFVAR ';' COND ';' EXPR ')' '{' BODY '}' { }
+ANYVAR: DEFVAR { }
+        | EVAL { }
+        | ';' { }
+
+LOOP:   FOR '(' ANYVAR  COND ';'  EVAL ')' ATOM { }
+        | FOR '(' ANYVAR  COND ';' EVAL ')' '{' BODY '}' { }
 
 COND:   VAR { }
         | VAR '<' COND { }
@@ -60,14 +64,14 @@ MARK:   ID ':' { }
 
 GOTO:   JUMP ID ';' { }
 
-IFELSE: IF '(' COND ')' ATOM ';' { }
+IFELSE: IF '(' COND ')' ATOM { }
         | IF '(' COND ')' '{' BODY '}' { }
         | IF '(' COND ')' '{' BODY '}' ELSEIF { }
 
 ELSEIF: ELSE '{' BODY '}' { }
-        | ELSE ATOM ';' { }
+        | ELSE ATOM  { }
 
-EVAL: ID '=' EXPR ';' { }
+EVAL: ID '=' EXPR ';'  { }
 
 EXPR:   EXPR '+' VAR { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '+', $1, $3)); }
         | EXPR '-' VAR { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '-', $1, $3)); }
@@ -75,16 +79,15 @@ EXPR:   EXPR '+' VAR { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr
         | EXPR '/' VAR { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '/', $1, $3)); }
         | VAR { $$ = $1; }
 
-
 VAR:    CONST { $$ = $1; }
         | ID { $$ = ast->GetVariableExpr(AST::typeIvar, $1); }
 
 CONST:  CONST_INT { $$ = ast->GetIntNumberExpr(AST::typeIvar, atoi($1)); }
         | CONST_DOUBLE { $$ = ast->GetDoubleNumberExpr(AST::typeDvar, atof($1)); }
 
-TYPE:   INT {$$ = $1;}
-        | CHAR {$$ = $1;}
-        | DOUBLE {$$ = $1;}
+TYPE:   INT { $$ = $1; }
+        | CHAR { $$ = $1; }
+        | DOUBLE { $$ = $1; }
 %%
 
 void yyerror(const char *errmsg) {
