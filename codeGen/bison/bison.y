@@ -1,7 +1,7 @@
 %{
     #include <stdio.h>
-    #include "HashTable.h"
-    #include "AST.h"
+    #include "../inc/HashTable.h"
+    #include "../inc/Ast.h"
     extern FILE *yyin;
     extern int yylineno;
     extern int ch;
@@ -9,11 +9,11 @@
     extern void yyerror(const char *);
     extern HashTable* hash_table;
     extern int yylex();
-    AST::AST* ast;
+    AST::Ast* ast;
 %}
 
 %token INT CHAR DOUBLE
-%token for ELSE PRINT FOR LEX_ERROR RETURN
+%token IF ELSE PRINT FOR LEX_ERROR RETURN
 %token ID CONST_INT CONST_DOUBLE
 
 %union {
@@ -42,8 +42,8 @@ DEFVAR: TYPE ID '=' EXPR';' { }
 
 UNDEFVAR: TYPE ID';' { }
 
-LOOP:   for '(' DEFVAR ';' COND ';' EXPR ')' ATOM ';' { }
-        | for '(' DEFVAR ';' COND ';' EXPR ')' '{' BODY '}' { }
+LOOP:   FOR '(' DEFVAR ';' COND ';' EXPR ')' ATOM ';' { }
+        | FOR '(' DEFVAR ';' COND ';' EXPR ')' '{' BODY '}' { }
 
 COND:   CONST { }
         | CONST '<' COND { }
@@ -78,7 +78,7 @@ int main(int argc, char** argv) {
         printf("\nCannot open file %s.\n", argv[1]);
         return EXIT_FAILURE;
     }
-    ast = new AST::AST();
+    ast = new AST::Ast();
     ch = 1;
     yylineno = 1;
 

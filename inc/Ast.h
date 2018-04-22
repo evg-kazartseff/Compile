@@ -56,6 +56,7 @@ namespace AST {
 
     /// DoubleNumberExprAST - Класс узла выражения для числовых литералов (Например, "1.2").
     class DoubleNumberExprAST : public BaseAST {
+    public:
         double Val;
     public:
         DoubleNumberExprAST(int type, double val) : BaseAST(type), Val(val) {}

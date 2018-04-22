@@ -3,9 +3,9 @@
 %{
 #include <stdio.h>
 #include <string.h>
-#include "AST.h"
-#include "parser.h"
-#include "HashTable.h"
+#include "../inc/Ast.h"
+#include "../inc/parser.h"
+#include "../inc/HashTable.h"
 
 #define HASHTABLESIZE 128
 
