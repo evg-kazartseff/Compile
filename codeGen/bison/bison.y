@@ -15,7 +15,7 @@
 %token INT CHAR DOUBLE
 %token IF ELSE PRINT FOR LEX_ERROR RETURN
 %token ID CONST_INT CONST_DOUBLE
-%token JUMP
+%token JUMP MARK_TOK
 
 %union {
     int type;
@@ -46,7 +46,7 @@ ATOM:   DEFVAR { }
 
 DEFVAR: TYPE ID '=' EXPR ';' { }
 
-UNDEFVAR: TYPE ID ';' { }
+UNDEFVAR: TYPE ID ';' { hash_table->CreateEntry($1, $2); }
 
 ANYVAR: DEFVAR { }
         | EVAL { }
@@ -60,9 +60,9 @@ COND:   VAR { }
         | VAR '>' COND { }
         | VAR "==" COND { }
 
-MARK:   ID ':' { }
+MARK:   ID ':' { hash_table->CreateEntry(MARK_TOK, $1); $$ = ast->GetMark(AST::typeMark, $1); }
 
-GOTO:   JUMP ID ';' { }
+GOTO:   JUMP ID ';' { if (hash_table->LookupEntry($2) != nullptr) { $$ = ast->GetJump(AST::typeJump, $2); } else { yyerror("Var not declaration"); } }
 
 IFELSE: IF '(' COND ')' ATOM { }
         | IF '(' COND ')' '{' BODY '}' { }
@@ -71,16 +71,16 @@ IFELSE: IF '(' COND ')' ATOM { }
 ELSEIF: ELSE '{' BODY '}' { }
         | ELSE ATOM  { }
 
-EVAL: ID '=' EXPR ';'  { }
+EVAL: ID '=' EXPR ';'  { if (hash_table->LookupEntry($1) != nullptr) { $$ = ast->GetEval(AST::typeEval, $1, $3); } else { yyerror("Var not declaration"); } }
 
-EXPR:   EXPR '+' VAR { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '+', $1, $3)); }
-        | EXPR '-' VAR { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '-', $1, $3)); }
-        | EXPR '*' VAR { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '*', $1, $3)); }
-        | EXPR '/' VAR { $$ = ast->ParseBinaryExpr(ast->GetBinaryExpr(AST::typeOpr, '/', $1, $3)); }
+EXPR:   EXPR '+' VAR { $$ = ast->GetBinaryExpr(AST::typeOpr, '+', $1, $3); }
+        | EXPR '-' VAR { $$ = ast->GetBinaryExpr(AST::typeOpr, '-', $1, $3); }
+        | EXPR '*' VAR { $$ = ast->GetBinaryExpr(AST::typeOpr, '*', $1, $3); }
+        | EXPR '/' VAR { $$ = ast->GetBinaryExpr(AST::typeOpr, '/', $1, $3); }
         | VAR { $$ = $1; }
 
 VAR:    CONST { $$ = $1; }
-        | ID { $$ = ast->GetVariableExpr(AST::typeIvar, $1); }
+        | ID { if (hash_table->LookupEntry($1) != nullptr) { $$ = ast->GetVariableExpr(AST::typeIvar, $1); } else { yyerror("Var not declaration"); } }
 
 CONST:  CONST_INT { $$ = ast->GetIntNumberExpr(AST::typeIvar, atoi($1)); }
         | CONST_DOUBLE { $$ = ast->GetDoubleNumberExpr(AST::typeDvar, atof($1)); }

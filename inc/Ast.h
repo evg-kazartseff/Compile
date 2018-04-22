@@ -28,6 +28,9 @@ namespace AST {
         typeDvar,
         typeCall,
         typeFargs,
+        typeEval,
+        typeJump,
+        typeMark,
         typeErr
     } nodeEnum;
 
@@ -85,6 +88,37 @@ namespace AST {
         void Dfs() final;
     };
 
+    /// EvalAST - Класс переопределения переменной
+    class EvalAST : public BaseAST {
+    public:
+        std::string Id;
+        BaseAST *Expr;
+    public:
+        EvalAST(int type, std::string id, BaseAST* expr)
+                : BaseAST(type), Id(id), Expr(expr) {}
+        std::string Generate_code() final;
+        void Dfs() final;
+    };
+
+    class JumpAST : public BaseAST {
+    public:
+        std::string Id;
+    public:
+        JumpAST() {}
+        JumpAST(int type, std::string id)
+                : BaseAST(type), Id(id) {}
+        std::string Generate_code() override;
+        void Dfs() override;
+    };
+
+    class MarkAST : public  JumpAST {
+    public:
+        MarkAST(int type, std::string id)
+                : JumpAST(type, id) {}
+        std::string Generate_code() final;
+        void Dfs() final;
+    };
+
     /// CallExprAST - Класс узла выражения для вызова функции.
     class CallExprAST : public BaseAST {
         std::string Callee;
@@ -138,7 +172,9 @@ namespace AST {
         BaseAST* GetDoubleNumberExpr(int type, double val);
         BaseAST* GetVariableExpr(int type, std::string name);
         BaseAST* GetBinaryExpr(int type, char op, BaseAST* lhs, BaseAST* rhs);
-        BaseAST* ParseBinaryExpr(BaseAST* Expr);
+        BaseAST* GetEval(int type, std::string id, BaseAST* expr);
+        BaseAST* GetJump(int type, std::string id);
+        BaseAST* GetMark(int type, std::string id);
         void DFS();
     };
 }

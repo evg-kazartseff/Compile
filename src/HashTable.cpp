@@ -2,17 +2,19 @@
 // Created by evgenii on 06.03.18.
 //
 
+#include <utility>
 #include "../inc/HashTable.h"
 
-void HashEntry::AddValueNode(std::string value) {
+void HashEntry::AddValueNode(int type, std::string value) {
     HashNode* look = this->LookupValueNode(value);
     if (look) {
         look->setValue(value);
+        look->setType(type);
         return;
     }
     HashNode* node = this->list;
     HashNode* newnode;
-    newnode = new HashNode(value);
+    newnode = new HashNode(type, value);
     if (node) {
         this->list = newnode;
         newnode->setNext(node);
@@ -75,13 +77,12 @@ HashTable::HashTable(size_t size) {
     this->table = new HashEntry[this->size];
 }
 
-void HashTable::CreateEntry(char* value) {
-    std::string val(value);
-    size_t hash = this->GetHash(value);
-    this->table[hash].AddValueNode(val);
+void HashTable::CreateEntry(int type, std::string value) {
+    size_t hash = this->GetHash(value.c_str());
+    this->table[hash].AddValueNode(type, std::move(value));
 }
 
-size_t HashTable::GetHash(char* key) {
+size_t HashTable::GetHash(const char* key) {
     unsigned long hash = 5381;
     int c;
 
@@ -91,21 +92,22 @@ size_t HashTable::GetHash(char* key) {
     return hash % this->size;
 }
 
-HashNode* HashTable::LookupEntry(char* value) {
-    std::string val(value);
-    size_t hash = this->GetHash(value);
-    return this->table[hash].LookupValueNode(val);
+HashNode* HashTable::LookupEntry(const std::string &value) {
+    size_t hash = this->GetHash(value.c_str());
+    return this->table[hash].LookupValueNode(value);
 }
 
-void HashTable::DeleteEntry(char* value) {
-    std::string val(value);
-    size_t hash = this->GetHash(value);
-    this->table[hash].DeleteValueNode(val);
+void HashTable::DeleteEntry(const std::string &value) {
+    size_t hash = this->GetHash(value.c_str());
+    this->table[hash].DeleteValueNode(value);
 }
 
-HashTable::~HashTable() {}
+HashTable::~HashTable() {
+    delete this->table;
+}
 
-HashNode::HashNode(std::string& Value) {
+HashNode::HashNode(int type, std::string& Value) {
+    this->type = type;
     this->value = Value;
 }
 
@@ -135,4 +137,12 @@ std::string &HashNode::getValue() {
 
 void HashNode::setValue(std::string &value) {
     this->value = value;
+}
+
+int HashNode::getType() {
+    return this->type;
+}
+
+void HashNode::setType(int type) {
+    this->type = type;
 }

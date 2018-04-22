@@ -84,19 +84,18 @@ SIGN [-+]
 
 {SIGN}?{DIGIT}+ {
     ch += yyleng;
-    yylval.str = strdup(yytext);
+    yylval.str = yytext;
     return CONST_INT;
 }
 
 {SIGN}?({DIGIT}+\.{DIGIT}+|{DIGIT}+\.|{DIGIT}+)([eE]{SIGN}?{DIGIT}+)? {
     ch += yyleng;
-    yylval.str = strdup(yytext);
+    yylval.str = yytext;
     return CONST_DOUBLE;
 }
 
 {ID} {
-    hash_table->CreateEntry(yytext);
-    yylval.str = strdup(yytext);
+    yylval.str = yytext;
     ch += yyleng;
     return ID;
 }
