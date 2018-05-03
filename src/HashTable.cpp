@@ -103,7 +103,6 @@ void HashTable::DeleteEntry(const std::string &value) {
 }
 
 HashTable::~HashTable() {
-    delete this->table;
 }
 
 HashNode::HashNode(int type, std::string& Value) {
