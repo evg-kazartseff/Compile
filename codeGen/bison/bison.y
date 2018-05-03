@@ -26,7 +26,7 @@
 %type <str> ID CONST_INT CONST_DOUBLE
 %type <type> INT CHAR DOUBLE TYPE
 %type <expr> EXPR CONST DEFVAR UNDEFVAR BODY COND IFELSE ELSEIF MARK GOTO ATOM
-%type <expr> VAR EVAL ANYVAR
+%type <expr> VAR EVAL ANYVAR LOOP
 
 %%
 START:  ATOM { ast->AddToLink(AST::typeLink, $1); }
@@ -35,22 +35,21 @@ START:  ATOM { ast->AddToLink(AST::typeLink, $1); }
 BODY:   ATOM { }
         | BODY ATOM { }
 
-ATOM:   DEFVAR { }
-        | UNDEFVAR { }
-        | LOOP { }
-        | RETURN { }
-        | GOTO { }
-        | MARK { }
-        | IFELSE { }
-        | EVAL { }
+ATOM:   DEFVAR { $$ = $1; }
+        | UNDEFVAR { $$ = $1; }
+        | LOOP { $$ = $1; }
+        | GOTO { $$ = $1; }
+        | MARK { $$ = $1; }
+        | IFELSE { $$ = $1; }
+        | EVAL { $$ = $1; }
 
 DEFVAR: TYPE ID '=' EXPR ';' { }
 
-UNDEFVAR: TYPE ID ';' { hash_table->CreateEntry($1, $2); }
+UNDEFVAR: TYPE ID ';' { hash_table->CreateEntry($1, $2); printf("New var [%d] %s\n", $1, $2); }
 
-ANYVAR: DEFVAR { }
-        | EVAL { }
-        | ';' { }
+ANYVAR: DEFVAR { $$ = $1; }
+        | EVAL { $$ = $1; }
+        | ';' { $$ = nullptr; }
 
 LOOP:   FOR '(' ANYVAR  COND ';'  EVAL ')' ATOM { }
         | FOR '(' ANYVAR  COND ';' EVAL ')' '{' BODY '}' { }
