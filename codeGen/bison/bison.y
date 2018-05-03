@@ -26,27 +26,28 @@
 %type <str> ID CONST_INT CONST_DOUBLE
 %type <type> INT CHAR DOUBLE TYPE
 %type <expr> EXPR CONST DEFVAR UNDEFVAR BODY COND IFELSE ELSEIF MARK GOTO ATOM
-%type <expr> VAR EVAL ANYVAR
+%type <expr> VAR EVAL ANYVAR LOOP ATOMLLIST
 
 %%
 START:  ATOM { ast->AddToLink(AST::typeLink, $1); }
         | START ATOM { ast->AddToLink(AST::typeLink, $2); }
 
-BODY:   ATOM { }
-        | BODY ATOM { }
+BODY: ATOMLLIST { $$ = ast->GetBody(AST::typeBody, $1); }
 
-ATOM:   DEFVAR { }
-        | UNDEFVAR { }
-        | LOOP { }
-        | RETURN { }
-        | GOTO { }
-        | MARK { }
-        | IFELSE { }
-        | EVAL { }
+ATOMLLIST:   ATOM { $$ = ast->GetBodyLList(AST::typeBodyLList, nullptr, $1); }
+        | BODY ATOM { $$ = ast->GetBodyLList(AST::typeBodyLList, $1, $2); }
 
-DEFVAR: TYPE ID '=' EXPR ';' { }
+ATOM:   DEFVAR { $$ = $1; }
+        | UNDEFVAR { $$ = $1; }
+        | LOOP { $$ = $1; }
+        | GOTO { $$ = $1; }
+        | MARK { $$ = $1; }
+        | IFELSE { $$ = $1; }
+        | EVAL { $$ = $1;}
 
-UNDEFVAR: TYPE ID ';' { hash_table->CreateEntry($1, $2); }
+DEFVAR: TYPE ID '=' EXPR ';' { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableDef($1, $2, $4); }
+
+UNDEFVAR: TYPE ID ';' { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableUndef($1, $2); }
 
 ANYVAR: DEFVAR { }
         | EVAL { }
@@ -108,6 +109,7 @@ int main(int argc, char** argv) {
     yylineno = 1;
 
     yyparse();
+
     fclose(yyin);
     delete hash_table;
     delete ast;
