@@ -23,6 +23,7 @@ namespace AST {
         typeFunc,
         typeTerm,
         typeBody,
+        typeBodyLList,
         typeRet,
         typeIvar,
         typeDvar,
@@ -32,6 +33,8 @@ namespace AST {
         typeJump,
         typeMark,
         typeLink,
+        typeDefVar,
+        typeUndefVar,
         typeErr
     } nodeEnum;
 
@@ -73,6 +76,23 @@ namespace AST {
         std::string Name;
     public:
         VariableExprAST(int type, std::string name) : BaseAST(type), Name(std::move(name)) {}
+        std::string Generate_code() final;
+        void Dfs() final;
+    };
+
+    class VariableUndefAST : public BaseAST {
+        std::string Name;
+    public:
+        VariableUndefAST(int type, std::string name) : BaseAST(type), Name(std::move(name)) {}
+        std::string Generate_code() override;
+        void Dfs() override;
+    };
+
+    class VariableDefAST : public VariableUndefAST {
+        BaseAST* Expr;
+    public:
+        VariableDefAST(int type, std::string name, BaseAST* expr)
+                : VariableUndefAST(type, std::move(name)), Expr(expr) {}
         std::string Generate_code() final;
         void Dfs() final;
     };
@@ -119,6 +139,8 @@ namespace AST {
         std::string Generate_code() final;
         void Dfs() final;
     };
+
+
 
     /// CallExprAST - Класс узла выражения для вызова функции.
     class CallExprAST : public BaseAST {
@@ -167,6 +189,25 @@ namespace AST {
         void Dfs() final;
     };
 
+    class BodyLListAST : public BaseAST {
+        BaseAST* Next;
+        BaseAST* Attr;
+    public:
+        BodyLListAST(int type, BaseAST* next, BaseAST* attr)
+                : Next(next), Attr(attr), BaseAST(type) {}
+        std::string Generate_code() final;
+        void Dfs() final;
+    };
+
+    class BodyAST : public BaseAST {
+        BaseAST* LList = nullptr;
+    public:
+        BodyAST(int type, BaseAST* llist)
+                : BaseAST(type),  LList(llist) {}
+        std::string Generate_code() final;
+        void Dfs() final;
+    };
+
     class Ast {
         LinkAST* tree;
     public:
@@ -178,6 +219,10 @@ namespace AST {
         BaseAST* GetEval(int type, std::string id, BaseAST* expr);
         BaseAST* GetJump(int type, std::string id);
         BaseAST* GetMark(int type, std::string id);
+        BaseAST* GetVariableDef(int type, std::string name, BaseAST* expr);
+        BaseAST* GetVariableUndef(int type, std::string name);
+        BaseAST* GetBodyLList(int type, BaseAST* next, BaseAST* attr);
+        BaseAST* GetBody(int type, BaseAST* llist);
         void AddToLink(int type, BaseAST* childe);
         void DFS();
     };

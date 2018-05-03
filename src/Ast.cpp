@@ -60,6 +60,22 @@ void AST::Ast::AddToLink(int type, BaseAST* childe) {
     this->tree->AddChild(childe);
 }
 
+AST::BaseAST* AST::Ast::GetVariableDef(int type, std::string name, AST::BaseAST* expr) {
+    return new VariableDefAST(type, name, expr);
+}
+
+AST::BaseAST* AST::Ast::GetVariableUndef(int type, std::string name) {
+    return new VariableUndefAST(type, name);
+}
+
+AST::BaseAST* AST::Ast::GetBodyLList(int type, AST::BaseAST* next, AST::BaseAST* attr) {
+    return new BodyLListAST(type, next, attr);
+}
+
+AST::BaseAST* AST::Ast::GetBody(int type, AST::BaseAST* llist) {
+    return new BodyAST(type, llist);
+}
+
 std::string AST::IntNumberExprAST::Generate_code() {
     return std::__cxx11::string();
 }
@@ -126,4 +142,36 @@ std::string AST::MarkAST::Generate_code() {
 
 void AST::MarkAST::Dfs() {
     JumpAST::Dfs();
+}
+
+std::string AST::VariableUndefAST::Generate_code() {
+    return std::__cxx11::string();
+}
+
+void AST::VariableUndefAST::Dfs() {
+
+}
+
+std::string AST::VariableDefAST::Generate_code() {
+    return VariableUndefAST::Generate_code();
+}
+
+void AST::VariableDefAST::Dfs() {
+    VariableUndefAST::Dfs();
+}
+
+std::string AST::BodyAST::Generate_code() {
+    return std::__cxx11::string();
+}
+
+void AST::BodyAST::Dfs() {
+
+}
+
+std::string AST::BodyLListAST::Generate_code() {
+    return std::__cxx11::string();
+}
+
+void AST::BodyLListAST::Dfs() {
+
 }
