@@ -23,7 +23,7 @@
     AST::BaseAST* expr;
 }
 
-%type <str> ID CONST_INT CONST_DOUBLE
+%type <str> ID CONST_INT CONST_DOUBLE ID_TOK
 %type <type> INT CHAR DOUBLE TYPE
 %type <expr> EXPR CONST DEFVAR UNDEFVAR BODY COND IFELSE ELSEIF MARK GOTO ATOM
 %type <expr> VAR EVAL ANYVAR LOOP ATOMLLIST
@@ -63,7 +63,7 @@ COND:   VAR { }
 
 MARK:   ID ':' { hash_table->CreateEntry(MARK_TOK, $1); $$ = ast->GetMark(AST::typeMark, $1); }
 
-GOTO:   JUMP ID ';' { if (hash_table->LookupEntry($2) != nullptr) { $$ = ast->GetJump(AST::typeJump, $2); } else { yyerror("Var not declaration"); } }
+GOTO:   JUMP ID_TOK ';' { if ($2) { $$ = ast->GetJump(AST::typeJump, $2); } else { $$ = nullptr; } }
 
 IFELSE: IF '(' COND ')' ATOM { }
         | IF '(' COND ')' '{' BODY '}' { }
@@ -72,7 +72,7 @@ IFELSE: IF '(' COND ')' ATOM { }
 ELSEIF: ELSE '{' BODY '}' { }
         | ELSE ATOM  { }
 
-EVAL: ID '=' EXPR ';'  { if (hash_table->LookupEntry($1) != nullptr) { $$ = ast->GetEval(AST::typeEval, $1, $3); } else { yyerror("Var not declaration"); } }
+EVAL: ID '=' EXPR ';'  { if ($1) $$ = ast->GetEval(AST::typeEval, $1, $3); else $$ = nullptr; }
 
 EXPR:   EXPR '+' VAR { $$ = ast->GetBinaryExpr(AST::typeOpr, '+', $1, $3); }
         | EXPR '-' VAR { $$ = ast->GetBinaryExpr(AST::typeOpr, '-', $1, $3); }
@@ -81,7 +81,9 @@ EXPR:   EXPR '+' VAR { $$ = ast->GetBinaryExpr(AST::typeOpr, '+', $1, $3); }
         | VAR { $$ = $1; }
 
 VAR:    CONST { $$ = $1; }
-        | ID { if (hash_table->LookupEntry($1) != nullptr) { $$ = ast->GetVariableExpr(AST::typeIvar, $1); } else { yyerror("Var not declaration"); } }
+        | ID_TOK { $$ = ast->GetVariableExpr(AST::typeIvar, $1); }
+
+ID_TOK: ID { if (hash_table->LookupEntry($1) != nullptr) { $$ = $1; } else { yyerror("Var not declaration"); $$ = nullptr; } }
 
 CONST:  CONST_INT { $$ = ast->GetIntNumberExpr(AST::typeIvar, atoi($1)); }
         | CONST_DOUBLE { $$ = ast->GetDoubleNumberExpr(AST::typeDvar, atof($1)); }
@@ -111,7 +113,7 @@ int main(int argc, char** argv) {
     yyparse();
 
     fclose(yyin);
-    delete hash_table;
+    //delete hash_table;
     delete ast;
     return EXIT_SUCCESS;
 }
