@@ -95,7 +95,8 @@ SIGN [-+]
 }
 
 {ID} {
-    yylval.str = yytext;
+    yylval.str = (yytext); // TODO: if strdup(yytext) then good, else yytext = "b;", but must "b"
+    // yylval.str = strdup(yytext); TODO IT's work!
     ch += yyleng;
     return ID;
 }
