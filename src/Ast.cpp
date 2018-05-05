@@ -34,7 +34,9 @@ std::string AST::LinkAST::Generate_code() {
 }
 
 void AST::LinkAST::Dfs() {
-
+    for (auto it: *this->Childs) {
+        it->Dfs();
+    }
 }
 
 void AST::Ast::DFS() {
@@ -99,7 +101,7 @@ std::string AST::VariableExprAST::Generate_code() {
 }
 
 void AST::VariableExprAST::Dfs() {
-    std::cout << this->Name << std::endl;
+    std::cout << this->Name;
     ///this->Generate_code();
 }
 
@@ -109,6 +111,7 @@ std::string AST::BinaryExprAST::Generate_code() {
 
 void AST::BinaryExprAST::Dfs() {
     this->LHS->Dfs();
+    printf(" %c ", this->Op);
     this->RHS->Dfs();
 }
 
@@ -125,7 +128,8 @@ std::string AST::EvalAST::Generate_code() {
 }
 
 void AST::EvalAST::Dfs() {
-
+    printf("%s = ", this->Id.c_str());
+    this->Expr->Dfs();
 }
 
 std::string AST::JumpAST::Generate_code() {
@@ -149,7 +153,7 @@ std::string AST::VariableUndefAST::Generate_code() {
 }
 
 void AST::VariableUndefAST::Dfs() {
-
+    printf("UndefVar: (%d) %s\n", this->Type, this->Name.c_str());
 }
 
 std::string AST::VariableDefAST::Generate_code() {
@@ -158,6 +162,7 @@ std::string AST::VariableDefAST::Generate_code() {
 
 void AST::VariableDefAST::Dfs() {
     VariableUndefAST::Dfs();
+    this->Expr->Dfs();
 }
 
 std::string AST::BodyAST::Generate_code() {

@@ -1,4 +1,2 @@
-int a = 2;
-int b = 2;
-int c;
-c = a + b;
+int c = 1 + 2;
+int k = c + 2 * 44 - c;

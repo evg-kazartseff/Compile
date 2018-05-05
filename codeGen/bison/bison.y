@@ -111,7 +111,7 @@ int main(int argc, char** argv) {
     yylineno = 1;
 
     yyparse();
-
+    ast->DFS();
     fclose(yyin);
     // delete hash_table;
     delete ast;
