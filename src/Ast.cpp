@@ -41,7 +41,7 @@ std::string AST::LinkAST::Generate_code()
 void AST::LinkAST::Dfs()
 {
     for (auto it: *this->Childs) {
-        it->Dfs();
+        if (it) it->Dfs();
     }
 }
 

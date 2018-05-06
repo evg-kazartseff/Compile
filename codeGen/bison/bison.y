@@ -7,6 +7,7 @@
     extern int ch;
     extern char *yytext;
     extern void yyerror(const char *);
+    extern void yyerror(const char *, const char *);
     extern HashTable* hash_table;
     extern int yylex();
     AST::Ast* ast;
@@ -62,7 +63,9 @@ COND:   VAR { }
         | VAR '>' COND { }
         | VAR "==" COND { }
 
-MARK:   ID ':' { hash_table->CreateEntry(MARK_TOK, $1); $$ = ast->GetMark(AST::typeMark, $1); }
+MARK:   ID ':' { if (hash_table->LookupEntry($1) == nullptr) {
+                    hash_table->CreateEntry(MARK_TOK, $1); $$ = ast->GetMark(AST::typeMark, $1);
+                 } else { yyerror("Identificator already created", $1); $$ = nullptr; } }
 
 GOTO:   JUMP ID_TOK ';' { if ($2) { $$ = ast->GetJump(AST::typeJump, $2); } else { $$ = nullptr; } }
 
@@ -106,11 +109,18 @@ TYPE:   INT { $$ = $1; }
         | DOUBLE { $$ = $1; }
 %%
 
-void yyerror(const char *errmsg) {
+void yyerror(const char *errmsg)
+{
     fprintf(stderr, "Position (%d, %d): [%s] %s\n", yylineno, ch, yytext, errmsg);
 }
 
-int main(int argc, char** argv) {
+void yyerror(const char *errmsg, const char *msg)
+{
+    fprintf(stderr, "Position (%d, %d): [%s] %s\n", yylineno, ch, msg, errmsg);
+}
+
+int main(int argc, char** argv)
+{
     if(argc < 2) {
         fprintf(stderr, "\nNot enough arguments. Please specify filename.\n");
         return EXIT_FAILURE;
