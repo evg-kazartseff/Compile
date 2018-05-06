@@ -4,6 +4,7 @@
 
 #include "../inc/Asm.h"
 
-ASM_GEN::ASM_GEN(std::string filename) {
+ASM_GEN::ASM_GEN(std::string filename)
+{
     this->file.open(filename.c_str(), std::fstream::out);
 }

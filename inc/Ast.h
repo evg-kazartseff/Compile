@@ -11,7 +11,8 @@
 #include <vector>
 #include <typeinfo>
 
-namespace AST {
+namespace AST
+{
     typedef enum {
         typeRoot,
         typeList,
@@ -44,10 +45,16 @@ namespace AST {
     class BaseAST {
     public:
         int Type = 0;
+
         virtual std::string Generate_code() = 0;
+
         virtual void Dfs() = 0;
+
         BaseAST() = default;
-        explicit BaseAST(int type) { this->Type = type; };
+
+        explicit BaseAST(int type)
+        { this->Type = type; };
+
         virtual ~BaseAST() = default;
     };
 
@@ -56,8 +63,11 @@ namespace AST {
     public:
         int Val;
     public:
-        IntNumberExprAST(int type, int val) : BaseAST(type), Val(val) {}
+        IntNumberExprAST(int type, int val) : BaseAST(type), Val(val)
+        {}
+
         std::string Generate_code() final;
+
         void Dfs() final;
     };
 
@@ -66,8 +76,11 @@ namespace AST {
     public:
         double Val;
     public:
-        DoubleNumberExprAST(int type, double val) : BaseAST(type), Val(val) {}
+        DoubleNumberExprAST(int type, double val) : BaseAST(type), Val(val)
+        {}
+
         std::string Generate_code() final;
+
         void Dfs() final;
     };
 
@@ -75,25 +88,35 @@ namespace AST {
     class VariableExprAST : public BaseAST {
         std::string Name;
     public:
-        VariableExprAST(int type, std::string name) : BaseAST(type), Name(std::move(name)) {}
+        VariableExprAST(int type, std::string name) : BaseAST(type), Name(std::move(name))
+        {}
+
         std::string Generate_code() final;
+
         void Dfs() final;
     };
 
     class VariableUndefAST : public BaseAST {
+    protected:
         std::string Name;
     public:
-        VariableUndefAST(int type, std::string name) : BaseAST(type), Name(std::move(name)) {}
+        VariableUndefAST(int type, std::string name) : BaseAST(type), Name(std::move(name))
+        {}
+
         std::string Generate_code() override;
+
         void Dfs() override;
     };
 
     class VariableDefAST : public VariableUndefAST {
-        BaseAST* Expr;
+        BaseAST *Expr;
     public:
-        VariableDefAST(int type, std::string name, BaseAST* expr)
-                : VariableUndefAST(type, std::move(name)), Expr(expr) {}
+        VariableDefAST(int type, std::string name, BaseAST *expr)
+                : VariableUndefAST(type, std::move(name)), Expr(expr)
+        {}
+
         std::string Generate_code() final;
+
         void Dfs() final;
     };
 
@@ -103,9 +126,12 @@ namespace AST {
         char Op;
         BaseAST *LHS, *RHS;
     public:
-        BinaryExprAST(int type, char op, BaseAST* lhs, BaseAST* rhs)
-                : BaseAST(type), Op(op), LHS(lhs), RHS(rhs) {}
+        BinaryExprAST(int type, char op, BaseAST *lhs, BaseAST *rhs)
+                : BaseAST(type), Op(op), LHS(lhs), RHS(rhs)
+        {}
+
         std::string Generate_code() final;
+
         void Dfs() final;
     };
 
@@ -115,9 +141,12 @@ namespace AST {
         std::string Id;
         BaseAST *Expr;
     public:
-        EvalAST(int type, std::string id, BaseAST* expr)
-                : BaseAST(type), Id(id), Expr(expr) {}
+        EvalAST(int type, std::string id, BaseAST *expr)
+                : BaseAST(type), Id(id), Expr(expr)
+        {}
+
         std::string Generate_code() final;
+
         void Dfs() final;
     };
 
@@ -125,31 +154,40 @@ namespace AST {
     public:
         std::string Id;
     public:
-        JumpAST() {}
+        JumpAST()
+        {}
+
         JumpAST(int type, std::string id)
-                : BaseAST(type), Id(id) {}
+                : BaseAST(type), Id(id)
+        {}
+
         std::string Generate_code() override;
+
         void Dfs() override;
     };
 
-    class MarkAST : public  JumpAST {
+    class MarkAST : public JumpAST {
     public:
         MarkAST(int type, std::string id)
-                : JumpAST(type, id) {}
+                : JumpAST(type, id)
+        {}
+
         std::string Generate_code() final;
+
         void Dfs() final;
     };
-
-
 
     /// CallExprAST - Класс узла выражения для вызова функции.
     class CallExprAST : public BaseAST {
         std::string Callee;
-        std::vector<BaseAST*> Args;
+        std::vector<BaseAST *> Args;
     public:
-        CallExprAST(std::string callee, std::vector<BaseAST*> &args)
-                : Callee(std::move(callee)), Args(args) {}
+        CallExprAST(std::string callee, std::vector<BaseAST *> &args)
+                : Callee(std::move(callee)), Args(args)
+        {}
+
         std::string Generate_code() final;
+
         void Dfs() final;
     };
 
@@ -159,71 +197,114 @@ namespace AST {
     class PrototypeAST : public BaseAST {
     public:
         std::string Name;
-        BaseAST* Args = nullptr;
+        BaseAST *Args = nullptr;
 
         PrototypeAST() = default;
 
-        PrototypeAST(std::string name, BaseAST* args)
-                : Name(std::move(name)), Args(args) {}
+        PrototypeAST(std::string name, BaseAST *args)
+                : Name(std::move(name)), Args(args)
+        {}
     };
 
     /// FunctionAST - Представляет определение самой функции
     class FunctionAST : public BaseAST {
-        BaseAST* Prototype;
-        BaseAST* Body;
+        BaseAST *Prototype;
+        BaseAST *Body;
     public:
-        FunctionAST(BaseAST* prototype, BaseAST* body)
-                : Prototype(prototype), Body(body) {}
+        FunctionAST(BaseAST *prototype, BaseAST *body)
+                : Prototype(prototype), Body(body)
+        {}
     };
 
     ///LinkAST - Связующий элемент в дереве
     class LinkAST : public BaseAST {
-        std::vector<BaseAST*>* Childs = nullptr;
+        std::vector<BaseAST *> *Childs = nullptr;
     public:
         explicit LinkAST(int type)
-                : BaseAST(type) {  this->Childs = new std::vector<BaseAST*>(); }
-        explicit LinkAST(std::vector<BaseAST*>* childs)
-                : Childs(childs) {}
-        void AddChild(BaseAST* child);
+                : BaseAST(type)
+        { this->Childs = new std::vector<BaseAST *>(); }
+
+        explicit LinkAST(std::vector<BaseAST *> *childs)
+                : Childs(childs)
+        {}
+
+        void AddChild(BaseAST *child);
+
         std::string Generate_code() final;
+
         void Dfs() final;
     };
 
     class BodyLListAST : public BaseAST {
-        BaseAST* Next;
-        BaseAST* Attr;
+        BaseAST *Next;
+        BaseAST *Attr;
     public:
-        BodyLListAST(int type, BaseAST* next, BaseAST* attr)
-                : Next(next), Attr(attr), BaseAST(type) {}
+        BodyLListAST(int type, BaseAST *next, BaseAST *attr)
+                : Next(next), Attr(attr), BaseAST(type)
+        {}
+
         std::string Generate_code() final;
+
         void Dfs() final;
     };
 
     class BodyAST : public BaseAST {
-        BaseAST* LList = nullptr;
+        BaseAST *LList = nullptr;
     public:
-        BodyAST(int type, BaseAST* llist)
-                : BaseAST(type),  LList(llist) {}
+        BodyAST(int type, BaseAST *llist)
+                : BaseAST(type), LList(llist)
+        {}
+
         std::string Generate_code() final;
+
         void Dfs() final;
     };
 
+    // TODO add unary class, loop class, if class
+/*
+ * if:
+ * ptr to CONDITION
+ * ptr to BODY IF TRUE
+ * ptr TO LIST ELSEIF
+ *
+ * unary:
+ * op, id
+ *
+ * loop:
+ * ptr to def
+ * ptr to CONDITION(not CONDITION IN IF)
+ * ptr to increment
+ * ptr to body
+ * */
     class Ast {
-        LinkAST* tree;
+        LinkAST *tree;
     public:
         Ast();
-        BaseAST* GetIntNumberExpr(int type, int val);
-        BaseAST* GetDoubleNumberExpr(int type, double val);
-        BaseAST* GetVariableExpr(int type, std::string name);
-        BaseAST* GetBinaryExpr(int type, char op, BaseAST* lhs, BaseAST* rhs);
-        BaseAST* GetEval(int type, std::string id, BaseAST* expr);
-        BaseAST* GetJump(int type, std::string id);
-        BaseAST* GetMark(int type, std::string id);
-        BaseAST* GetVariableDef(int type, std::string name, BaseAST* expr);
-        BaseAST* GetVariableUndef(int type, std::string name);
-        BaseAST* GetBodyLList(int type, BaseAST* next, BaseAST* attr);
-        BaseAST* GetBody(int type, BaseAST* llist);
-        void AddToLink(int type, BaseAST* childe);
+
+        BaseAST *GetIntNumberExpr(int type, int val);
+
+        BaseAST *GetDoubleNumberExpr(int type, double val);
+
+        BaseAST *GetVariableExpr(int type, std::string name);
+
+        BaseAST *GetBinaryExpr(int type, char op, BaseAST *lhs, BaseAST *rhs);
+
+        BaseAST *GetEval(int type, std::string id, BaseAST *expr);
+
+        BaseAST *GetJump(int type, std::string id);
+
+        BaseAST *GetMark(int type, std::string id);
+
+        BaseAST *GetVariableDef(int type, std::string name, BaseAST *expr);
+
+        BaseAST *GetVariableUndef(int type, std::string name);
+
+        BaseAST *GetBodyLList(int type, BaseAST *next, BaseAST *attr);
+
+        BaseAST *GetBody(int type, BaseAST *llist);
+
+        void AddToLink(int type, BaseAST *childe);
+
         void DFS();
     };
 }

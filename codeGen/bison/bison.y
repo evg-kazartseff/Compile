@@ -25,8 +25,9 @@
 
 %type <str> ID CONST_INT CONST_DOUBLE ID_TOK
 %type <type> INT CHAR DOUBLE TYPE
-%type <expr> EXPR CONST DEFVAR UNDEFVAR BODY COND IFELSE ELSEIF MARK GOTO ATOM
-%type <expr> VAR EVAL ANYVAR LOOP ATOMLLIST
+%type <expr> EXPR2 EXPR1 EXPR0 EXPR CONST DEFVAR UNDEFVAR VAR EVAL
+%type <expr> MARK GOTO ATOM
+%type <expr> ANYVAR LOOP ATOMLLIST COND IFELSE ELSEIF BODY
 
 %%
 START:  ATOM { ast->AddToLink(AST::typeLink, $1); }
@@ -74,11 +75,23 @@ ELSEIF: ELSE '{' BODY '}' { }
 
 EVAL: ID '=' EXPR ';'  { if ($1) $$ = ast->GetEval(AST::typeEval, $1, $3); else $$ = nullptr; }
 
-EXPR:   EXPR '+' VAR { $$ = ast->GetBinaryExpr(AST::typeOpr, '+', $1, $3); }
-        | EXPR '-' VAR { $$ = ast->GetBinaryExpr(AST::typeOpr, '-', $1, $3); }
-        | EXPR '*' VAR { $$ = ast->GetBinaryExpr(AST::typeOpr, '*', $1, $3); }
-        | EXPR '/' VAR { $$ = ast->GetBinaryExpr(AST::typeOpr, '/', $1, $3); }
-        | VAR { $$ = $1; }
+EXPR:   EXPR0 { $$ = $1; }
+        | EXPR0 '&' EXPR { $$ = ast->GetBinaryExpr(AST::typeOpr, '&', $1, $3); }
+        | EXPR0 '^' EXPR { $$ = ast->GetBinaryExpr(AST::typeOpr, '^', $1, $3); }
+        | EXPR0 '|' EXPR { $$ = ast->GetBinaryExpr(AST::typeOpr, '|', $1, $3); }
+
+
+EXPR0:   EXPR1 { $$ = $1; }
+        | EXPR1 '+' EXPR0 { $$ = ast->GetBinaryExpr(AST::typeOpr, '+', $1, $3); }
+        | EXPR1 '-' EXPR0 { $$ = ast->GetBinaryExpr(AST::typeOpr, '-', $1, $3); }
+
+EXPR1:  EXPR2 { $$ = $1; }
+        | EXPR2 '*' EXPR1 { $$ = ast->GetBinaryExpr(AST::typeOpr, '*', $1, $3); }
+        | EXPR2 '/' EXPR1 { $$ = ast->GetBinaryExpr(AST::typeOpr, '/', $1, $3); }
+        | EXPR2 '%' EXPR1 { $$ = ast->GetBinaryExpr(AST::typeOpr, '%', $1, $3); }
+
+EXPR2:  VAR { $$ = $1; }
+        | '(' EXPR ')' { $$ = $2;}
 
 VAR:    CONST { $$ = $1; }
         | ID_TOK { $$ = ast->GetVariableExpr(AST::typeIvar, $1); }

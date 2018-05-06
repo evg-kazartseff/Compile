@@ -5,28 +5,29 @@
 #include <utility>
 #include "../inc/HashTable.h"
 
-void HashEntry::AddValueNode(int type, std::string value) {
-    HashNode* look = this->LookupValueNode(value);
+void HashEntry::AddValueNode(int type, std::string value)
+{
+    HashNode *look = this->LookupValueNode(value);
     if (look) {
         look->setValue(value);
         look->setType(type);
         return;
     }
-    HashNode* node = this->list;
-    HashNode* newnode;
+    HashNode *node = this->list;
+    HashNode *newnode;
     newnode = new HashNode(type, value);
     if (node) {
         this->list = newnode;
         newnode->setNext(node);
         node->setPrev(newnode);
-    }
-    else {
+    } else {
         this->list = newnode;
     }
 }
 
-HashNode* HashEntry::LookupValueNode(const std::string& value) {
-    HashNode* node = this->list;
+HashNode *HashEntry::LookupValueNode(const std::string &value)
+{
+    HashNode *node = this->list;
     if (!node)
         return nullptr;
     if (node->getValue() == value)
@@ -39,32 +40,33 @@ HashNode* HashEntry::LookupValueNode(const std::string& value) {
     return nullptr;
 }
 
-void HashEntry::DeleteValueNode(const std::string &value) {
-    HashNode* node = this->LookupValueNode(value);
+void HashEntry::DeleteValueNode(const std::string &value)
+{
+    HashNode *node = this->LookupValueNode(value);
     if (!node)
         return;
     this->DeleteNode(node);
 }
 
-void HashEntry::DeleteNode(HashNode* node) {
+void HashEntry::DeleteNode(HashNode *node)
+{
     if (!this->list)
         return;
     if (!node->getPrev()) {
         this->list = node->getNext();
-    }
-    else if (!node->getNext()) {
+    } else if (!node->getNext()) {
         node->getPrev()->setNext(nullptr);
-    }
-    else {
+    } else {
         node->getPrev()->setNext(node->getNext());
         node->getNext()->setPrev(node->getPrev());
     }
     delete node;
 }
 
-HashEntry::~HashEntry() {
-    HashNode* node = this->list;
-    HashNode* next;
+HashEntry::~HashEntry()
+{
+    HashNode *node = this->list;
+    HashNode *next;
     while (node) {
         next = node->getNext();
         delete node;
@@ -72,17 +74,20 @@ HashEntry::~HashEntry() {
     }
 }
 
-HashTable::HashTable(size_t size) {
+HashTable::HashTable(size_t size)
+{
     this->size = size;
     this->table = new HashEntry[this->size];
 }
 
-void HashTable::CreateEntry(int type, std::string value) {
+void HashTable::CreateEntry(int type, std::string value)
+{
     size_t hash = this->GetHash(value.c_str());
     this->table[hash].AddValueNode(type, std::move(value));
 }
 
-size_t HashTable::GetHash(const char* key) {
+size_t HashTable::GetHash(const char *key)
+{
     unsigned long hash = 5381;
     int c;
 
@@ -92,56 +97,69 @@ size_t HashTable::GetHash(const char* key) {
     return hash % this->size;
 }
 
-HashNode* HashTable::LookupEntry(const std::string &value) {
+HashNode *HashTable::LookupEntry(const std::string &value)
+{
     size_t hash = this->GetHash(value.c_str());
     return this->table[hash].LookupValueNode(value);
 }
 
-void HashTable::DeleteEntry(const std::string &value) {
+void HashTable::DeleteEntry(const std::string &value)
+{
     size_t hash = this->GetHash(value.c_str());
     this->table[hash].DeleteValueNode(value);
 }
 
-HashTable::~HashTable() {
+HashTable::~HashTable()
+{
 }
 
-HashNode::HashNode(int type, std::string& Value) {
+HashNode::HashNode(int type, std::string &Value)
+{
     this->type = type;
     this->value = Value;
 }
 
-HashNode::~HashNode() {
+HashNode::~HashNode()
+{
     this->value.clear();
 }
 
-HashNode* HashNode::getNext() const {
+HashNode *HashNode::getNext() const
+{
     return this->next;
 }
 
-void HashNode::setNext(HashNode* next) {
+void HashNode::setNext(HashNode *next)
+{
     this->next = next;
 }
 
-HashNode* HashNode::getPrev() const {
+HashNode *HashNode::getPrev() const
+{
     return this->prev;
 }
 
-void HashNode::setPrev(HashNode* prev) {
+void HashNode::setPrev(HashNode *prev)
+{
     this->prev = prev;
 }
 
-std::string &HashNode::getValue() {
+std::string &HashNode::getValue()
+{
     return this->value;
 }
 
-void HashNode::setValue(std::string &value) {
+void HashNode::setValue(std::string &value)
+{
     this->value = value;
 }
 
-int HashNode::getType() {
+int HashNode::getType()
+{
     return this->type;
 }
 
-void HashNode::setType(int type) {
+void HashNode::setType(int type)
+{
     this->type = type;
 }
