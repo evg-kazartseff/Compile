@@ -13,7 +13,7 @@
     AST::Ast* ast;
 %}
 
-%token INT CHAR DOUBLE
+%token INT CHAR DOUBLE STRING
 %token IF ELSE PRINT FOR LEX_ERROR RETURN
 %token ID CONST_INT CONST_DOUBLE
 %token JUMP MARK_TOK
@@ -26,7 +26,7 @@
 
 }
 
-%type <str> ID CONST_INT CONST_DOUBLE ID_TOK
+%type <str> ID CONST_INT CONST_DOUBLE ID_TOK STRING
 %type <type> INT CHAR DOUBLE TYPE
 %type <expr> EXPR2 EXPR1 EXPR0 EXPR CONST DEFVAR UNDEFVAR VAR EVAL
 %type <expr> MARK GOTO ATOM CALL ARGS ARG
@@ -52,10 +52,11 @@ ATOM:   DEFVAR { $$ = $1; }
 
 CALL:   ID '(' ARGS ')' ';' { }
 
-ARGS:   ARG { }
-        | ARGS ',' ARG { }
+ARGS:   ARG { /*$$ = ast->GetArgList(nullptr, $1);*/ }
+        | ARG ',' ARGS { /*$$ = ast->GetArgList($1, $3);*/ }
 
-ARG: ID { }
+ARG: VAR { }
+        | STRING { }
 
 DEFVAR: TYPE ID '=' EXPR ';' { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableDef($1, $2, $4); }
 
@@ -106,7 +107,7 @@ EXPR1:  EXPR2 { $$ = $1; }
 
 EXPR2:  VAR { $$ = $1; }
         | '(' EXPR ')' { $$ = $2;}
-        | '~' EXPR { $$ = ast->GetUnary(AST::typeOpr, '~', $2); }
+        | '~' EXPR { $$ = ast->GetUnary('~', $2); }
 
 VAR:    CONST { $$ = $1; }
         | ID_TOK { $$ = ast->GetVariableExpr(std::string($1)); }

@@ -288,10 +288,10 @@ namespace AST
 
     class UnaryAST : public BaseAST {
         char Operation;
-        BaseAST* Id;
+        BaseAST* Operand;
     public:
         UnaryAST(char operation, BaseAST* id)
-                : Operation(operation), Id(id) {}
+                    : Operation(operation), Operand(id) {}
         std::string Generate_code() final;
 
         void Dfs() final;

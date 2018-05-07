@@ -312,6 +312,6 @@ std::string AST::UnaryAST::Generate_code() {
 
 void AST::UnaryAST::Dfs() {
     std::cout << "(" << this->Operation;
-    this->Opearnd->Dfs();
+    this->Operand->Dfs();
     std::cout << ")";
 }
