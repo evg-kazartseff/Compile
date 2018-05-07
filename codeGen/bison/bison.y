@@ -22,12 +22,14 @@
     int type;
     char* str;
     AST::BaseAST* expr;
+    // TODO Fix unary priority
+
 }
 
 %type <str> ID CONST_INT CONST_DOUBLE ID_TOK
 %type <type> INT CHAR DOUBLE TYPE
 %type <expr> EXPR2 EXPR1 EXPR0 EXPR CONST DEFVAR UNDEFVAR VAR EVAL
-%type <expr> MARK GOTO ATOM
+%type <expr> MARK GOTO ATOM CALL ARGS ARG
 %type <expr> ANYVAR LOOP ATOMLLIST COND IFELSE ELSEIF BODY LEVAL
 
 %%
@@ -45,7 +47,15 @@ ATOM:   DEFVAR { $$ = $1; }
         | GOTO { $$ = $1; }
         | MARK { $$ = $1; }
         | IFELSE { $$ = $1; }
-        | EVAL { $$ = $1;}
+        | EVAL { $$ = $1; }
+        | CALL { $$ = $1; }
+
+CALL:   ID '(' ARGS ')' ';' { }
+
+ARGS:   ARG { }
+        | ARGS ',' ARG { }
+
+ARG: ID { }
 
 DEFVAR: TYPE ID '=' EXPR ';' { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableDef($1, $2, $4); }
 
@@ -139,7 +149,7 @@ int main(int argc, char** argv)
     yyparse();
     ast->DFS();
     fclose(yyin);
-    // delete hash_table;
+    delete hash_table;
     delete ast;
     return EXIT_SUCCESS;
 }

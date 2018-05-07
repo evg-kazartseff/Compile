@@ -1,17 +1,2 @@
-lol:
-int c = 1 + 2;
-double k = 4 + (2 % c)  * c | 2;
-k = 5;
-goto lol;
 
-if (c < k) {
-    k = c;
-} else {
-    c = k;
-}
-
-for (int a = 0; a < 100; a = a + 1) {
-    goto lol;
-    a = ~a;
-    a = (-a) + 1 + ~c;
-}
+printf("lol");

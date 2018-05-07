@@ -12,7 +12,8 @@
 #include <typeinfo>
 
 ///TODO remove type
-
+// TODO оставить только вызов функций, удалить прототипы, добавить класс Return(пустой)
+// TODO добавить список класс список аргументов функции
 namespace AST
 {
     typedef enum {
