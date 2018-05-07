@@ -39,7 +39,7 @@ START:  ATOM { ast->AddToLink($1); }
 BODY: ATOMLLIST { $$ = ast->GetBody($1); }
 
 ATOMLLIST:   ATOM { $$ = ast->GetBodyLList(nullptr, $1); }
-        | ATOM BODY { $$ = ast->GetBodyLList($1, $2); }
+        | ATOM BODY { $$ = ast->GetBodyLList($2, $1); }
 
 ATOM:   DEFVAR { $$ = $1; }
         | UNDEFVAR { $$ = $1; }
@@ -66,9 +66,9 @@ ANYVAR: DEFVAR { $$ = $1; }
         | EVAL { $$ = $1; }
         | ';' { $$ = nullptr; }
 
-LOOP:   FOR '(' ANYVAR  COND ';'  EVAL ')' ATOM { $$ = ast->GetLoop($3, $4, $6, $8); }
-        | FOR '(' ANYVAR  COND ';' EVAL ')' '{' BODY '}' { $$ = ast->GetLoop($3, $4, $6, $9); }
-LEVAL:  ID '=' EXPR { $$ = ast->GetEval(AST::typeEval, $1, $3); }
+LOOP:   FOR '(' ANYVAR  COND ';'  LEVAL ')' ATOM { $$ = ast->GetLoop($3, $4, $6, $8); }
+        | FOR '(' ANYVAR  COND ';' LEVAL ')' '{' BODY '}' { $$ = ast->GetLoop($3, $4, $6, $9); }
+LEVAL:  ID '=' EXPR { $$ = ast->GetEval($1, $3); }
 
 COND:   VAR { $$ = $1; }
         | VAR '<' COND { $$ = ast->GetLogicExpr('<', $1, $3); }
@@ -108,6 +108,7 @@ EXPR1:  EXPR2 { $$ = $1; }
 EXPR2:  VAR { $$ = $1; }
         | '(' EXPR ')' { $$ = $2;}
         | '~' EXPR { $$ = ast->GetUnary('~', $2); }
+        | '!' EXPR { $$ = ast->GetUnary('!', $2); }
 
 VAR:    CONST { $$ = $1; }
         | ID_TOK { $$ = ast->GetVariableExpr(std::string($1)); }
