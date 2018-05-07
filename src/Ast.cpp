@@ -117,6 +117,18 @@ AST::BaseAST* AST::Ast::GetUnary(char operation, AST::BaseAST* id) {
     return new UnaryAST(operation, id);
 }
 
+AST::BaseAST* AST::Ast::GetArgList(AST::BaseAST* next, AST::BaseAST* attr) {
+    return new ArgListAST(next, attr);
+}
+
+AST::BaseAST* AST::Ast::GetArgs(AST::BaseAST* llist) {
+    return new ArgsAST(llist);
+}
+
+AST::BaseAST* AST::Ast::GetCallFunc(std::string id, AST::BaseAST* args) {
+    return new CallFuncAST(id, args);
+}
+
 std::string AST::IntNumberExprAST::Generate_code()
 {
     return std::__cxx11::string();
@@ -163,12 +175,12 @@ void AST::BinaryExprAST::Dfs()
     printf(")");
 }
 
-std::string AST::CallExprAST::Generate_code()
+std::string AST::CallFuncAST::Generate_code()
 {
     return std::__cxx11::string();
 }
 
-void AST::CallExprAST::Dfs()
+void AST::CallFuncAST::Dfs()
 {
 
 }
@@ -314,4 +326,20 @@ void AST::UnaryAST::Dfs() {
     std::cout << "(" << this->Operation;
     this->Operand->Dfs();
     std::cout << ")";
+}
+
+std::string AST::ArgListAST::Generate_code() {
+    return std::__cxx11::string();
+}
+
+void AST::ArgListAST::Dfs() {
+
+}
+
+std::string AST::ArgsAST::Generate_code() {
+    return std::__cxx11::string();
+}
+
+void AST::ArgsAST::Dfs() {
+
 }

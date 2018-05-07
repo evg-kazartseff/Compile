@@ -50,12 +50,12 @@ ATOM:   DEFVAR { $$ = $1; }
         | EVAL { $$ = $1; }
         | CALL { $$ = $1; }
 
-CALL:   ID '(' ARGS ')' ';' { }
+CALL:   ID '(' ARGS ')' ';' { $$ = ast->GetCallFunc($1, ast->GetArgs($3));}
 
-ARGS:   ARG { /*$$ = ast->GetArgList(nullptr, $1);*/ }
-        | ARG ',' ARGS { /*$$ = ast->GetArgList($1, $3);*/ }
+ARGS:   ARG { $$ = ast->GetArgList(nullptr, $1); }
+        | ARG ',' ARGS { $$ = ast->GetArgList($1, $3); }
 
-ARG: VAR { }
+ARG: VAR { $$ = ast->GetArgList(nullptr, $1); }
         | STRING { }
 
 DEFVAR: TYPE ID '=' EXPR ';' { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableDef($1, $2, $4); }
@@ -113,7 +113,7 @@ EXPR2:  VAR { $$ = $1; }
 VAR:    CONST { $$ = $1; }
         | ID_TOK { $$ = ast->GetVariableExpr(std::string($1)); }
 
-ID_TOK: ID { if (hash_table->LookupEntry($1) != nullptr) { $$ = $1; } else { yyerror("Var not declaration"); $$ = ""; } }
+ID_TOK: ID { if (hash_table->LookupEntry($1) != nullptr) { $$ = $1; } else { yyerror("Var not declaration"); $$ = (char*)""; } }
 
 CONST:  CONST_INT { $$ = ast->GetIntNumberExpr(atoi($1)); }
         | CONST_DOUBLE { $$ = ast->GetDoubleNumberExpr(atof($1)); }

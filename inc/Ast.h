@@ -165,42 +165,15 @@ namespace AST
     };
 
     /// CallExprAST - Класс узла выражения для вызова функции.
-    class CallExprAST : public BaseAST {
-        std::string Callee;
-        std::vector<BaseAST *> Args;
+    class CallFuncAST : public BaseAST {
+        std::string Id;
+        BaseAST* Args;
     public:
-        CallExprAST(std::string callee, std::vector<BaseAST *> &args)
-                : Callee(std::move(callee)), Args(args)
+        CallFuncAST(std::string id, BaseAST* args)
+                : Id(std::move(id)), Args(args)
         {}
-
         std::string Generate_code() final;
-
         void Dfs() final;
-    };
-
-    /// PrototypeAST - Этот класс представляет "прототип" для функции,
-    /// который хранит её имя и имена аргументов (и, таким образом,
-    /// неявно хранится число аргументов).
-    class PrototypeAST : public BaseAST {
-    public:
-        std::string Name;
-        BaseAST *Args = nullptr;
-
-        PrototypeAST() = default;
-
-        PrototypeAST(std::string name, BaseAST *args)
-                : Name(std::move(name)), Args(args)
-        {}
-    };
-
-    /// FunctionAST - Представляет определение самой функции
-    class FunctionAST : public BaseAST {
-        BaseAST *Prototype;
-        BaseAST *Body;
-    public:
-        FunctionAST(BaseAST *prototype, BaseAST *body)
-                : Prototype(prototype), Body(body)
-        {}
     };
 
     ///LinkAST - Связующий элемент в дереве
@@ -239,6 +212,29 @@ namespace AST
         BodyAST(BaseAST *llist)
                 : LList(llist)
         {}
+
+        std::string Generate_code() final;
+
+        void Dfs() final;
+    };
+
+    class ArgListAST : public BaseAST {
+        BaseAST *Next;
+        BaseAST *Attr;
+    public:
+        ArgListAST(BaseAST *next, BaseAST *attr)
+        : Next(next), Attr(attr) {}
+
+        std::string Generate_code() final;
+
+        void Dfs() final;
+    };
+
+    class ArgsAST : public BaseAST {
+        BaseAST *LList = nullptr;
+    public:
+        ArgsAST(BaseAST *llist)
+            : LList(llist) {}
 
         std::string Generate_code() final;
 
@@ -320,11 +316,17 @@ namespace AST
 
         BaseAST* GetVariableDef(int type, std::string name, BaseAST* expr);
 
-        AST::BaseAST* GetVariableUndef(int type, std::string name);
+        BaseAST* GetVariableUndef(int type, std::string name);
 
         BaseAST *GetBodyLList(BaseAST *next, BaseAST *attr);
 
         BaseAST *GetBody(BaseAST *llist);
+
+        BaseAST* GetArgList(BaseAST* next, BaseAST* attr);
+
+        BaseAST* GetArgs(BaseAST* llist);
+
+        BaseAST* GetCallFunc(std::string id, BaseAST* args);
 
         BaseAST *GetIf(BaseAST *statement, BaseAST *body, BaseAST *els);
 
