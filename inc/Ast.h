@@ -11,6 +11,8 @@
 #include <vector>
 #include <typeinfo>
 
+///TODO remove type
+
 namespace AST
 {
     typedef enum {
@@ -305,17 +307,23 @@ namespace AST
         void Dfs() final;
     };
 
-    // TODO add unary class, loop class, if class
+    // TODO add unary class
 /*
  * unary:
  * op, id
  *
- * loop:
- * ptr to def
- * ptr to CONDITION(not CONDITION IN IF)
- * ptr to increment
- * ptr to body
- * */
+*/
+    class UnaryAST : public BaseAST {
+        char Operation;
+        BaseAST* Id;
+    public:
+        UnaryAST(int type, char operation, BaseAST* id)
+                : BaseAST(type), Operation(operation), Id(id) {}
+        std::string Generate_code() final;
+
+        void Dfs() final;
+    };
+
     class Ast {
         LinkAST *tree;
     public:
@@ -350,6 +358,8 @@ namespace AST
         BaseAST *GetElse(int type, BaseAST *body);
 
         BaseAST *GetLoop(int type, BaseAST *def, BaseAST *If, BaseAST *inc, BaseAST *body);
+
+        BaseAST* GetUnary(int type, char operation, BaseAST* id);
 
         void AddToLink(int type, BaseAST *childe);
 

@@ -20,8 +20,8 @@
 
 %union {
     int type;
-    char *str;
-    AST::BaseAST *expr;
+    char* str;
+    AST::BaseAST* expr;
 }
 
 %type <str> ID CONST_INT CONST_DOUBLE ID_TOK
@@ -97,7 +97,7 @@ EXPR2:  VAR { $$ = $1; }
         | '(' EXPR ')' { $$ = $2;}
 
 VAR:    CONST { $$ = $1; }
-        | ID_TOK { $$ = ast->GetVariableExpr(AST::typeIvar, $1); }
+        | ID_TOK { $$ = ast->GetVariableExpr(AST::typeIvar, std::string($1)); }
 
 ID_TOK: ID { if (hash_table->LookupEntry($1) != nullptr) { $$ = $1; } else { yyerror("Var not declaration"); $$ = ""; } }
 
