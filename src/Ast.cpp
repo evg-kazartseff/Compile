@@ -8,24 +8,24 @@
 AST::Ast::Ast()
 {}
 
-AST::BaseAST *AST::Ast::GetIntNumberExpr(int type, int val)
+AST::BaseAST *AST::Ast::GetIntNumberExpr(int val)
 {
-    return new IntNumberExprAST(type, val);
+    return new IntNumberExprAST(val);
 }
 
-AST::BaseAST *AST::Ast::GetDoubleNumberExpr(int type, double val)
+AST::BaseAST *AST::Ast::GetDoubleNumberExpr(double val)
 {
-    return new DoubleNumberExprAST(type, val);
+    return new DoubleNumberExprAST(val);
 }
 
-AST::BaseAST *AST::Ast::GetVariableExpr(int type, std::string name)
+AST::BaseAST*AST::Ast::GetVariableExpr(std::string name)
 {
-    return new VariableExprAST(type, std::move(name));
+    return new VariableExprAST(std::move(name));
 }
 
-AST::BaseAST *AST::Ast::GetBinaryExpr(int type, char op, BaseAST *lhs, BaseAST *rhs)
+AST::BaseAST *AST::Ast::GetBinaryExpr( char op, BaseAST *lhs, BaseAST *rhs)
 {
-    return new BinaryExprAST(type, op, lhs, rhs);
+    return new BinaryExprAST(op, lhs, rhs);
 }
 
 void AST::LinkAST::AddChild(BaseAST *child)
@@ -51,70 +51,70 @@ void AST::Ast::DFS()
     this->tree->Dfs(); /// С этого метода начинать обход дерева
 }
 
-AST::BaseAST *AST::Ast::GetEval(int type, std::string id, AST::BaseAST *expr)
+AST::BaseAST *AST::Ast::GetEval(std::string id, AST::BaseAST *expr)
 {
-    return new EvalAST(type, id, expr);
+    return new EvalAST(id, expr);
 }
 
-AST::BaseAST *AST::Ast::GetJump(int type, std::string id)
+AST::BaseAST *AST::Ast::GetJump(std::string id)
 {
-    return new JumpAST(type, id);
+    return new JumpAST(id);
 }
 
-AST::BaseAST *AST::Ast::GetMark(int type, std::string id)
+AST::BaseAST *AST::Ast::GetMark(std::string id)
 {
-    return new MarkAST(type, id);
+    return new MarkAST(id);
 }
 
-void AST::Ast::AddToLink(int type, BaseAST *childe)
+void AST::Ast::AddToLink(BaseAST *childe)
 {
     if (!this->tree)
-        this->tree = new LinkAST(type); /// используем синглтон для однократной инициализации
+        this->tree = new LinkAST(); /// используем синглтон для однократной инициализации
     this->tree->AddChild(childe);
 }
 
-AST::BaseAST *AST::Ast::GetVariableDef(int type, std::string name, AST::BaseAST *expr)
+AST::BaseAST* AST::Ast::GetVariableDef(int type, std::string name, BaseAST* expr)
 {
     return new VariableDefAST(type, name, expr);
 }
 
-AST::BaseAST *AST::Ast::GetVariableUndef(int type, std::string name)
+AST::BaseAST*AST::Ast::GetVariableUndef(int type, std::string name)
 {
     return new VariableUndefAST(type, name);
 }
 
-AST::BaseAST *AST::Ast::GetBodyLList(int type, AST::BaseAST *next, AST::BaseAST *attr)
+AST::BaseAST *AST::Ast::GetBodyLList(AST::BaseAST *next, AST::BaseAST *attr)
 {
-    return new BodyLListAST(type, next, attr);
+    return new BodyLListAST(next, attr);
 }
 
-AST::BaseAST *AST::Ast::GetBody(int type, AST::BaseAST *llist)
+AST::BaseAST *AST::Ast::GetBody(AST::BaseAST *llist)
 {
-    return new BodyAST(type, llist);
+    return new BodyAST(llist);
 }
 
-AST::BaseAST *AST::Ast::GetIf(int type, AST::BaseAST *statement, AST::BaseAST *body, AST::BaseAST *els)
+AST::BaseAST *AST::Ast::GetIf(AST::BaseAST *statement, AST::BaseAST *body, AST::BaseAST *els)
 {
-    return new IfAST(type, statement, body, els);
+    return new IfAST(statement, body, els);
 }
 
-AST::BaseAST *AST::Ast::GetLogicExpr(int type, char op, AST::BaseAST *lhs, AST::BaseAST *rhs)
+AST::BaseAST *AST::Ast::GetLogicExpr( char op, AST::BaseAST *lhs, AST::BaseAST *rhs)
 {
-    return new LogicExprAST(type, op, lhs, rhs);
+    return new LogicExprAST(op, lhs, rhs);
 }
 
-AST::BaseAST *AST::Ast::GetElse(int type, AST::BaseAST *body)
+AST::BaseAST *AST::Ast::GetElse(AST::BaseAST *body)
 {
-    return new ElseAST(type, body);
+    return new ElseAST(body);
 }
 
-AST::BaseAST *AST::Ast::GetLoop(int type, AST::BaseAST *def, AST::BaseAST *If, AST::BaseAST *inc, AST::BaseAST *body)
+AST::BaseAST *AST::Ast::GetLoop(AST::BaseAST *def, AST::BaseAST *If, AST::BaseAST *inc, AST::BaseAST *body)
 {
-    return new LoopAST(type, def, If, inc, body);
+    return new LoopAST(def, If, inc, body);
 }
 
-AST::BaseAST* AST::Ast::GetUnary(int type, char operation, AST::BaseAST* id) {
-    return new UnaryAST(type, operation, id);
+AST::BaseAST* AST::Ast::GetUnary(char operation, AST::BaseAST* id) {
+    return new UnaryAST(operation, id);
 }
 
 std::string AST::IntNumberExprAST::Generate_code()
@@ -212,7 +212,7 @@ std::string AST::VariableUndefAST::Generate_code()
 
 void AST::VariableUndefAST::Dfs()
 {
-    printf("UndefVar: (%d) %s\n", this->Type, this->Name.c_str());
+    printf("UndefVar: %s\n", this->Name.c_str());
 }
 
 std::string AST::VariableDefAST::Generate_code()
@@ -222,7 +222,7 @@ std::string AST::VariableDefAST::Generate_code()
 
 void AST::VariableDefAST::Dfs()
 {
-    printf("(%d) %s = ", this->Type, this->Name.c_str());
+    printf("%s = ", this->Name.c_str());
     this->Expr->Dfs();
     puts("");
 }

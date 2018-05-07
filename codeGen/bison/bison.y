@@ -33,13 +33,13 @@
 %type <expr> ANYVAR LOOP ATOMLLIST COND IFELSE ELSEIF BODY LEVAL
 
 %%
-START:  ATOM { ast->AddToLink(AST::typeLink, $1); }
-        | START ATOM { ast->AddToLink(AST::typeLink, $2); }
+START:  ATOM { ast->AddToLink($1); }
+        | START ATOM { ast->AddToLink($2); }
 
-BODY: ATOMLLIST { $$ = ast->GetBody(AST::typeBody, $1); }
+BODY: ATOMLLIST { $$ = ast->GetBody($1); }
 
-ATOMLLIST:   ATOM { $$ = ast->GetBodyLList(AST::typeBodyLList, nullptr, $1); }
-        | ATOM BODY{ $$ = ast->GetBodyLList(AST::typeBodyLList, $2, $1); }
+ATOMLLIST:   ATOM { $$ = ast->GetBodyLList(nullptr, $1); }
+        | ATOM BODY { $$ = ast->GetBodyLList($1, $2); }
 
 ATOM:   DEFVAR { $$ = $1; }
         | UNDEFVAR { $$ = $1; }
@@ -65,57 +65,56 @@ ANYVAR: DEFVAR { $$ = $1; }
         | EVAL { $$ = $1; }
         | ';' { $$ = nullptr; }
 
-LOOP:   FOR '(' ANYVAR  COND ';'  LEVAL ')' ATOM { $$ = ast->GetLoop(AST::typeLoop, $3, $4, $6, $8); }
-        | FOR '(' ANYVAR  COND ';' LEVAL')' '{' BODY '}' { $$ = ast->GetLoop(AST::typeLoop, $3, $4, $6, $9); }
-
+LOOP:   FOR '(' ANYVAR  COND ';'  EVAL ')' ATOM { $$ = ast->GetLoop($3, $4, $6, $8); }
+        | FOR '(' ANYVAR  COND ';' EVAL ')' '{' BODY '}' { $$ = ast->GetLoop($3, $4, $6, $9); }
 LEVAL:  ID '=' EXPR { $$ = ast->GetEval(AST::typeEval, $1, $3); }
 
 COND:   VAR { $$ = $1; }
-        | VAR '<' COND { $$ = ast->GetLogicExpr(AST::typeOpr, '<', $1, $3); }
-        | VAR '>' COND { $$ = ast->GetLogicExpr(AST::typeOpr, '>', $1, $3); }
-        | VAR "==" COND {$$ = ast->GetLogicExpr(AST::typeOpr, '=', $1, $3); }
+        | VAR '<' COND { $$ = ast->GetLogicExpr('<', $1, $3); }
+        | VAR '>' COND { $$ = ast->GetLogicExpr('>', $1, $3); }
+        | VAR "==" COND {$$ = ast->GetLogicExpr('=', $1, $3); }
 
 MARK:   ID ':' { if (hash_table->LookupEntry($1) == nullptr) {
-                    hash_table->CreateEntry(MARK_TOK, $1); $$ = ast->GetMark(AST::typeMark, $1);
+                    hash_table->CreateEntry(MARK_TOK, $1); $$ = ast->GetMark($1);
                  } else { yyerror("Identificator already created", $1); $$ = nullptr; } }
 
-GOTO:   JUMP ID_TOK ';' { if ($2) { $$ = ast->GetJump(AST::typeJump, $2); } else { $$ = nullptr; } }
+GOTO:   JUMP ID_TOK ';' { if ($2) { $$ = ast->GetJump($2); } else { $$ = nullptr; } }
 
-IFELSE: IF '(' COND ')' ATOM { $$ = ast->GetIf(AST::typeIf, $3, $5, nullptr); }
-        | IF '(' COND ')' '{' BODY '}' { $$ = ast->GetIf(AST::typeIf, $3, $6, nullptr); }
-        | IF '(' COND ')' '{' BODY '}' ELSEIF { $$ = ast->GetIf(AST::typeIf, $3, $6, $8); }
+IFELSE: IF '(' COND ')' ATOM { $$ = ast->GetIf($3, $5, nullptr); }
+        | IF '(' COND ')' '{' BODY '}' { $$ = ast->GetIf($3, $6, nullptr); }
+        | IF '(' COND ')' '{' BODY '}' ELSEIF { $$ = ast->GetIf($3, $6, $8); }
 
-ELSEIF: ELSE '{' BODY '}' { $$ = ast->GetElse(AST::typeElse, $3); }
-        | ELSE ATOM  { $$ = ast->GetElse(AST::typeElse, $2); }
+ELSEIF: ELSE '{' BODY '}' { $$ = ast->GetElse($3); }
+        | ELSE ATOM  { $$ = ast->GetElse($2); }
 
-EVAL: ID '=' EXPR ';'  { if ($1) $$ = ast->GetEval(AST::typeEval, $1, $3); else $$ = nullptr; }
+EVAL: ID '=' EXPR ';'  { if ($1) $$ = ast->GetEval($1, $3); else $$ = nullptr; }
 
 EXPR:   EXPR0 { $$ = $1; }
-        | EXPR0 '&' EXPR { $$ = ast->GetBinaryExpr(AST::typeOpr, '&', $1, $3); }
-        | EXPR0 '^' EXPR { $$ = ast->GetBinaryExpr(AST::typeOpr, '^', $1, $3); }
-        | EXPR0 '|' EXPR { $$ = ast->GetBinaryExpr(AST::typeOpr, '|', $1, $3); }
+        | EXPR0 '&' EXPR { $$ = ast->GetBinaryExpr('&', $1, $3); }
+        | EXPR0 '^' EXPR { $$ = ast->GetBinaryExpr( '^', $1, $3); }
+        | EXPR0 '|' EXPR { $$ = ast->GetBinaryExpr( '|', $1, $3); }
 
 
 EXPR0:   EXPR1 { $$ = $1; }
-        | EXPR1 '+' EXPR0 { $$ = ast->GetBinaryExpr(AST::typeOpr, '+', $1, $3); }
-        | EXPR1 '-' EXPR0 { $$ = ast->GetBinaryExpr(AST::typeOpr, '-', $1, $3); }
+        | EXPR1 '+' EXPR0 { $$ = ast->GetBinaryExpr( '+', $1, $3); }
+        | EXPR1 '-' EXPR0 { $$ = ast->GetBinaryExpr( '-', $1, $3); }
 
 EXPR1:  EXPR2 { $$ = $1; }
-        | EXPR2 '*' EXPR1 { $$ = ast->GetBinaryExpr(AST::typeOpr, '*', $1, $3); }
-        | EXPR2 '/' EXPR1 { $$ = ast->GetBinaryExpr(AST::typeOpr, '/', $1, $3); }
-        | EXPR2 '%' EXPR1 { $$ = ast->GetBinaryExpr(AST::typeOpr, '%', $1, $3); }
+        | EXPR2 '*' EXPR1 { $$ = ast->GetBinaryExpr( '*', $1, $3); }
+        | EXPR2 '/' EXPR1 { $$ = ast->GetBinaryExpr( '/', $1, $3); }
+        | EXPR2 '%' EXPR1 { $$ = ast->GetBinaryExpr( '%', $1, $3); }
 
 EXPR2:  VAR { $$ = $1; }
         | '(' EXPR ')' { $$ = $2;}
         | '~' EXPR { $$ = ast->GetUnary(AST::typeOpr, '~', $2); }
 
 VAR:    CONST { $$ = $1; }
-        | ID_TOK { $$ = ast->GetVariableExpr(AST::typeIvar, std::string($1)); }
+        | ID_TOK { $$ = ast->GetVariableExpr(std::string($1)); }
 
 ID_TOK: ID { if (hash_table->LookupEntry($1) != nullptr) { $$ = $1; } else { yyerror("Var not declaration"); $$ = ""; } }
 
-CONST:  CONST_INT { $$ = ast->GetIntNumberExpr(AST::typeIvar, atoi($1)); }
-        | CONST_DOUBLE { $$ = ast->GetDoubleNumberExpr(AST::typeDvar, atof($1)); }
+CONST:  CONST_INT { $$ = ast->GetIntNumberExpr(atoi($1)); }
+        | CONST_DOUBLE { $$ = ast->GetDoubleNumberExpr(atof($1)); }
 
 TYPE:   INT { $$ = $1; }
         | CHAR { $$ = $1; }

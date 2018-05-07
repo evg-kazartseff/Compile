@@ -16,36 +16,16 @@
 // TODO добавить список класс список аргументов функции
 namespace AST
 {
-    typedef enum {
-        typeIf,
-        typeElse,
-        typeOpr,
-        typeBody,
-        typeBodyLList,
-        typeIvar,
-        typeDvar,
-        typeEval,
-        typeJump,
-        typeMark,
-        typeLink,
-        typeLoop
-    } nodeEnum;
-
     class Ast;
 
     /// BaseAST - Базовый класс для всех узлов выражений.
     class BaseAST {
     public:
-        int Type = 0;
-
         virtual std::string Generate_code() = 0;
 
         virtual void Dfs() = 0;
 
         BaseAST() = default;
-
-        explicit BaseAST(int type)
-        { this->Type = type; };
 
         virtual ~BaseAST() = default;
     };
@@ -55,7 +35,7 @@ namespace AST
     public:
         int Val;
     public:
-        IntNumberExprAST(int type, int val) : BaseAST(type), Val(val)
+        IntNumberExprAST(int val) : Val(val)
         {}
 
         std::string Generate_code() final;
@@ -68,7 +48,7 @@ namespace AST
     public:
         double Val;
     public:
-        DoubleNumberExprAST(int type, double val) : BaseAST(type), Val(val)
+        DoubleNumberExprAST(double val) : Val(val)
         {}
 
         std::string Generate_code() final;
@@ -80,7 +60,7 @@ namespace AST
     class VariableExprAST : public BaseAST {
         std::string Name;
     public:
-        VariableExprAST(int type, std::string name) : BaseAST(type), Name(std::move(name))
+        VariableExprAST(std::string name) : Name(std::move(name))
         {}
 
         std::string Generate_code() final;
@@ -90,9 +70,10 @@ namespace AST
 
     class VariableUndefAST : public BaseAST {
     protected:
+        int Type;
         std::string Name;
     public:
-        VariableUndefAST(int type, std::string name) : BaseAST(type), Name(std::move(name))
+        VariableUndefAST(int type, std::string name) : Type(type), Name(std::move(name))
         {}
 
         std::string Generate_code() override;
@@ -118,8 +99,8 @@ namespace AST
         char Op;
         BaseAST *LHS, *RHS;
     public:
-        BinaryExprAST(int type, char op, BaseAST *lhs, BaseAST *rhs)
-                : BaseAST(type), Op(op), LHS(lhs), RHS(rhs)
+        BinaryExprAST(char op, BaseAST *lhs, BaseAST *rhs)
+                : Op(op), LHS(lhs), RHS(rhs)
         {}
 
         std::string Generate_code() final;
@@ -132,8 +113,8 @@ namespace AST
         char Op;
         BaseAST *LHS, *RHS;
     public:
-        LogicExprAST(int type, char op, BaseAST *lhs, BaseAST *rhs)
-                : BaseAST(type), Op(op), LHS(lhs), RHS(rhs)
+        LogicExprAST(char op, BaseAST *lhs, BaseAST *rhs)
+                : Op(op), LHS(lhs), RHS(rhs)
         {}
 
         std::string Generate_code() final;
@@ -147,8 +128,8 @@ namespace AST
         std::string Id;
         BaseAST *Expr;
     public:
-        EvalAST(int type, std::string id, BaseAST *expr)
-                : BaseAST(type), Id(id), Expr(expr)
+        EvalAST(std::string id, BaseAST *expr)
+                : Id(id), Expr(expr)
         {}
 
         std::string Generate_code() final;
@@ -163,8 +144,8 @@ namespace AST
         JumpAST()
         {}
 
-        JumpAST(int type, std::string id)
-                : BaseAST(type), Id(id)
+        JumpAST(std::string id)
+                : Id(id)
         {}
 
         std::string Generate_code() override;
@@ -174,8 +155,8 @@ namespace AST
 
     class MarkAST : public JumpAST {
     public:
-        MarkAST(int type, std::string id)
-                : JumpAST(type, id)
+        MarkAST(std::string id)
+                : JumpAST(id)
         {}
 
         std::string Generate_code() final;
@@ -226,8 +207,7 @@ namespace AST
     class LinkAST : public BaseAST {
         std::vector<BaseAST *> *Childs = nullptr;
     public:
-        explicit LinkAST(int type)
-                : BaseAST(type)
+        LinkAST()
         { this->Childs = new std::vector<BaseAST *>(); }
 
         explicit LinkAST(std::vector<BaseAST *> *childs)
@@ -245,9 +225,8 @@ namespace AST
         BaseAST *Next;
         BaseAST *Attr;
     public:
-        BodyLListAST(int type, BaseAST *next, BaseAST *attr)
-                : Next(next), Attr(attr), BaseAST(type)
-        {}
+        BodyLListAST(BaseAST *next, BaseAST *attr)
+                : Next(next), Attr(attr) {}
 
         std::string Generate_code() final;
 
@@ -257,8 +236,8 @@ namespace AST
     class BodyAST : public BaseAST {
         BaseAST *LList = nullptr;
     public:
-        BodyAST(int type, BaseAST *llist)
-                : BaseAST(type), LList(llist)
+        BodyAST(BaseAST *llist)
+                : LList(llist)
         {}
 
         std::string Generate_code() final;
@@ -272,8 +251,8 @@ namespace AST
         BaseAST *Body;
         BaseAST *Else;
     public:
-        IfAST(int type, BaseAST *statement, BaseAST *body,BaseAST *els)
-                : BaseAST(type), Statement(statement), Body(body), Else(els)
+        IfAST(BaseAST *statement, BaseAST *body,BaseAST *els)
+                : Statement(statement), Body(body), Else(els)
         {}
 
         std::string Generate_code() final;
@@ -284,8 +263,8 @@ namespace AST
     class ElseAST : public BaseAST {
         BaseAST *Body;
     public:
-        ElseAST(int type, BaseAST *body)
-                : BaseAST(type), Body(body)
+        ElseAST(BaseAST *body)
+                : Body(body)
         {}
 
         std::string Generate_code() final;
@@ -299,9 +278,8 @@ namespace AST
         BaseAST *Inc;
         BaseAST *Body;
     public:
-        LoopAST(int type, BaseAST *def, BaseAST *If, BaseAST *inc, BaseAST *body)
-                : BaseAST(type), Def(def), If(If), Inc(inc), Body(body)
-        {}
+        LoopAST(BaseAST *def, BaseAST *If, BaseAST *inc, BaseAST *body)
+                : Def(def), If(If), Inc(inc), Body(body) {}
 
         std::string Generate_code() final;
 
@@ -310,10 +288,10 @@ namespace AST
 
     class UnaryAST : public BaseAST {
         char Operation;
-        BaseAST* Opearnd;
+        BaseAST* Id;
     public:
-        UnaryAST(int type, char operation, BaseAST* id)
-                : BaseAST(type), Operation(operation), Opearnd(id) {}
+        UnaryAST(char operation, BaseAST* id)
+                : Operation(operation), Id(id) {}
         std::string Generate_code() final;
 
         void Dfs() final;
@@ -324,39 +302,39 @@ namespace AST
     public:
         Ast();
 
-        BaseAST *GetIntNumberExpr(int type, int val);
+        BaseAST *GetIntNumberExpr(int val);
 
-        BaseAST *GetDoubleNumberExpr(int type, double val);
+        BaseAST *GetDoubleNumberExpr(double val);
 
-        BaseAST *GetVariableExpr(int type, std::string name);
+        AST::BaseAST* GetVariableExpr(std::string name);
 
-        BaseAST *GetBinaryExpr(int type, char op, BaseAST *lhs, BaseAST *rhs);
+        BaseAST *GetBinaryExpr(char op, BaseAST *lhs, BaseAST *rhs);
 
-        BaseAST *GetLogicExpr(int type, char op, BaseAST *lhs, BaseAST *rhs);
+        BaseAST *GetLogicExpr(char op, BaseAST *lhs, BaseAST *rhs);
 
-        BaseAST *GetEval(int type, std::string id, BaseAST *expr);
+        BaseAST *GetEval(std::string id, BaseAST *expr);
 
-        BaseAST *GetJump(int type, std::string id);
+        BaseAST *GetJump(std::string id);
 
-        BaseAST *GetMark(int type, std::string id);
+        BaseAST *GetMark(std::string id);
 
-        BaseAST *GetVariableDef(int type, std::string name, BaseAST *expr);
+        BaseAST* GetVariableDef(int type, std::string name, BaseAST* expr);
 
-        BaseAST *GetVariableUndef(int type, std::string name);
+        AST::BaseAST* GetVariableUndef(int type, std::string name);
 
-        BaseAST *GetBodyLList(int type, BaseAST *next, BaseAST *attr);
+        BaseAST *GetBodyLList(BaseAST *next, BaseAST *attr);
 
-        BaseAST *GetBody(int type, BaseAST *llist);
+        BaseAST *GetBody(BaseAST *llist);
 
-        BaseAST *GetIf(int type, BaseAST *statement, BaseAST *body, BaseAST *els);
+        BaseAST *GetIf(BaseAST *statement, BaseAST *body, BaseAST *els);
 
-        BaseAST *GetElse(int type, BaseAST *body);
+        BaseAST *GetElse(BaseAST *body);
 
-        BaseAST *GetLoop(int type, BaseAST *def, BaseAST *If, BaseAST *inc, BaseAST *body);
+        BaseAST *GetLoop(BaseAST *def, BaseAST *If, BaseAST *inc, BaseAST *body);
 
-        BaseAST* GetUnary(int type, char operation, BaseAST* id);
+        BaseAST* GetUnary(char operation, BaseAST* id);
 
-        void AddToLink(int type, BaseAST *childe);
+        void AddToLink(BaseAST *childe);
 
         void DFS();
     };

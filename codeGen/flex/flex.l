@@ -84,19 +84,18 @@ SIGN [-+]
 
 {SIGN}?{DIGIT}+ {
     ch += yyleng;
-    yylval.str = yytext;
+    yylval.str = strdup(yytext);
     return CONST_INT;
 }
 
 {SIGN}?({DIGIT}+\.{DIGIT}+|{DIGIT}+\.|{DIGIT}+)([eE]{SIGN}?{DIGIT}+)? {
     ch += yyleng;
-    yylval.str = yytext;
+    yylval.str = strdup(yytext);
     return CONST_DOUBLE;
 }
 
 {ID} {
-    // yylval.str = (yytext); // TODO: if strdup(yytext) then good, else yytext = "b;", but must "b"
-    yylval.str = strdup(yytext); // TODO IT's work!
+    yylval.str = strdup(yytext);
     ch += yyleng;
     return ID;
 }
