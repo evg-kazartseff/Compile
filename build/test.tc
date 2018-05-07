@@ -9,3 +9,7 @@ if (c < k) {
 } else {
     c = k;
 }
+
+for (int a = 0; a < 100; a = a + 1) {
+    goto lol;
+}

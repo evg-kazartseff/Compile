@@ -28,7 +28,7 @@
 %type <type> INT CHAR DOUBLE TYPE
 %type <expr> EXPR2 EXPR1 EXPR0 EXPR CONST DEFVAR UNDEFVAR VAR EVAL
 %type <expr> MARK GOTO ATOM
-%type <expr> ANYVAR LOOP ATOMLLIST COND IFELSE ELSEIF BODY
+%type <expr> ANYVAR LOOP ATOMLLIST COND IFELSE ELSEIF BODY LEVAL
 
 %%
 START:  ATOM { ast->AddToLink(AST::typeLink, $1); }
@@ -55,8 +55,10 @@ ANYVAR: DEFVAR { $$ = $1; }
         | EVAL { $$ = $1; }
         | ';' { $$ = nullptr; }
 
-LOOP:   FOR '(' ANYVAR  COND ';'  EVAL ')' ATOM { $$ = ast->GetLoop(AST::typeLoop, $3, $4, $6, $8); }
-        | FOR '(' ANYVAR  COND ';' EVAL ')' '{' BODY '}' { $$ = ast->GetLoop(AST::typeLoop, $3, $4, $6, $9); }
+LOOP:   FOR '(' ANYVAR  COND ';'  LEVAL ')' ATOM { $$ = ast->GetLoop(AST::typeLoop, $3, $4, $6, $8); }
+        | FOR '(' ANYVAR  COND ';' LEVAL')' '{' BODY '}' { $$ = ast->GetLoop(AST::typeLoop, $3, $4, $6, $9); }
+
+LEVAL:  ID '=' EXPR { $$ = ast->GetEval(AST::typeEval, $1, $3); }
 
 COND:   VAR { $$ = $1; }
         | VAR '<' COND { $$ = ast->GetLogicExpr(AST::typeOpr, '<', $1, $3); }
