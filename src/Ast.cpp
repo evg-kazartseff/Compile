@@ -295,7 +295,15 @@ std::string AST::LoopAST::Generate_code()
 
 void AST::LoopAST::Dfs()
 {
-
+    std::cout << "for (";
+    this->Def->Dfs();
+    std::cout << "; ";
+    this->If->Dfs();
+    std::cout << "; ";
+    this->Inc->Dfs();
+    std::cout << ") {\n";
+    this->Body->Dfs();
+    std::cout << "}\n";
 }
 
 std::string AST::UnaryAST::Generate_code() {
@@ -303,5 +311,7 @@ std::string AST::UnaryAST::Generate_code() {
 }
 
 void AST::UnaryAST::Dfs() {
-
+    std::cout << "(" << this->Operation;
+    this->Opearnd->Dfs();
+    std::cout << ")";
 }

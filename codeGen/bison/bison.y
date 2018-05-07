@@ -37,7 +37,7 @@ START:  ATOM { ast->AddToLink(AST::typeLink, $1); }
 BODY: ATOMLLIST { $$ = ast->GetBody(AST::typeBody, $1); }
 
 ATOMLLIST:   ATOM { $$ = ast->GetBodyLList(AST::typeBodyLList, nullptr, $1); }
-        | BODY ATOM { $$ = ast->GetBodyLList(AST::typeBodyLList, $1, $2); }
+        | ATOM BODY{ $$ = ast->GetBodyLList(AST::typeBodyLList, $2, $1); }
 
 ATOM:   DEFVAR { $$ = $1; }
         | UNDEFVAR { $$ = $1; }
@@ -97,6 +97,7 @@ EXPR1:  EXPR2 { $$ = $1; }
 
 EXPR2:  VAR { $$ = $1; }
         | '(' EXPR ')' { $$ = $2;}
+        | '~' EXPR { $$ = ast->GetUnary(AST::typeOpr, '~', $2); }
 
 VAR:    CONST { $$ = $1; }
         | ID_TOK { $$ = ast->GetVariableExpr(AST::typeIvar, std::string($1)); }

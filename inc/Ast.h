@@ -307,18 +307,12 @@ namespace AST
         void Dfs() final;
     };
 
-    // TODO add unary class
-/*
- * unary:
- * op, id
- *
-*/
     class UnaryAST : public BaseAST {
         char Operation;
-        BaseAST* Id;
+        BaseAST* Opearnd;
     public:
         UnaryAST(int type, char operation, BaseAST* id)
-                : BaseAST(type), Operation(operation), Id(id) {}
+                : BaseAST(type), Operation(operation), Opearnd(id) {}
         std::string Generate_code() final;
 
         void Dfs() final;
