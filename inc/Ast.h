@@ -14,29 +14,18 @@
 namespace AST
 {
     typedef enum {
-        typeRoot,
-        typeList,
-        typeCond,
-        typeId,
+        typeIf,
+        typeElse,
         typeOpr,
-        typeDef,
-        typeArgs,
-        typeFunc,
-        typeTerm,
         typeBody,
         typeBodyLList,
-        typeRet,
         typeIvar,
         typeDvar,
-        typeCall,
-        typeFargs,
         typeEval,
         typeJump,
         typeMark,
         typeLink,
-        typeDefVar,
-        typeUndefVar,
-        typeErr
+        typeLoop
     } nodeEnum;
 
     class Ast;
@@ -127,6 +116,20 @@ namespace AST
         BaseAST *LHS, *RHS;
     public:
         BinaryExprAST(int type, char op, BaseAST *lhs, BaseAST *rhs)
+                : BaseAST(type), Op(op), LHS(lhs), RHS(rhs)
+        {}
+
+        std::string Generate_code() final;
+
+        void Dfs() final;
+    };
+
+    class LogicExprAST : public BaseAST {
+    public:
+        char Op;
+        BaseAST *LHS, *RHS;
+    public:
+        LogicExprAST(int type, char op, BaseAST *lhs, BaseAST *rhs)
                 : BaseAST(type), Op(op), LHS(lhs), RHS(rhs)
         {}
 
@@ -260,13 +263,50 @@ namespace AST
         void Dfs() final;
     };
 
+    /// If else
+    class IfAST : public BaseAST {
+        BaseAST *Statement;
+        BaseAST *Body;
+        BaseAST *Else;
+    public:
+        IfAST(int type, BaseAST *statement, BaseAST *body,BaseAST *els)
+                : BaseAST(type), Statement(statement), Body(body), Else(els)
+        {}
+
+        std::string Generate_code() final;
+
+        void Dfs() final;
+    };
+
+    class ElseAST : public BaseAST {
+        BaseAST *Body;
+    public:
+        ElseAST(int type, BaseAST *body)
+                : BaseAST(type), Body(body)
+        {}
+
+        std::string Generate_code() final;
+
+        void Dfs() final;
+    };
+
+    class LoopAST : public BaseAST {
+        BaseAST *Def;
+        BaseAST *If;
+        BaseAST *Inc;
+        BaseAST *Body;
+    public:
+        LoopAST(int type, BaseAST *def, BaseAST *If, BaseAST *inc, BaseAST *body)
+                : BaseAST(type), Def(def), If(If), Inc(inc), Body(body)
+        {}
+
+        std::string Generate_code() final;
+
+        void Dfs() final;
+    };
+
     // TODO add unary class, loop class, if class
 /*
- * if:
- * ptr to CONDITION
- * ptr to BODY IF TRUE
- * ptr TO LIST ELSEIF
- *
  * unary:
  * op, id
  *
@@ -289,6 +329,8 @@ namespace AST
 
         BaseAST *GetBinaryExpr(int type, char op, BaseAST *lhs, BaseAST *rhs);
 
+        BaseAST *GetLogicExpr(int type, char op, BaseAST *lhs, BaseAST *rhs);
+
         BaseAST *GetEval(int type, std::string id, BaseAST *expr);
 
         BaseAST *GetJump(int type, std::string id);
@@ -302,6 +344,12 @@ namespace AST
         BaseAST *GetBodyLList(int type, BaseAST *next, BaseAST *attr);
 
         BaseAST *GetBody(int type, BaseAST *llist);
+
+        BaseAST *GetIf(int type, BaseAST *statement, BaseAST *body, BaseAST *els);
+
+        BaseAST *GetElse(int type, BaseAST *body);
+
+        BaseAST *GetLoop(int type, BaseAST *def, BaseAST *If, BaseAST *inc, BaseAST *body);
 
         void AddToLink(int type, BaseAST *childe);
 

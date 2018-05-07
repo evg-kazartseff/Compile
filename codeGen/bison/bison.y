@@ -55,13 +55,13 @@ ANYVAR: DEFVAR { $$ = $1; }
         | EVAL { $$ = $1; }
         | ';' { $$ = nullptr; }
 
-LOOP:   FOR '(' ANYVAR  COND ';'  EVAL ')' ATOM { }
-        | FOR '(' ANYVAR  COND ';' EVAL ')' '{' BODY '}' { }
+LOOP:   FOR '(' ANYVAR  COND ';'  EVAL ')' ATOM { $$ = ast->GetLoop(AST::typeLoop, $3, $4, $6, $8); }
+        | FOR '(' ANYVAR  COND ';' EVAL ')' '{' BODY '}' { $$ = ast->GetLoop(AST::typeLoop, $3, $4, $6, $9); }
 
-COND:   VAR { }
-        | VAR '<' COND { }
-        | VAR '>' COND { }
-        | VAR "==" COND { }
+COND:   VAR { $$ = $1; }
+        | VAR '<' COND { $$ = ast->GetLogicExpr(AST::typeOpr, '<', $1, $3); }
+        | VAR '>' COND { $$ = ast->GetLogicExpr(AST::typeOpr, '>', $1, $3); }
+        | VAR "==" COND {$$ = ast->GetLogicExpr(AST::typeOpr, '=', $1, $3); }
 
 MARK:   ID ':' { if (hash_table->LookupEntry($1) == nullptr) {
                     hash_table->CreateEntry(MARK_TOK, $1); $$ = ast->GetMark(AST::typeMark, $1);
@@ -69,12 +69,12 @@ MARK:   ID ':' { if (hash_table->LookupEntry($1) == nullptr) {
 
 GOTO:   JUMP ID_TOK ';' { if ($2) { $$ = ast->GetJump(AST::typeJump, $2); } else { $$ = nullptr; } }
 
-IFELSE: IF '(' COND ')' ATOM { }
-        | IF '(' COND ')' '{' BODY '}' { }
-        | IF '(' COND ')' '{' BODY '}' ELSEIF { }
+IFELSE: IF '(' COND ')' ATOM { $$ = ast->GetIf(AST::typeIf, $3, $5, nullptr); }
+        | IF '(' COND ')' '{' BODY '}' { $$ = ast->GetIf(AST::typeIf, $3, $6, nullptr); }
+        | IF '(' COND ')' '{' BODY '}' ELSEIF { $$ = ast->GetIf(AST::typeIf, $3, $6, $8); }
 
-ELSEIF: ELSE '{' BODY '}' { }
-        | ELSE ATOM  { }
+ELSEIF: ELSE '{' BODY '}' { $$ = ast->GetElse(AST::typeElse, $3); }
+        | ELSE ATOM  { $$ = ast->GetElse(AST::typeElse, $2); }
 
 EVAL: ID '=' EXPR ';'  { if ($1) $$ = ast->GetEval(AST::typeEval, $1, $3); else $$ = nullptr; }
 

@@ -93,6 +93,26 @@ AST::BaseAST *AST::Ast::GetBody(int type, AST::BaseAST *llist)
     return new BodyAST(type, llist);
 }
 
+AST::BaseAST *AST::Ast::GetIf(int type, AST::BaseAST *statement, AST::BaseAST *body, AST::BaseAST *els)
+{
+    return new IfAST(type, statement, body, els);
+}
+
+AST::BaseAST *AST::Ast::GetLogicExpr(int type, char op, AST::BaseAST *lhs, AST::BaseAST *rhs)
+{
+    return new LogicExprAST(type, op, lhs, rhs);
+}
+
+AST::BaseAST *AST::Ast::GetElse(int type, AST::BaseAST *body)
+{
+    return new ElseAST(type, body);
+}
+
+AST::BaseAST *AST::Ast::GetLoop(int type, AST::BaseAST *def, AST::BaseAST *If, AST::BaseAST *inc, AST::BaseAST *body)
+{
+    return new LoopAST(type, def, If, inc, body);
+}
+
 std::string AST::IntNumberExprAST::Generate_code()
 {
     return std::__cxx11::string();
@@ -210,7 +230,7 @@ std::string AST::BodyAST::Generate_code()
 
 void AST::BodyAST::Dfs()
 {
-
+    if (this->LList) this->LList->Dfs();
 }
 
 std::string AST::BodyLListAST::Generate_code()
@@ -219,6 +239,57 @@ std::string AST::BodyLListAST::Generate_code()
 }
 
 void AST::BodyLListAST::Dfs()
+{
+    this->Attr->Dfs();
+    if (this->Next)
+        this->Next->Dfs();
+}
+
+std::string AST::IfAST::Generate_code()
+{
+    return std::__cxx11::string();
+}
+
+void AST::IfAST::Dfs()
+{
+    std::cout << "if (";
+    this->Statement->Dfs();
+    std::cout << ") {\n";
+    this->Body->Dfs();
+    std::cout << "}";
+    if (this->Else) this->Else->Dfs();
+}
+
+std::string AST::LogicExprAST::Generate_code()
+{
+    return std::__cxx11::string();
+}
+
+void AST::LogicExprAST::Dfs()
+{
+    std::cout << this->Op << " ";
+    this->LHS->Dfs();
+    this->RHS->Dfs();
+}
+
+std::string AST::ElseAST::Generate_code()
+{
+    return std::__cxx11::string();
+}
+
+void AST::ElseAST::Dfs()
+{
+    std::cout << " else {\n";
+    this->Body->Dfs();
+    std::cout << "}\n";
+}
+
+std::string AST::LoopAST::Generate_code()
+{
+    return std::__cxx11::string();
+}
+
+void AST::LoopAST::Dfs()
 {
 
 }

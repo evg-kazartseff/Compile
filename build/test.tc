@@ -3,4 +3,9 @@ int c = 1 + 2;
 double k = 4 + (2 % c)  * c | 2;
 k = 5;
 goto lol;
-lol:
+
+if (c < k) {
+    k = c;
+} else {
+    c = k;
+}
