@@ -113,6 +113,10 @@ AST::BaseAST *AST::Ast::GetLoop(int type, AST::BaseAST *def, AST::BaseAST *If, A
     return new LoopAST(type, def, If, inc, body);
 }
 
+AST::BaseAST* AST::Ast::GetUnary(int type, char operation, AST::BaseAST* id) {
+    return new UnaryAST(type, operation, id);
+}
+
 std::string AST::IntNumberExprAST::Generate_code()
 {
     return std::__cxx11::string();
@@ -291,5 +295,13 @@ std::string AST::LoopAST::Generate_code()
 
 void AST::LoopAST::Dfs()
 {
+
+}
+
+std::string AST::UnaryAST::Generate_code() {
+    return std::__cxx11::string();
+}
+
+void AST::UnaryAST::Dfs() {
 
 }
