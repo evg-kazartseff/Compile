@@ -5,11 +5,8 @@
 #ifndef LAB2_HASHTABLE_H
 #define LAB2_HASHTABLE_H
 
-#include <cstddef>
 #include <string>
 #include <queue>
-
-// TODO ADD SUBTABLE
 
 class HashNode {
 private:
