@@ -77,6 +77,7 @@ HashEntry::~HashEntry()
 HashTable::HashTable(size_t size)
 {
     this->size = size;
+    this->parent = nullptr;
     this->table = new HashEntry[this->size];
 }
 
@@ -111,6 +112,42 @@ void HashTable::DeleteEntry(const std::string &value)
 
 HashTable::~HashTable()
 {
+}
+
+void HashTable::addChildScope() {
+    HashTable* NewScope = new HashTable(this->getSize());
+    this->addChildScope(NewScope);
+}
+
+void HashTable::setParent(HashTable* table) {
+    this->parent = table;
+}
+
+size_t HashTable::getSize() {
+    return this->size;
+}
+
+void HashTable::addChildScope(HashTable* scope) {
+    scope->setParent(this);
+    this->childs.push(scope);
+}
+
+HashTable* HashTable::getChlidScope() {
+    return this->childs.front();
+}
+
+void HashTable::popChildScope() {
+    if (!this->childs.empty())
+        this->childs.pop();
+}
+
+void HashTable::deleteAllChildScope() {
+    while (!this->childs.empty())
+        this->childs.pop();
+}
+
+HashTable* HashTable::getParent() {
+    return this->parent;
 }
 
 HashNode::HashNode(int type, std::string &Value)
