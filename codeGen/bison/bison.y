@@ -162,5 +162,7 @@ int main(int argc, char** argv)
     delete hash_table;
     delete ast;
     delete AsmGen;
+    WriteAdapter* writeAdapter = Singleton<WriteAdapter>::getInstance();
+    delete writeAdapter;
     return EXIT_SUCCESS;
 }
