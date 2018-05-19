@@ -138,6 +138,10 @@ void AST::Ast::SetFile(const std::string &filename)
     this->tree->SetFile(filename);
 }
 
+AST::BaseAST* AST::Ast::GetReturn(AST::BaseAST* val) {
+    return new ReturnAST(val);
+}
+
 std::string AST::IntNumberExprAST::Generate_code()
 {
     return std::__cxx11::string();
@@ -362,4 +366,12 @@ void AST::ArgsAST::Dfs()
 void AST::BaseAST::SetFile(const std::string &filename)
 {
     this->file.open(filename.c_str(), std::fstream::out);
+}
+
+std::string AST::ReturnAST::Generate_code() {
+    return std::__cxx11::string();
+}
+
+void AST::ReturnAST::Dfs() {
+
 }
