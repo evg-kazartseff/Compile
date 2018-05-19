@@ -8,6 +8,8 @@
 #include <string>
 #include <queue>
 
+class Ast;
+
 class HashNode {
 private:
     std::string value;
@@ -55,6 +57,7 @@ public:
 };
 
 class HashTable {
+    friend Ast;
 private:
     size_t size;
     HashEntry *table;
@@ -89,6 +92,8 @@ public:
     void popChildScope();
 
     void deleteAllChildScope();
+
+    HashEntry *getTable();
 };
 
 #endif //LAB2_HASHTABLE_H

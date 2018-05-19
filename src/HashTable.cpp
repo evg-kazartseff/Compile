@@ -158,6 +158,11 @@ HashTable *HashTable::getParent()
     return this->parent;
 }
 
+HashEntry *HashTable::getTable()
+{
+    return this->table;
+}
+
 HashNode::HashNode(int type, std::string &Value)
 {
     this->type = type;
