@@ -1,12 +1,7 @@
 //
 // Created by evgenii on 31.03.18.
 //
-
 #include "../inc/Ast.h"
-#include <typeindex>
-
-AST::Ast::Ast()
-{}
 
 AST::BaseAST *AST::Ast::GetIntNumberExpr(int val)
 {
@@ -47,36 +42,23 @@ void AST::LinkAST::Dfs()
 
 void AST::Ast::DFS()
 {
-    this->tree->file << "\t.file pipiska" << std::endl;
-    // set variable;
-    this->tree->file << "\t.text\n"
-                        "\t.global main\n"
-                        "\ttype main, @function\n"
-                        "main:\n "
-                        ".LFB0:" << std::endl;
-
     if (this->tree == nullptr) return;
     this->tree->Dfs(); /// С этого метода начинать обход дерева
-
-    this->tree->file << "\n.LFE0:\n"
-                        "\t.size main, .-main\n"
-                        "\t.ident \"Tutanh\"\n"
-                        "\t.section .note.GNU-stack,\"\",@progbits\n";
 }
 
 AST::BaseAST *AST::Ast::GetEval(std::string id, AST::BaseAST *expr)
 {
-    return new EvalAST(id, expr);
+    return new EvalAST(std::move(id), expr);
 }
 
 AST::BaseAST *AST::Ast::GetJump(std::string id)
 {
-    return new JumpAST(id);
+    return new JumpAST(std::move(id));
 }
 
 AST::BaseAST *AST::Ast::GetMark(std::string id)
 {
-    return new MarkAST(id);
+    return new MarkAST(std::move(id));
 }
 
 void AST::Ast::AddToLink(BaseAST *childe)
@@ -88,12 +70,12 @@ void AST::Ast::AddToLink(BaseAST *childe)
 
 AST::BaseAST *AST::Ast::GetVariableDef(int type, std::string name, BaseAST *expr)
 {
-    return new VariableDefAST(type, name, expr);
+    return new VariableDefAST(type, std::move(name), expr);
 }
 
 AST::BaseAST *AST::Ast::GetVariableUndef(int type, std::string name)
 {
-    return new VariableUndefAST(type, name);
+    return new VariableUndefAST(type, std::move(name));
 }
 
 AST::BaseAST *AST::Ast::GetBodyLList(AST::BaseAST *next, AST::BaseAST *attr)
@@ -143,12 +125,7 @@ AST::BaseAST *AST::Ast::GetArgs(AST::BaseAST *llist)
 
 AST::BaseAST *AST::Ast::GetCallFunc(std::string id, AST::BaseAST *args)
 {
-    return new CallFuncAST(id, args);
-}
-
-void AST::Ast::SetFile(const std::string &filename)
-{
-    this->tree->SetFile(filename);
+    return new CallFuncAST(std::move(id), args);
 }
 
 AST::BaseAST *AST::Ast::GetReturn(AST::BaseAST *val)
@@ -251,7 +228,9 @@ std::string AST::VariableUndefAST::Generate_code()
 
 void AST::VariableUndefAST::Dfs()
 {
-    printf("UndefVar: %s\n", this->Name.c_str());
+    std::stringstream str;
+    str << "UndefVar: " << this->Name.c_str() << std::endl;
+    this->write_adapter->Print(str.str());
 }
 
 std::string AST::VariableDefAST::Generate_code()
@@ -375,11 +354,6 @@ std::string AST::ArgsAST::Generate_code()
 void AST::ArgsAST::Dfs()
 {
 
-}
-
-void AST::BaseAST::SetFile(const std::string &filename)
-{
-    this->file.open(filename.c_str(), std::fstream::out);
 }
 
 std::string AST::ReturnAST::Generate_code()

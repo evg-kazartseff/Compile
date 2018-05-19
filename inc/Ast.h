@@ -9,24 +9,22 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <typeinfo>
-#include <fstream>
+#include <sstream>
+#include "WriteAdapter.h"
 
-// TODO оставить только вызов функций, удалить прототипы, добавить класс Return(пустой)
-// TODO добавить список класс список аргументов функции
+
 namespace AST
 {
     class Ast;
 
     /// BaseAST - Базовый класс для всех узлов выражений.
     class BaseAST {
-        friend Ast;
     protected:
-        std::fstream file;
+         WriteAdapter* write_adapter;
     public:
-        BaseAST() = default;
+        BaseAST() { this->write_adapter = Singleton<WriteAdapter>::getInstance(); }
         virtual ~BaseAST() = default;
-        void SetFile(const std::string& filename);
+
         virtual std::string Generate_code() = 0;
         virtual void Dfs() = 0;
     };
@@ -36,8 +34,8 @@ namespace AST
     public:
         int Val;
     public:
-        IntNumberExprAST(int val)
-                : Val(val) {}
+        explicit IntNumberExprAST(int val)
+                : Val(val) , BaseAST() {}
         std::string Generate_code() final;
         void Dfs() final;
     };
@@ -47,7 +45,7 @@ namespace AST
     public:
         double Val;
     public:
-        DoubleNumberExprAST(double val)
+        explicit DoubleNumberExprAST(double val)
                 : Val(val) {}
         std::string Generate_code() final;
         void Dfs() final;
@@ -57,7 +55,7 @@ namespace AST
     class VariableExprAST : public BaseAST {
         std::string Name;
     public:
-        VariableExprAST(std::string name)
+        explicit VariableExprAST(std::string name)
                 : Name(std::move(name)) {}
         std::string Generate_code() final;
         void Dfs() final;
@@ -69,7 +67,7 @@ namespace AST
         std::string Name;
     public:
         VariableUndefAST(int type, std::string name)
-                : Type(type), Name(std::move(name)) {}
+                : Type(type), Name(std::move(name)), BaseAST() {}
         std::string Generate_code() override;
         void Dfs() override;
     };
@@ -113,7 +111,7 @@ namespace AST
         BaseAST *Expr;
     public:
         EvalAST(std::string id, BaseAST *expr)
-                : Id(id), Expr(expr) {}
+                : Id(std::move(id)), Expr(expr) {}
         std::string Generate_code() final;
         void Dfs() final;
     };
@@ -122,17 +120,17 @@ namespace AST
     public:
         std::string Id;
     public:
-        JumpAST() {}
-        JumpAST(std::string id)
-                : Id(id) {}
+        JumpAST() = default;
+        explicit JumpAST(std::string id)
+                : Id(std::move(id)) {}
         std::string Generate_code() override;
         void Dfs() override;
     };
 
     class MarkAST : public JumpAST {
     public:
-        MarkAST(std::string id)
-                : JumpAST(id) {}
+        explicit MarkAST(std::string id)
+                : JumpAST(std::move(id)) {}
         std::string Generate_code() final;
         void Dfs() final;
     };
@@ -150,7 +148,7 @@ namespace AST
 
     ///LinkAST - Связующий элемент в дереве
     class LinkAST : public BaseAST {
-        std::vector<BaseAST *> *Childs = nullptr;
+        std::vector<BaseAST*> *Childs = nullptr;
     public:
         LinkAST() { this->Childs = new std::vector<BaseAST *>(); }
         explicit LinkAST(std::vector<BaseAST *> *childs)
@@ -173,7 +171,7 @@ namespace AST
     class BodyAST : public BaseAST {
         BaseAST *LList = nullptr;
     public:
-        BodyAST(BaseAST *llist)
+        explicit BodyAST(BaseAST *llist)
                 : LList(llist) {}
         std::string Generate_code() final;
         void Dfs() final;
@@ -192,7 +190,7 @@ namespace AST
     class ArgsAST : public BaseAST {
         BaseAST *LList = nullptr;
     public:
-        ArgsAST(BaseAST *llist)
+        explicit ArgsAST(BaseAST *llist)
             : LList(llist) {}
         std::string Generate_code() final;
         void Dfs() final;
@@ -213,7 +211,7 @@ namespace AST
     class ElseAST : public BaseAST {
         BaseAST *Body;
     public:
-        ElseAST(BaseAST *body)
+        explicit ElseAST(BaseAST *body)
                 : Body(body) {}
         std::string Generate_code() final;
         void Dfs() final;
@@ -244,7 +242,7 @@ namespace AST
     class ReturnAST : public BaseAST {
         BaseAST* Val;
     public:
-        ReturnAST(BaseAST* val)
+        explicit ReturnAST(BaseAST* val)
                 : Val(val) {}
         std::string Generate_code() final;
         void Dfs() final;
@@ -253,7 +251,7 @@ namespace AST
     class Ast {
         LinkAST *tree;
     public:
-        Ast();
+        Ast() = default;
 
         BaseAST* GetIntNumberExpr(int val);
         BaseAST* GetDoubleNumberExpr(double val);
@@ -276,7 +274,6 @@ namespace AST
         BaseAST* GetUnary(char operation, BaseAST* id);
         BaseAST* GetReturn(BaseAST* val);
         void AddToLink(BaseAST *childe);
-        void SetFile(const std::string& filename);
         void DFS();
     };
 }

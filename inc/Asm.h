@@ -7,15 +7,15 @@
 
 #include <fstream>
 #include "Ast.h"
+#include "WriteAdapter.h"
 
 class ASM_GEN {
-    friend AST::Ast;
 private:
+    WriteAdapter* writeAdapter;
     std::string file_name;
     AST::Ast *ast;
 public:
     ASM_GEN(const std::string &filename, AST::Ast *ast);
-
     void Generate();
 };
 
