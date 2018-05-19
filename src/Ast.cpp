@@ -18,12 +18,12 @@ AST::BaseAST *AST::Ast::GetDoubleNumberExpr(double val)
     return new DoubleNumberExprAST(val);
 }
 
-AST::BaseAST*AST::Ast::GetVariableExpr(std::string name)
+AST::BaseAST *AST::Ast::GetVariableExpr(std::string name)
 {
     return new VariableExprAST(std::move(name));
 }
 
-AST::BaseAST *AST::Ast::GetBinaryExpr( char op, BaseAST *lhs, BaseAST *rhs)
+AST::BaseAST *AST::Ast::GetBinaryExpr(char op, BaseAST *lhs, BaseAST *rhs)
 {
     return new BinaryExprAST(op, lhs, rhs);
 }
@@ -73,12 +73,12 @@ void AST::Ast::AddToLink(BaseAST *childe)
     this->tree->AddChild(childe);
 }
 
-AST::BaseAST* AST::Ast::GetVariableDef(int type, std::string name, BaseAST* expr)
+AST::BaseAST *AST::Ast::GetVariableDef(int type, std::string name, BaseAST *expr)
 {
     return new VariableDefAST(type, name, expr);
 }
 
-AST::BaseAST*AST::Ast::GetVariableUndef(int type, std::string name)
+AST::BaseAST *AST::Ast::GetVariableUndef(int type, std::string name)
 {
     return new VariableUndefAST(type, name);
 }
@@ -98,7 +98,7 @@ AST::BaseAST *AST::Ast::GetIf(AST::BaseAST *statement, AST::BaseAST *body, AST::
     return new IfAST(statement, body, els);
 }
 
-AST::BaseAST *AST::Ast::GetLogicExpr( char op, AST::BaseAST *lhs, AST::BaseAST *rhs)
+AST::BaseAST *AST::Ast::GetLogicExpr(char op, AST::BaseAST *lhs, AST::BaseAST *rhs)
 {
     return new LogicExprAST(op, lhs, rhs);
 }
@@ -113,23 +113,28 @@ AST::BaseAST *AST::Ast::GetLoop(AST::BaseAST *def, AST::BaseAST *If, AST::BaseAS
     return new LoopAST(def, If, inc, body);
 }
 
-AST::BaseAST* AST::Ast::GetUnary(char operation, AST::BaseAST* id) {
+AST::BaseAST *AST::Ast::GetUnary(char operation, AST::BaseAST *id)
+{
     return new UnaryAST(operation, id);
 }
 
-AST::BaseAST* AST::Ast::GetArgList(AST::BaseAST* next, AST::BaseAST* attr) {
+AST::BaseAST *AST::Ast::GetArgList(AST::BaseAST *next, AST::BaseAST *attr)
+{
     return new ArgListAST(next, attr);
 }
 
-AST::BaseAST* AST::Ast::GetArgs(AST::BaseAST* llist) {
+AST::BaseAST *AST::Ast::GetArgs(AST::BaseAST *llist)
+{
     return new ArgsAST(llist);
 }
 
-AST::BaseAST* AST::Ast::GetCallFunc(std::string id, AST::BaseAST* args) {
+AST::BaseAST *AST::Ast::GetCallFunc(std::string id, AST::BaseAST *args)
+{
     return new CallFuncAST(id, args);
 }
 
-void AST::Ast::SetFile(const std::string &filename) {
+void AST::Ast::SetFile(const std::string &filename)
+{
     this->tree->SetFile(filename);
 }
 
@@ -322,32 +327,39 @@ void AST::LoopAST::Dfs()
     std::cout << "}\n";
 }
 
-std::string AST::UnaryAST::Generate_code() {
+std::string AST::UnaryAST::Generate_code()
+{
     return std::__cxx11::string();
 }
 
-void AST::UnaryAST::Dfs() {
+void AST::UnaryAST::Dfs()
+{
     std::cout << "(" << this->Operation;
     this->Operand->Dfs();
     std::cout << ")";
 }
 
-std::string AST::ArgListAST::Generate_code() {
+std::string AST::ArgListAST::Generate_code()
+{
     return std::__cxx11::string();
 }
 
-void AST::ArgListAST::Dfs() {
+void AST::ArgListAST::Dfs()
+{
 
 }
 
-std::string AST::ArgsAST::Generate_code() {
+std::string AST::ArgsAST::Generate_code()
+{
     return std::__cxx11::string();
 }
 
-void AST::ArgsAST::Dfs() {
+void AST::ArgsAST::Dfs()
+{
 
 }
 
-void AST::BaseAST::SetFile(const std::string& filename) {
+void AST::BaseAST::SetFile(const std::string &filename)
+{
     this->file.open(filename.c_str(), std::fstream::out);
 }

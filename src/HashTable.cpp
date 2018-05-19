@@ -114,39 +114,47 @@ HashTable::~HashTable()
 {
 }
 
-void HashTable::addChildScope() {
-    HashTable* NewScope = new HashTable(this->getSize());
+void HashTable::addChildScope()
+{
+    HashTable *NewScope = new HashTable(this->getSize());
     this->addChildScope(NewScope);
 }
 
-void HashTable::setParent(HashTable* table) {
+void HashTable::setParent(HashTable *table)
+{
     this->parent = table;
 }
 
-size_t HashTable::getSize() {
+size_t HashTable::getSize()
+{
     return this->size;
 }
 
-void HashTable::addChildScope(HashTable* scope) {
+void HashTable::addChildScope(HashTable *scope)
+{
     scope->setParent(this);
     this->childs.push(scope);
 }
 
-HashTable* HashTable::getChlidScope() {
+HashTable *HashTable::getChlidScope()
+{
     return this->childs.front();
 }
 
-void HashTable::popChildScope() {
+void HashTable::popChildScope()
+{
     if (!this->childs.empty())
         this->childs.pop();
 }
 
-void HashTable::deleteAllChildScope() {
+void HashTable::deleteAllChildScope()
+{
     while (!this->childs.empty())
         this->childs.pop();
 }
 
-HashTable* HashTable::getParent() {
+HashTable *HashTable::getParent()
+{
     return this->parent;
 }
 

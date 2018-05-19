@@ -16,26 +16,41 @@ private:
     HashNode *prev;
 public:
     explicit HashNode(int type, std::string &Value);
+
     ~HashNode();
+
     void setNext(HashNode *next);
+
     void setPrev(HashNode *prev);
+
     HashNode *getNext() const;
+
     HashNode *getPrev() const;
+
     std::string &getValue();
+
     int getType();
+
     void setValue(std::string &value);
+
     void setType(int type);
 };
 
 class HashEntry {
 private:
     HashNode *list;
+
     void DeleteNode(HashNode *node);
+
 public:
     HashEntry() = default;
+
     ~HashEntry();
+
     void AddValueNode(int type, std::string value);
+
     HashNode *LookupValueNode(const std::string &value);
+
     void DeleteValueNode(const std::string &value);
 };
 
@@ -43,24 +58,36 @@ class HashTable {
 private:
     size_t size;
     HashEntry *table;
-    HashTable* parent;
-    std::queue<HashTable*> childs;
+    HashTable *parent;
+    std::queue<HashTable *> childs;
+
     size_t GetHash(const char *key);
+
     size_t getSize();
+
 public:
     explicit HashTable(size_t size);
+
     ~HashTable();
+
     void CreateEntry(int type, std::string value);
+
     HashNode *LookupEntry(const std::string &value);
+
     void DeleteEntry(const std::string &value);
 
-    void setParent(HashTable* table);
-    HashTable* getParent();
+    void setParent(HashTable *table);
+
+    HashTable *getParent();
 
     void addChildScope();
-    void addChildScope(HashTable* scope);
-    HashTable* getChlidScope();
+
+    void addChildScope(HashTable *scope);
+
+    HashTable *getChlidScope();
+
     void popChildScope();
+
     void deleteAllChildScope();
 };
 

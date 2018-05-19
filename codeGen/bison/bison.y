@@ -15,9 +15,9 @@
 %}
 
 %token INT CHAR DOUBLE STRING
-%token IF ELSE PRINT FOR LEX_ERROR RETURN
+%token IF ELSE PRINT FOR LEX_ERROR
 %token ID CONST_INT CONST_DOUBLE
-%token JUMP MARK_TOK
+%token JUMP MARK_TOK RETURN
 
 %union {
     int type;
@@ -30,7 +30,7 @@
 %type <str> ID CONST_INT CONST_DOUBLE ID_TOK STRING
 %type <type> INT CHAR DOUBLE TYPE
 %type <expr> EXPR2 EXPR1 EXPR0 EXPR CONST DEFVAR UNDEFVAR VAR EVAL
-%type <expr> MARK GOTO ATOM CALL ARGS ARG
+%type <expr> MARK GOTO ATOM CALL ARGS ARG RET
 %type <expr> ANYVAR LOOP ATOMLLIST COND IFELSE ELSEIF BODY LEVAL
 
 %%
@@ -50,6 +50,9 @@ ATOM:   DEFVAR { $$ = $1; }
         | IFELSE { $$ = $1; }
         | EVAL { $$ = $1; }
         | CALL { $$ = $1; }
+        | RET { $$ = $1; }
+
+RET: RETURN VAR ';' { }
 
 CALL:   ID '(' ARGS ')' ';' { $$ = ast->GetCallFunc($1, ast->GetArgs($3));}
 

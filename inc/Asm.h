@@ -11,9 +11,10 @@
 class ASM_GEN {
 private:
     std::string file_name;
-    AST::Ast* ast;
+    AST::Ast *ast;
 public:
-    ASM_GEN(const std::string& filename, AST::Ast* ast);
+    ASM_GEN(const std::string &filename, AST::Ast *ast);
+
     void Generate();
 };
 
