@@ -6,13 +6,15 @@
 #define COMPILE_ASM_H
 
 #include <fstream>
+#include "Ast.h"
 
 class ASM_GEN {
 private:
-    std::fstream file;
+    std::string file_name;
+    AST::Ast* ast;
 public:
-    ASM_GEN(std::string filename);
-
+    ASM_GEN(const std::string& filename, AST::Ast* ast);
+    void Generate();
 };
 
 #endif //COMPILE_ASM_H

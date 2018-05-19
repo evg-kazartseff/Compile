@@ -129,6 +129,10 @@ AST::BaseAST* AST::Ast::GetCallFunc(std::string id, AST::BaseAST* args) {
     return new CallFuncAST(id, args);
 }
 
+void AST::Ast::SetFile(const std::string &filename) {
+    this->tree->SetFile(filename);
+}
+
 std::string AST::IntNumberExprAST::Generate_code()
 {
     return std::__cxx11::string();
@@ -342,4 +346,8 @@ std::string AST::ArgsAST::Generate_code() {
 
 void AST::ArgsAST::Dfs() {
 
+}
+
+void AST::BaseAST::SetFile(const std::string& filename) {
+    this->file.open(filename.c_str(), std::fstream::out);
 }

@@ -2,6 +2,7 @@
     #include <stdio.h>
     #include "../inc/HashTable.h"
     #include "../inc/Ast.h"
+    #include "../inc/Asm.h"
     extern FILE *yyin;
     extern int yylineno;
     extern int ch;
@@ -135,12 +136,16 @@ void yyerror(const char *errmsg, const char *msg)
 
 int main(int argc, char** argv)
 {
-    if(argc < 2) {
+    if(argc < 3) {
         fprintf(stderr, "\nNot enough arguments. Please specify filename.\n");
         return EXIT_FAILURE;
     }
     if((yyin = fopen(argv[1], "r")) == nullptr) {
-        printf("\nCannot open file %s.\n", argv[1]);
+        fprintf(stderr, "\nCannot open file %s.\n", argv[1]);
+        return EXIT_FAILURE;
+    }
+    if(argv[2] == nullptr) {
+        fprintf(stderr, "Specify the output file\n");
         return EXIT_FAILURE;
     }
     ast = new AST::Ast();
@@ -148,7 +153,8 @@ int main(int argc, char** argv)
     yylineno = 1;
 
     yyparse();
-    ast->DFS();
+    ASM_GEN* AsmGen = new ASM_GEN(argv[2], ast);
+    AsmGen->Generate();
     fclose(yyin);
     delete hash_table;
     delete ast;

@@ -59,10 +59,8 @@ public:
 
     void addChildScope();
     void addChildScope(HashTable* scope);
-
     HashTable* getChlidScope();
     void popChildScope();
-
     void deleteAllChildScope();
 };
 

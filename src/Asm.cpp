@@ -3,8 +3,15 @@
 //
 
 #include "../inc/Asm.h"
+#include "../inc/Ast.h"
 
-ASM_GEN::ASM_GEN(std::string filename)
+ASM_GEN::ASM_GEN(const std::string &filename, AST::Ast* ast)
 {
-    this->file.open(filename.c_str(), std::fstream::out);
+    this->file_name = std::move(filename);
+    this->ast = ast;
+}
+
+void ASM_GEN::Generate() {
+    this->ast->SetFile(this->file_name);
+    this->ast->DFS();
 }
