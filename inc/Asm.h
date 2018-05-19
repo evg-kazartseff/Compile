@@ -9,6 +9,7 @@
 #include "Ast.h"
 
 class ASM_GEN {
+    friend AST::Ast;
 private:
     std::string file_name;
     AST::Ast *ast;

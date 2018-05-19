@@ -20,6 +20,7 @@ namespace AST
 
     /// BaseAST - Базовый класс для всех узлов выражений.
     class BaseAST {
+        friend Ast;
     protected:
         std::fstream file;
     public:

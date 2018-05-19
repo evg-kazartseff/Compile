@@ -47,8 +47,21 @@ void AST::LinkAST::Dfs()
 
 void AST::Ast::DFS()
 {
+    this->tree->file << "\t.file pipiska" << std::endl;
+    // set variable;
+    this->tree->file << "\t.text\n"
+                        "\t.global main\n"
+                        "\ttype main, @function\n"
+                        "main:\n "
+                        ".LFB0:" << std::endl;
+
     if (this->tree == nullptr) return;
     this->tree->Dfs(); /// С этого метода начинать обход дерева
+
+    this->tree->file << "\n.LFE0:\n"
+                        "\t.size main, .-main\n"
+                        "\t.ident \"Tutanh\"\n"
+                        "\t.section .note.GNU-stack,\"\",@progbits\n";
 }
 
 AST::BaseAST *AST::Ast::GetEval(std::string id, AST::BaseAST *expr)
@@ -138,7 +151,8 @@ void AST::Ast::SetFile(const std::string &filename)
     this->tree->SetFile(filename);
 }
 
-AST::BaseAST* AST::Ast::GetReturn(AST::BaseAST* val) {
+AST::BaseAST *AST::Ast::GetReturn(AST::BaseAST *val)
+{
     return new ReturnAST(val);
 }
 
@@ -368,10 +382,12 @@ void AST::BaseAST::SetFile(const std::string &filename)
     this->file.open(filename.c_str(), std::fstream::out);
 }
 
-std::string AST::ReturnAST::Generate_code() {
+std::string AST::ReturnAST::Generate_code()
+{
     return std::__cxx11::string();
 }
 
-void AST::ReturnAST::Dfs() {
+void AST::ReturnAST::Dfs()
+{
 
 }

@@ -161,5 +161,6 @@ int main(int argc, char** argv)
     fclose(yyin);
     delete hash_table;
     delete ast;
+    delete AsmGen;
     return EXIT_SUCCESS;
 }

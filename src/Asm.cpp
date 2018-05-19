@@ -12,6 +12,8 @@ ASM_GEN::ASM_GEN(const std::string &filename, AST::Ast *ast)
 
 void ASM_GEN::Generate()
 {
+
+
     this->ast->SetFile(this->file_name);
     this->ast->DFS();
 }
