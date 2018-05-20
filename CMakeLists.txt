@@ -23,6 +23,9 @@ ENDIF()
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build/bin)
 ADD_FLEX_BISON_DEPENDENCY(lexer parser)
 
+execute_process(COMMAND /bin/chmod +x "../build/Run.sh")
+execute_process(COMMAND /bin/chmod +x "../build/PostRun.sh")
+
 set(SRC src/HashTable.cpp src/ClassAst/Ast.cpp src/Asm.cpp src/WriteAdapter.cpp src/ClassAst/AstGet.cpp)
 set(INC inc/HashTable.h inc/Ast.h inc/Asm.h inc/WriteAdapter.h src/ClassAst/AstLink.cpp src/ClassAst/AstVar.cpp src/ClassAst/AstExpr.cpp inc/Singleton.h src/ASM_VARS.cpp inc/ASM_VARS.h)
 
