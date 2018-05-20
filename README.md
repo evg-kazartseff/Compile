@@ -1,3 +1,9 @@
+> # Компиляция
+- `mkdir build ; cd build`
+- `cmake ..`
+- `make`
+- `./compile input output.s`
+- `gcc asm.s -o output`
 > # Описание языка
 >  - [Типы данных](#типы-данных)
 >  - [Структуры языка](#структуры-языка)
