@@ -2,7 +2,7 @@
 // Created by evgenii on 20.05.18.
 //
 
-#include "../inc/ASM_VARS.h"
+#include "../../inc/ASM_VARS.h"
 
 void AsmVars::setDoubleType(size_t var) {
     this->var_size.Double = var;

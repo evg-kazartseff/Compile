@@ -3,7 +3,7 @@
 //
 
 #include <sstream>
-#include "../inc/Asm.h"
+#include "../../inc/Asm.h"
 
 ASM_GEN::ASM_GEN(const std::string &filename, AST::Ast *ast)
 {

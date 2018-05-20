@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "../inc/WriteAdapter.h"
+#include "../../inc/WriteAdapter.h"
 
 void WriteAdapter::SetFile(const std::string& file) {
     this->file.open(file);

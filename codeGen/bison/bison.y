@@ -6,6 +6,7 @@
     #include "../inc/Singleton.h"
     #include "../inc/WriteAdapter.h"
     #include "../inc/ASM_VARS.h"
+    #include "../inc/StringNameGenerator.h"
 
     extern FILE *yyin;
     extern int yylineno;
@@ -64,7 +65,7 @@ ARGS:   ARG { $$ = ast->GetArgList(nullptr, $1); }
         | ARG ',' ARGS { $$ = ast->GetArgList($1, $3); }
 
 ARG: VAR { $$ = ast->GetArgList(nullptr, $1); }
-        | STRING { /*$$ = ast->GetString(genName, $1)*/ $$ = nullptr;}
+        | STRING { $$ = ast->GetString(Singleton<StringNameGenerator>::getInstance()->Generate(), $1);}
 
 DEFVAR: TYPE ID '=' EXPR ';' { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableDef($1, $2, $4); }
 
