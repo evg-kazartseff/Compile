@@ -92,7 +92,7 @@ MARK:   ID ':' { if (hash_table->LookupEntry($1) == nullptr) {
                     hash_table->CreateEntry(MARK_TOK, $1); $$ = ast->GetMark($1);
                  } else { yyerror("Identificator already created", $1); $$ = nullptr; } }
 
-GOTO:   JUMP ID_TOK ';' { if ($2) { $$ = ast->GetJump($2); } else { $$ = nullptr; } }
+GOTO:   JUMP ID ';' { if ($2) { $$ = ast->GetJump($2); } else { $$ = nullptr; } }
 
 IFELSE: IF '(' COND ')' ATOM { $$ = ast->GetIf($3, $5, nullptr); }
         | IF '(' COND ')' '{' BODY '}' { $$ = ast->GetIf($3, $6, nullptr); }

@@ -11,27 +11,6 @@ AST::BaseAST::BaseAST()
     this->hashTable = Singleton<HashTable>::getInstance();
 }
 
-std::string AST::JumpAST::Generate_code()
-{
-    return std::__cxx11::string();
-}
-
-void AST::JumpAST::Dfs()
-{
-    printf("Goto %s\n", this->Id.c_str());
-}
-
-std::string AST::MarkAST::Generate_code()
-{
-    return JumpAST::Generate_code();
-}
-
-
-void AST::MarkAST::Dfs()
-{
-    printf("New Mark %s\n", this->Id.c_str());
-}
-
 std::string AST::BodyAST::Generate_code()
 {
     return std::__cxx11::string();

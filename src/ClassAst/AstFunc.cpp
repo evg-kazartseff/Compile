@@ -5,7 +5,7 @@
 
 std::string AST::CallFuncAST::Generate_code()
 {
-    return "\tcall " + this->Id + "\n";
+    return "\tcall " + this->Id + "\n\n";
 }
 
 void AST::CallFuncAST::Dfs()

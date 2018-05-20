@@ -1,5 +1,10 @@
 int a;
 int b;
+goto kk;
 scanf("%d", &a);
 printf("%X %d\n", a, b);
+kk:
+int k;
+scanf("%d", &k);
+printf("it is k %d\n", k);
 return 2;

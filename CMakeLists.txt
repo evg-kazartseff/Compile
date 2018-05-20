@@ -36,7 +36,9 @@ set(SRC src/HashTable.cpp
         src/ClassAst/AstExpr.cpp
         src/ASM/ASM_VARS.cpp
         src/ClassAst/AstFunc.cpp
-        src/ASM/StringNameGenerator.cpp)
+        src/ASM/StringNameGenerator.cpp
+        src/ClassAst/AstCond.cpp)
+
 set(INC inc/HashTable.h
         inc/Ast.h inc/Asm.h
         inc/WriteAdapter.h
