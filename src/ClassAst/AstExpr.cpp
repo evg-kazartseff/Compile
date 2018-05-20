@@ -6,9 +6,14 @@
 
 std::string AST::VariableExprAST::Generate_code()
 {
-    int addr = hashTable->getAddr(this->Name);
-    std::string str = "-" + std::to_string(addr) + "(%ebp)";
-    return str;
+    if (this->Is_addr) {
+
+    }
+    else {
+        int addr = hashTable->getAddr(this->Name);
+        std::string str = "-" + std::to_string(addr) + "(%ebp)";
+        return str;
+    }
 }
 
 void AST::VariableExprAST::Dfs()

@@ -59,11 +59,13 @@ namespace AST
     /// VariableExprAST - Класс узла выражения для переменных (например, "a").
     class VariableExprAST : public BaseAST {
         std::string Name;
+        bool Is_addr;
     public:
-        explicit VariableExprAST(std::string name)
-                : Name(std::move(name)) {}
+        explicit VariableExprAST(std::string name, bool is_addr = false)
+                : Name(std::move(name)), Is_addr(is_addr) {}
         std::string Generate_code() final;
         void Dfs() final;
+        void setAddr() {this->Is_addr = true;}
     };
 
     class VariableUndefAST : public BaseAST {
