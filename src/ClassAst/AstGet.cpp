@@ -1,7 +1,7 @@
 //
 // Created by direnol on 20.05.18.
 //
-#include "../inc/Ast.h"
+#include "../../inc/Ast.h"
 
 AST::BaseAST *AST::Ast::GetIntNumberExpr(int val)
 {
@@ -102,4 +102,17 @@ AST::BaseAST *AST::Ast::GetCallFunc(std::string id, AST::BaseAST *args)
 AST::BaseAST *AST::Ast::GetReturn(AST::BaseAST *val)
 {
     return new ReturnAST(val);
+}
+
+void AST::Ast::DFS()
+{
+    if (this->tree == nullptr) return;
+    this->tree->Dfs(); /// С этого метода начинать обход дерева
+}
+
+void AST::Ast::AddToLink(BaseAST *childe)
+{
+    if (!this->tree)
+        this->tree = new LinkAST(); /// используем синглтон для однократной инициализации
+    this->tree->AddChild(childe);
 }
