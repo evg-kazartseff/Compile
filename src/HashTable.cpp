@@ -213,3 +213,11 @@ void HashNode::setType(int type)
 {
     this->type = type;
 }
+
+void HashNode::setAddr(int addr) {
+    this->addr = addr;
+}
+
+int HashNode::getAddr() {
+    return this->addr;
+}
