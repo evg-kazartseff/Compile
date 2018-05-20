@@ -1,2 +1,5 @@
-int a = 2;
-printf(a);
+int a;
+int b;
+return 0;
+printf(a,b);
+return 2;

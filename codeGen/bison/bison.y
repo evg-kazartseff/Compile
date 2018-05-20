@@ -62,10 +62,10 @@ RET: RETURN VAR ';' { $$ = ast->GetReturn($2); }
 CALL:   ID  '(' ARGS ')'  ';' { $$ = ast->GetCallFunc($1, ast->GetArgs($3));}
 
 ARGS:   ARG { $$ = ast->GetArgList(nullptr, $1); }
-        | ARG ',' ARGS { $$ = ast->GetArgList($1, $3); }
+        | ARG ',' ARGS { $$ = ast->GetArgList($3, $1); }
 
-ARG: VAR { $$ = ast->GetArgList(nullptr, $1); }
-        | STRING { $$ = ast->GetString(Singleton<StringNameGenerator>::getInstance()->Generate(), $1);}
+ARG: VAR { $$ = $1; }
+        | STRING { /*$$ = ast->GetString(genName, $1)*/ $$ = nullptr;}
 
 DEFVAR: TYPE ID '=' EXPR ';' { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableDef($1, $2, $4); }
 
