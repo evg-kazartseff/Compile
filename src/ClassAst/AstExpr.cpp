@@ -4,6 +4,12 @@
 
 #include "../../inc/Ast.h"
 
+std::string AST::VariableExprAST::Generate_code()
+{
+    return std::__cxx11::string();
+}
+
+
 void AST::VariableExprAST::Dfs()
 {
     printf(" %s ", this->Name.c_str());
@@ -12,15 +18,17 @@ void AST::VariableExprAST::Dfs()
 
 std::string AST::BinaryExprAST::Generate_code()
 {
+    // set result
     return std::__cxx11::string();
 }
 
 void AST::BinaryExprAST::Dfs()
 {
-    printf("(%c ", this->Op);
     this->LHS->Dfs();
+    // result left
+
     this->RHS->Dfs();
-    printf(")");
+    // result right
 }
 
 
@@ -35,7 +43,6 @@ void AST::EvalAST::Dfs()
     this->Expr->Dfs();
     puts("");
 }
-
 
 std::string AST::UnaryAST::Generate_code()
 {
