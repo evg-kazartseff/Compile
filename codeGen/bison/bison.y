@@ -5,13 +5,15 @@
     #include "../inc/Asm.h"
     #include "../inc/Singleton.h"
     #include "../inc/WriteAdapter.h"
+    #include "../inc/ASM_VARS.h"
+
     extern FILE *yyin;
     extern int yylineno;
     extern int ch;
     extern char *yytext;
     extern void yyerror(const char *);
     extern void yyerror(const char *, const char *);
-    extern HashTable* hash_table;
+    HashTable* hash_table = Singleton<HashTable>::getInstance();
     extern int yylex();
     AST::Ast* ast;
 %}
@@ -158,9 +160,10 @@ int main(int argc, char** argv)
     yylineno = 1;
 
     yyparse();
+    AsmVars* asmVars = Singleton<AsmVars>::getInstance();
+    asmVars->setDoubleType(DOUBLE);
+    asmVars->setIntType(INT);
     ASM_GEN* AsmGen = new ASM_GEN(argv[2], ast);
-    //AsmVars->set_size_int = INT;
-    //AsmVars->set_size_double= DOUBLE;
     AsmGen->Generate();
     fclose(yyin);
     delete hash_table;

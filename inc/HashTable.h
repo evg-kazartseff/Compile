@@ -58,37 +58,26 @@ private:
     HashEntry *table;
     HashTable *parent;
     std::queue<HashTable *> childs;
-
     size_t GetHash(const char *key);
-
     size_t getSize();
-
 public:
-    explicit HashTable(size_t size);
-
+    explicit HashTable(size_t size = 128);
     ~HashTable();
-
     void CreateEntry(int type, std::string value);
-
     HashNode *LookupEntry(const std::string &value);
-
     void DeleteEntry(const std::string &value);
 
     void setParent(HashTable *table);
-
     HashTable *getParent();
 
     void addChildScope();
-
     void addChildScope(HashTable *scope);
-
     HashTable *getChlidScope();
-
     void popChildScope();
-
     void deleteAllChildScope();
 
-    HashEntry *getTable();
+    void setAddr(const std::string& name, int addr);
+    int getAddr(const std::string& name);
 };
 
 #endif //LAB2_HASHTABLE_H

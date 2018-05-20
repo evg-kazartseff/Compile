@@ -1,8 +1,14 @@
 //
 // Created by evgenii on 31.03.18.
 //
+
 #include "../../inc/Ast.h"
 
+AST::BaseAST::BaseAST() {
+    this->write_adapter = Singleton<WriteAdapter>::getInstance();
+    this->asmVars = Singleton<AsmVars>::getInstance();
+    this->hashTable = Singleton<HashTable>::getInstance();
+}
 
 std::string AST::CallFuncAST::Generate_code()
 {
@@ -29,11 +35,11 @@ std::string AST::MarkAST::Generate_code()
     return JumpAST::Generate_code();
 }
 
+
 void AST::MarkAST::Dfs()
 {
     printf("New Mark %s\n", this->Id.c_str());
 }
-
 
 std::string AST::BodyAST::Generate_code()
 {
@@ -101,6 +107,7 @@ std::string AST::LoopAST::Generate_code()
     return std::__cxx11::string();
 }
 
+
 void AST::LoopAST::Dfs()
 {
     std::cout << "for (";
@@ -113,7 +120,6 @@ void AST::LoopAST::Dfs()
     this->Body->Dfs();
     std::cout << "}\n";
 }
-
 
 std::string AST::ArgListAST::Generate_code()
 {

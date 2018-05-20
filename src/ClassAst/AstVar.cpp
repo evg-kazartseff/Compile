@@ -35,10 +35,10 @@ std::string AST::VariableExprAST::Generate_code()
 
 std::string AST::VariableUndefAST::Generate_code()
 {
-    int size = 4; //this->Type == INT ? 4 : 8;
-    stack += size;
-    hash_table->add_addr(this->Name, stack);
-    std::string code = "\tsubl " + std::to_string(size) + ", %esp\n";
+    int size = this->Type == this->asmVars->getIntType() ? 4 : 8;
+    this->asmVars->IncStack(size);
+    this->hashTable->setAddr(this->Name, this->asmVars->getStack());
+    std::string code = "\tsubl " + std::to_string(this->asmVars->getStack()) + ", %esp\n";
     return code;
 }
 

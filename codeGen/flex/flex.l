@@ -5,11 +5,6 @@
 #include <string.h>
 #include "../inc/Ast.h"
 #include "../inc/parser.h"
-#include "../inc/HashTable.h"
-
-#define HASHTABLESIZE 128
-
-    HashTable* hash_table = new HashTable(HASHTABLESIZE);
     int ch = 1;
 %}
 

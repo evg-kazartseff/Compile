@@ -3,6 +3,7 @@
 //
 
 #include <utility>
+#include <iostream>
 #include "../inc/HashTable.h"
 
 void HashEntry::AddValueNode(int type, std::string value)
@@ -158,9 +159,22 @@ HashTable *HashTable::getParent()
     return this->parent;
 }
 
-HashEntry *HashTable::getTable()
-{
-    return this->table;
+void HashTable::setAddr(const std::string& name, int addr) {
+    HashNode* node = this->LookupEntry(name);
+    if(!node) {
+        std::cerr << "Undefine vareable: " << name << std::endl;
+        return;
+    }
+    node->setAddr(addr);
+}
+
+int HashTable::getAddr(const std::string &name) {
+    HashNode* node = this->LookupEntry(name);
+    if(!node) {
+        std::cerr << "Undefine vareable: " << name << std::endl;
+        return -1;
+    }
+    return node->getAddr();
 }
 
 HashNode::HashNode(int type, std::string &Value)

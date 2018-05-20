@@ -12,6 +12,8 @@
 #include <sstream>
 #include "WriteAdapter.h"
 #include "Singleton.h"
+#include "ASM_VARS.h"
+#include "HashTable.h"
 
 
 namespace AST
@@ -22,8 +24,10 @@ namespace AST
     class BaseAST {
     protected:
          WriteAdapter* write_adapter;
+         AsmVars* asmVars;
+         HashTable* hashTable;
     public:
-        BaseAST() { this->write_adapter = Singleton<WriteAdapter>::getInstance(); }
+        BaseAST();
         virtual ~BaseAST() = default;
 
         virtual std::string Generate_code() = 0;
