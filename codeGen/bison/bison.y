@@ -3,6 +3,8 @@
     #include "../inc/HashTable.h"
     #include "../inc/Ast.h"
     #include "../inc/Asm.h"
+    #include "../inc/Singleton.h"
+    #include "../inc/WriteAdapter.h"
     extern FILE *yyin;
     extern int yylineno;
     extern int ch;

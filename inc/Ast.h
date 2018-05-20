@@ -11,6 +11,7 @@
 #include <vector>
 #include <sstream>
 #include "WriteAdapter.h"
+#include "Singleton.h"
 
 
 namespace AST

@@ -24,7 +24,7 @@ SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/build/bin)
 ADD_FLEX_BISON_DEPENDENCY(lexer parser)
 
 set(SRC src/HashTable.cpp src/ClassAst/Ast.cpp src/Asm.cpp src/WriteAdapter.cpp src/ClassAst/AstGet.cpp)
-set(INC inc/HashTable.h inc/Ast.h inc/Asm.h inc/WriteAdapter.h src/ClassAst/AstLink.cpp src/ClassAst/AstVar.cpp src/ClassAst/AstExpr.cpp)
+set(INC inc/HashTable.h inc/Ast.h inc/Asm.h inc/WriteAdapter.h src/ClassAst/AstLink.cpp src/ClassAst/AstVar.cpp src/ClassAst/AstExpr.cpp inc/Singleton.h)
 
 add_executable(compile ${SRC} ${INC} ${BISON_parser_OUTPUTS} ${FLEX_lexer_OUTPUTS})
 target_link_libraries(compile fl y m)

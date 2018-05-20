@@ -7,28 +7,6 @@
 
 #include <fstream>
 
-template <typename T>
-class Singleton
-{
-public:
-    virtual ~Singleton () = default;
-    static T* getInstance ()
-    {
-        if (!singletonInstance)
-        {
-            singletonInstance = new T ();
-        }
-        return singletonInstance;
-    }
-protected:
-    Singleton () = default;
-    Singleton(Singleton const&) = delete;
-    Singleton& operator= (Singleton const&) = delete;
-    static T* singletonInstance;
-};
-
-template <typename T>
-T* Singleton<T>::singletonInstance;
 
 class WriteAdapter {
 private:
