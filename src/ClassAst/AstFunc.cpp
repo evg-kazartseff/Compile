@@ -17,7 +17,7 @@ void AST::CallFuncAST::Dfs()
 
 std::string AST::ArgListAST::Generate_code()
 {
-    return "\tpushl ";
+//    return "\tpushl ";
 }
 
 void AST::ArgListAST::Dfs()
@@ -26,8 +26,7 @@ void AST::ArgListAST::Dfs()
         this->Next->Dfs();
 
     if (this->Attr) {
-        std::string str = Generate_code() + this->Attr->Generate_code();
-        this->write_adapter->Print(str + "\n");
+        this->Attr->Dfs();
     }
 }
 
@@ -43,7 +42,7 @@ void AST::ArgsAST::Dfs()
 
 
 std::string AST::StringAST::Generate_code() {
-    return "$" + this->Str;
+    return "\tpushl $" + this->Str + "\n";
 }
 
 void AST::StringAST::Dfs() {
