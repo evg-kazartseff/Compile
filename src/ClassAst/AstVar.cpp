@@ -35,13 +35,18 @@ std::string AST::VariableExprAST::Generate_code()
 
 std::string AST::VariableUndefAST::Generate_code()
 {
-    return std::__cxx11::string();
+    int size = 4; //this->Type == INT ? 4 : 8;
+    stack += size;
+    hash_table->add_addr(this->Name, stack);
+    std::string code = "\tsubl " + std::to_string(size) + ", %esp\n";
+    return code;
 }
 
 void AST::VariableUndefAST::Dfs()
 {
     std::stringstream str;
-    str << "UndefVar: " << this->Name.c_str() << std::endl;
+    std::cout << "Undefvar " << this->Name.c_str() << std::endl;
+    str << this->Generate_code();
     this->write_adapter->Print(str.str());
 }
 

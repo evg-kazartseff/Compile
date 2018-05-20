@@ -159,6 +159,8 @@ int main(int argc, char** argv)
 
     yyparse();
     ASM_GEN* AsmGen = new ASM_GEN(argv[2], ast);
+    //AsmVars->set_size_int = INT;
+    //AsmVars->set_size_double= DOUBLE;
     AsmGen->Generate();
     fclose(yyin);
     delete hash_table;
