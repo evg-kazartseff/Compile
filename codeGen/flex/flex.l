@@ -29,6 +29,12 @@ SIGN [-+]
     ch += yyleng;
 }
 
+\".*\" {
+    ch += yyleng;
+    yylval.str = strdup(yytext);
+    return STRING;
+}
+
 "return" {
     ch += yyleng;
     return RETURN;

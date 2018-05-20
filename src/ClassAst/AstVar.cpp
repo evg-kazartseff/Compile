@@ -1,9 +1,7 @@
 //
 // Created by direnol on 20.05.18.
 //
-
 #include "../../inc/Ast.h"
-
 
 std::string AST::IntNumberExprAST::Generate_code()
 {
@@ -56,6 +54,9 @@ void AST::VariableDefAST::Dfs()
 {
     std::stringstream str;
     VariableUndefAST::Dfs();
+    // new area
     this->Expr->Dfs();
+    // set result to var
+    // end area
     this->write_adapter->Print(str.str());
 }

@@ -11,7 +11,6 @@ std::string AST::VariableExprAST::Generate_code()
     return str;
 }
 
-
 void AST::VariableExprAST::Dfs()
 {
 //    std::cout << ' ' << this->Name << ' ';
@@ -32,7 +31,6 @@ void AST::BinaryExprAST::Dfs()
     this->RHS->Dfs();
     // result right
 }
-
 
 std::string AST::EvalAST::Generate_code()
 {

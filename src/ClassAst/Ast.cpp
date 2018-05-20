@@ -11,16 +11,6 @@ AST::BaseAST::BaseAST()
     this->hashTable = Singleton<HashTable>::getInstance();
 }
 
-std::string AST::CallFuncAST::Generate_code()
-{
-    return std::__cxx11::string();
-}
-
-void AST::CallFuncAST::Dfs()
-{
-
-}
-
 std::string AST::JumpAST::Generate_code()
 {
     return std::__cxx11::string();
@@ -122,32 +112,15 @@ void AST::LoopAST::Dfs()
     std::cout << "}\n";
 }
 
-std::string AST::ArgListAST::Generate_code()
-{
-    return std::__cxx11::string();
-}
-
-void AST::ArgListAST::Dfs()
-{
-
-}
-
-std::string AST::ArgsAST::Generate_code()
-{
-    return std::__cxx11::string();
-}
-
-void AST::ArgsAST::Dfs()
-{
-
-}
 
 std::string AST::ReturnAST::Generate_code()
 {
-    std::string str = "\n\tmovl " + this->Val->Generate_code() + ", %eax\n"
-                                                                 "\tmovl %ebp, %esp\n"
-                                                                 "\tpopl %ebp\n"
-                                                                 "\tret\n";
+    std::string str = "\n\tmovl " +
+                      this->Val->Generate_code() +
+                      ", %eax\n"
+                      "\tmovl %ebp, %esp\n"
+                      "\tpopl %ebp\n"
+                      "\tret\n";
     return str;
 }
 
@@ -155,3 +128,4 @@ void AST::ReturnAST::Dfs()
 {
     this->write_adapter->Print(Generate_code());
 }
+

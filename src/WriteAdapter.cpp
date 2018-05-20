@@ -10,7 +10,7 @@ void WriteAdapter::SetFile(const std::string& file) {
 }
 
 void WriteAdapter::Print(const std::string& str) {
-    std::cout << str;
+    // std::cout << str;
     if (this->file.is_open())
         this->file.write(str.c_str(), str.length());
 }

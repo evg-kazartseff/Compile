@@ -16,14 +16,19 @@ ASM_GEN::ASM_GEN(const std::string &filename, AST::Ast *ast)
 void ASM_GEN::Generate()
 {
     std::stringstream str;
-    str << "\t.data\n"
-           "fmtd:\t.string \"%d\"\n"
-           "fmtld:\t.string \"%ld\"\n"
-           "fmtf:\t.string \"%f\"\n"
-           "fmtlf:\t.string \"%lf\"\n"
-           "fmts:\t.string \" \"\n"
-           "fmtn:\t.string \"\\n\"\n"
-           "\n\t.text\n"
+    str << "\t.data\n";
+//           "fmtd:\t.string \"%d\"\n"
+//           "fmtld:\t.string \"%ld\"\n"
+//           "fmtf:\t.string \"%f\"\n"
+//           "fmtlf:\t.string \"%lf\"\n"
+//           "fmts:\t.string \" \"\n"
+//           "fmtn:\t.string \"\\n\"\n"
+    /* for (auto it : nameMap) {
+     *     str << it->first + ":\n\t.string \"" << it->second << "\"\n\t"
+     *         << it->first + "_size, . - " << it->first << " - 1\n";
+     * */
+
+    str << "\n\t.text\n"
            "\t.global main\n"
            "\t.type main, @function\n"
            "main:\n"
