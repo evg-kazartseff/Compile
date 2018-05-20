@@ -42,3 +42,15 @@ void AST::UnaryAST::Dfs()
     this->Operand->Dfs();
     std::cout << ")";
 }
+
+std::string AST::LogicExprAST::Generate_code()
+{
+    return std::__cxx11::string();
+}
+
+void AST::LogicExprAST::Dfs()
+{
+    std::cout << this->Op << " ";
+    this->LHS->Dfs();
+    this->RHS->Dfs();
+}

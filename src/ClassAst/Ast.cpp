@@ -48,18 +48,6 @@ void AST::IfAST::Dfs()
     if (this->Else) this->Else->Dfs();
 }
 
-std::string AST::LogicExprAST::Generate_code()
-{
-    return std::__cxx11::string();
-}
-
-void AST::LogicExprAST::Dfs()
-{
-    std::cout << this->Op << " ";
-    this->LHS->Dfs();
-    this->RHS->Dfs();
-}
-
 std::string AST::ElseAST::Generate_code()
 {
     return std::__cxx11::string();
@@ -77,7 +65,6 @@ std::string AST::LoopAST::Generate_code()
     return std::__cxx11::string();
 }
 
-
 void AST::LoopAST::Dfs()
 {
     std::cout << "for (";
@@ -90,7 +77,6 @@ void AST::LoopAST::Dfs()
     this->Body->Dfs();
     std::cout << "}\n";
 }
-
 
 std::string AST::ReturnAST::Generate_code()
 {
