@@ -116,3 +116,7 @@ void AST::Ast::AddToLink(BaseAST *childe)
         this->tree = new LinkAST(); /// используем синглтон для однократной инициализации
     this->tree->AddChild(childe);
 }
+
+AST::BaseAST* AST::Ast::GetString(const std::string& str, const std::string &format) {
+    return new StringAST(str, format);
+}

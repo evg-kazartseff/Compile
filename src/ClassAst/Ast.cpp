@@ -128,4 +128,3 @@ void AST::ReturnAST::Dfs()
 {
     this->write_adapter->Print(Generate_code());
 }
-

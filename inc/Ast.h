@@ -253,6 +253,16 @@ namespace AST
         void Dfs() final;
     };
 
+    class StringAST : public BaseAST {
+        std::string Str;
+        std::string Format;
+    public:
+        explicit StringAST(std::string str, std::string format)
+                : Str(std::move(str)), Format(std::move(format)) {}
+        std::string Generate_code() final;
+        void Dfs() final;
+    };
+
     class Ast {
         LinkAST *tree;
     public:
@@ -278,6 +288,7 @@ namespace AST
         BaseAST* GetLoop(BaseAST *def, BaseAST *If, BaseAST *inc, BaseAST *body);
         BaseAST* GetUnary(char operation, BaseAST* id);
         BaseAST* GetReturn(BaseAST* val);
+        AST::BaseAST* GetString(const std::string& str, const std::string& format);
         void AddToLink(BaseAST *childe);
         void DFS();
     };

@@ -35,3 +35,12 @@ void AST::ArgsAST::Dfs()
 {
     if (this->LList) this->LList->Dfs();
 }
+
+
+std::string AST::StringAST::Generate_code() {
+    return std::__cxx11::string();
+}
+
+void AST::StringAST::Dfs() {
+
+}
