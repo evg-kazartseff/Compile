@@ -23,10 +23,10 @@ void ASM_GEN::Generate()
 //           "fmtlf:\t.string \"%lf\"\n"
 //           "fmts:\t.string \" \"\n"
 //           "fmtn:\t.string \"\\n\"\n"
-//     for (auto it : Singleton<FormatAcum>::getInstance()->GetAcum()) {
-//         str << it.first + ":\n\t.string \"" << it.second << "\"\n\t"
-//             << it.first + "_size, . - " << it.first << " - 1\n";
-//     }
+     for (auto it : Singleton<FormatAcum>::getInstance()->GetAcum()) {
+         str << it.first + ":\n\t.string " << it.second << "\n\t"
+             ".set "<< it.first + "_size, . - " << it.first << " - 1\n";
+     }
 
     str << "\n\t.text\n"
            "\t.global main\n"
