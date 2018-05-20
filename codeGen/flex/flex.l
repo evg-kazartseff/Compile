@@ -13,7 +13,7 @@ LETTER[a-zA-Z]
 DELIM[();{},:]
 WS[ \t]
 ID ("_"|{LETTER})("_"|{LETTER}|{DIGIT})*
-OP [-+*/<>|?!%=~]
+OP [-+*/<>|?!%=~&]
 SIGN [-+]
 
 %%

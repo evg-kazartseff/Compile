@@ -26,9 +26,8 @@ void AST::ArgListAST::Dfs()
         this->Next->Dfs();
 
     if (this->Attr) {
-        this->write_adapter->Print(Generate_code());
-        this->Attr->Dfs();
-        this->write_adapter->Print("\n");
+        std::string str = Generate_code() + this->Attr->Generate_code();
+        this->write_adapter->Print(str + "\n");
     }
 }
 

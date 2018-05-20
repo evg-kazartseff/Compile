@@ -3,6 +3,25 @@
 //
 #include "../../inc/Ast.h"
 
+std::string AST::VariableExprAST::Generate_code()
+{
+    int addr = hashTable->getAddr(this->Name);
+    std::string str = "-" + std::to_string(addr) + "(%ebp)";
+    if (this->Is_addr) {
+        std::string eval_addr = "\tleal " + str + ", %eax\n";
+        this->write_adapter->Print(eval_addr);
+        str = "%eax";
+    }
+
+    return str;
+}
+
+void AST::VariableExprAST::Dfs()
+{
+//    std::cout << ' ' << this->Name << ' ';
+    this->write_adapter->Print(this->Generate_code());
+}
+
 std::string AST::IntNumberExprAST::Generate_code()
 {
     std::string str = "$" + std::to_string(Val);

@@ -1,5 +1,5 @@
 int a;
 int b;
-return 0;
-printf(a,b);
+scanf("%d", &a);
+printf("%X %d\n", a, b);
 return 2;

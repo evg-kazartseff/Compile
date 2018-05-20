@@ -4,24 +4,6 @@
 
 #include "../../inc/Ast.h"
 
-std::string AST::VariableExprAST::Generate_code()
-{
-    if (this->Is_addr) {
-
-    }
-    else {
-        int addr = hashTable->getAddr(this->Name);
-        std::string str = "-" + std::to_string(addr) + "(%ebp)";
-        return str;
-    }
-}
-
-void AST::VariableExprAST::Dfs()
-{
-//    std::cout << ' ' << this->Name << ' ';
-    this->write_adapter->Print(this->Generate_code());
-}
-
 std::string AST::BinaryExprAST::Generate_code()
 {
     // set result
