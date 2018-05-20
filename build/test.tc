@@ -1,3 +1,4 @@
-int a;
+int a = 2;
 int b;
-int var = 1 + 2;
+int var = 1 + b;
+double aa;

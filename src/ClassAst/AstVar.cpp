@@ -35,7 +35,7 @@ std::string AST::VariableUndefAST::Generate_code()
     int size = this->Type == this->asmVars->getIntType() ? 4 : 8;
     this->asmVars->IncStack(size);
     this->hashTable->setAddr(this->Name, this->asmVars->getStack());
-    std::string code = "\tsubl " + std::to_string(this->asmVars->getStack()) + ", %esp\n";
+    std::string code = "\tsubl $" + std::to_string(size) + ", %esp\n";
     return code;
 }
 

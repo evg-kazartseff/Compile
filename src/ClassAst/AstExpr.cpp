@@ -6,14 +6,16 @@
 
 std::string AST::VariableExprAST::Generate_code()
 {
-    return std::__cxx11::string();
+    int addr = hashTable->getAddr(this->Name);
+    std::string str = "-" + std::to_string(addr) + "(%ebp)";
+    return str;
 }
 
 
 void AST::VariableExprAST::Dfs()
 {
-    printf(" %s ", this->Name.c_str());
-    ///this->Generate_code();
+//    std::cout << ' ' << this->Name << ' ';
+    this->write_adapter->Print(this->Generate_code());
 }
 
 std::string AST::BinaryExprAST::Generate_code()
@@ -39,9 +41,9 @@ std::string AST::EvalAST::Generate_code()
 
 void AST::EvalAST::Dfs()
 {
-    printf("%s =", this->Id.c_str());
+    std::cout << this->Id << " = ";
     this->Expr->Dfs();
-    puts("");
+    std::cout << std::endl;
 }
 
 std::string AST::UnaryAST::Generate_code()

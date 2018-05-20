@@ -56,7 +56,7 @@ ATOM:   DEFVAR { $$ = $1; }
         | CALL { $$ = $1; }
         | RET { $$ = $1; }
 
-RET: RETURN VAR ';' { }
+RET: RETURN VAR ';' { $$ = ast->GetReturn($2); }
 
 CALL:   ID '(' ARGS ')' ';' { $$ = ast->GetCallFunc($1, ast->GetArgs($3));}
 

@@ -34,7 +34,8 @@ void ASM_GEN::Generate()
     this->ast->DFS();
 
     str.str("");
-    str << "\tmovl %ebp, %esp\n"
+    str << "\n\tmovl $0, %eax\n"
+           "\tmovl %ebp, %esp\n"
            "\tpopl %ebp\n"
            "\tret\n";
     this->writeAdapter->Print(str.str());

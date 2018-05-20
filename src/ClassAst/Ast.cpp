@@ -4,7 +4,8 @@
 
 #include "../../inc/Ast.h"
 
-AST::BaseAST::BaseAST() {
+AST::BaseAST::BaseAST()
+{
     this->write_adapter = Singleton<WriteAdapter>::getInstance();
     this->asmVars = Singleton<AsmVars>::getInstance();
     this->hashTable = Singleton<HashTable>::getInstance();
@@ -143,10 +144,14 @@ void AST::ArgsAST::Dfs()
 
 std::string AST::ReturnAST::Generate_code()
 {
-    return std::__cxx11::string();
+    std::string str = "\n\tmovl " + this->Val->Generate_code() + ", %eax\n"
+                                                                 "\tmovl %ebp, %esp\n"
+                                                                 "\tpopl %ebp\n"
+                                                                 "\tret\n";
+    return str;
 }
 
 void AST::ReturnAST::Dfs()
 {
-
+    this->write_adapter->Print(Generate_code());
 }
