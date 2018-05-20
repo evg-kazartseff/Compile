@@ -16,19 +16,26 @@ ASM_GEN::ASM_GEN(const std::string &filename, AST::Ast *ast)
 void ASM_GEN::Generate()
 {
     std::stringstream str;
-    str << "\t.file pipiska" << std::endl;
-    // set variable;
-    str << "\t.text\n"
-                 "\t.global main\n"
-                 "\ttype main, @function\n"
-                 "main:\n "
-                 ".LFB0:\n" << std::endl;
+    str << "\t.data\n"
+           "fmtd:\t.string \"%d\"\n"
+           "fmtld:\t.string \"%ld\"\n"
+           "fmtf:\t.string \"%f\"\n"
+           "fmtlf:\t.string \"%lf\"\n"
+           "fmts:\t.string \" \"\n"
+           "fmtn:\t.string \"\\n\"\n"
+           "\n\t.text\n"
+           "\t.global main\n"
+           "\t.type main, @function\n"
+           "main:\n"
+           "\tpushl %ebp\n"
+           "\tmovl %esp, %ebp\n\n";
+
     this->writeAdapter->Print(str.str());
     this->ast->DFS();
+
     str.str("");
-    str << "\n.LFE0:\n"
-                 "\t.size main, .-main\n"
-                 "\t.ident \"Tutanh\"\n"
-                 "\t.section .note.GNU-stack,\"\",@progbits" << std::endl;
+    str << "\tmovl %ebp, %esp\n"
+           "\tpopl %ebp\n"
+           "\tret\n";
     this->writeAdapter->Print(str.str());
 }
