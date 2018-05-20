@@ -44,9 +44,9 @@ void AST::ArgsAST::Dfs()
 
 
 std::string AST::StringAST::Generate_code() {
-    return std::__cxx11::string();
+    return "$" + this->Str;
 }
 
 void AST::StringAST::Dfs() {
-
+    this->write_adapter->Print(this->Generate_code());
 }

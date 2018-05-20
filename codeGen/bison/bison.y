@@ -65,7 +65,10 @@ ARGS:   ARG { $$ = ast->GetArgList(nullptr, $1); }
         | ARG ',' ARGS { $$ = ast->GetArgList($3, $1); }
 
 ARG: VAR { $$ = $1; }
-        | STRING { /*$$ = ast->GetString(genName, $1)*/ $$ = nullptr;}
+        | STRING {      std::string str_name = Singleton<StringNameGenerator>::getInstance()->Generate();
+                        Singleton<FormatAcum>::getInstance()->Add(str_name, $1);
+                        $$ = ast->GetString(str_name, $1);
+                 }
 
 DEFVAR: TYPE ID '=' EXPR ';' { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableDef($1, $2, $4); }
 

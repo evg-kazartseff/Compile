@@ -12,3 +12,11 @@ StringNameGenerator::StringNameGenerator() {
 std::string StringNameGenerator::Generate() {
     return this->prefix + std::to_string(this->inc++);
 }
+
+void FormatAcum::Add(std::string str_name, std::string format) {
+    this->Acum.push_back({str_name, format});
+}
+
+std::vector<std::pair<std::string, std::string>> FormatAcum::GetAcum() {
+    return this->Acum;
+}
