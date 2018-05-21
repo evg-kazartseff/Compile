@@ -14,16 +14,18 @@ LETTER[a-zA-Z]
 DELIM[();{},:]
 WS[ \t]
 ID ("_"|{LETTER})("_"|{LETTER}|{DIGIT})*
-OP [-+*/<>|?!%=~&]
+OP [-+*/|%&]
+LOP [<>=!~]
 SIGN [-+]
 
 %%
-"\n" {
-    ch = 1;
-}
 
 "/*".*"*/" {
     ch += yyleng;
+}
+
+"\n" {
+    ch = 1;
 }
 
 "//"(.|[ \t])*\n {
@@ -35,6 +37,14 @@ SIGN [-+]
     yylval.str = strdup(yytext);
     return STRING;
 }
+
+{OP}"=" {
+    ch += yyleng;
+    yylval.type = *yytext;
+    hash_table->addChildScope();
+    return OPME;
+}
+
 
 "++" {
     ch += yyleng;
@@ -139,6 +149,11 @@ SIGN [-+]
 }
 
 {OP} {
+    ch += yyleng;
+    return *yytext;
+}
+
+{LOP} {
     ch += yyleng;
     return *yytext;
 }

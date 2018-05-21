@@ -23,7 +23,7 @@
 %token INT VOID STRING FUNCTION
 %token IF ELSE PRINT FOR LEX_ERROR
 %token ID CONST_INT CONST_DOUBLE
-%token JUMP MARK_TOK RETURN
+%token JUMP MARK_TOK RETURN OPME
 %token DEC INC EQ LEQ GEQ NEQ AND
 
 
@@ -35,7 +35,7 @@
 }
 
 %type <str> ID CONST_INT ID_REC STRING ID_LOC
-%type <type> INT VOID FUNCTION FUNC_T
+%type <type> INT VOID FUNCTION FUNC_T OPME
 %type <expr> EXPR2 EXPR1 EXPR0 EXPR CONST DEFVAR UNDEFVAR VAR EVAL
 %type <expr> MARK GOTO ATOM CALL ARGS ARG RET
 %type <expr> ANYVAR LOOP ATOMLLIST IFELSE ELSEIF BODY
@@ -85,6 +85,7 @@ ARG: EXPR { $$ = $1; }
                         Singleton<FormatAcum>::getInstance()->Add(str_name, $1);
                         $$ = ast->GetString(str_name, $1);
                  }
+        | EVAL { reinterpret_cast<AST::EvalAST*>($1)->SetNeed(); $$ = $1; }
 
 DEFVAR: INT ID_LOC '=' EXPR  { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableDef($1, $2, $4); }
 
@@ -98,7 +99,7 @@ LOOP:   FOR '(' ANYVAR ';' EXPR ';'  LEVAL ')' ATOM { $$ = ast->GetLoop($3, $5, 
         | FOR '(' ANYVAR ';' EXPR ';' LEVAL ')' '{' BODY '}' { $$ = ast->GetLoop($3, $5, $7, $10); }
 
 LEVAL:  EVAL { $$ = $1; }
-        | EXPR { $$ =$1; }
+        | EXPR { $$ = $1; }
 
 MARK:   ID ':' { if (hash_table->LookupEntry($1) == nullptr) {
                     hash_table->CreateEntry(MARK_TOK, $1); $$ = ast->GetMark($1);
@@ -113,7 +114,10 @@ IFELSE: IF '(' EXPR ')' ATOM { $$ = ast->GetIf($3, $5, nullptr); }
 ELSEIF: ELSE '{' BODY '}' { $$ = ast->GetElse($3); }
         | ELSE ATOM  { $$ = ast->GetElse($2); }
 
-EVAL: ID '=' EXPR   { if ($1) $$ = ast->GetEval($1, $3); else $$ = nullptr; }
+EVAL:   ID_REC '=' EXPR   { if ($1) $$ = ast->GetEval($1, $3); else $$ = nullptr; }
+        | ID_REC OPME EXPR { if ($1) $$ = ast->GetEval($1,
+                ast->GetBinaryExpr($2, ast->GetVariableExpr(std::string($1)), $3));
+            else $$ = nullptr; }
 
 EXPR:   EXPR0 { $$ = $1; }
         | EXPR0 '&' EXPR { $$ = ast->GetBinaryExpr('&', $1, $3); }
@@ -168,7 +172,7 @@ void yyerror(const char *errmsg)
 
 void yyerror(const char *errmsg, const char *msg)
 {
-    fprintf(stderr, "Position (%d, %d): [%s] %s\n", yylineno, ch, msg, errmsg);
+    fprintf(stderr, ">Position (%d, %d): [%s] %s\n", yylineno, ch, msg, errmsg);
     valid = false;
 }
 

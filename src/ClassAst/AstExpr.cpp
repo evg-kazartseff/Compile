@@ -55,6 +55,10 @@ std::string AST::EvalAST::Generate_code()
     std::string str = "\tpopl %eax\n"
                       "\tmovl %eax, " + pos;
     asmVars->DecStack(INT_SIZE);
+    if (this->need_ret) {
+        str += "\tpushl %eax\n";
+        asmVars->IncStack(INT_SIZE);
+    }
     return str;
 }
 
@@ -62,6 +66,11 @@ void AST::EvalAST::Dfs()
 {
     this->Expr->Dfs();
     write_adapter->Print(Generate_code());
+}
+
+void AST::EvalAST::SetNeed()
+{
+    this->need_ret = true;
 }
 
 std::string AST::UnaryAST::Generate_code()

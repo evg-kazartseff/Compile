@@ -118,11 +118,15 @@ namespace AST
     public:
         std::string Id;
         BaseAST *Expr;
+        bool need_ret;
     public:
-        EvalAST(std::string id, BaseAST *expr)
-                : Id(std::move(id)), Expr(expr) {}
+        EvalAST(std::string id, BaseAST *expr, bool need = false)
+                : Id(std::move(id)), Expr(expr), need_ret(need)
+        {}
         std::string Generate_code() final;
         void Dfs() final;
+
+        void SetNeed();
     };
 
     class JumpAST : public BaseAST {
