@@ -5,7 +5,14 @@ function int sqr;
 
 int a = 2;
 int b = 4;
+int c;
+int r;
 
 if ((a < b) & (b < 3)) {
     printf("ll\n");
+} else {
+    int kl;
+    kl = 15;
+    int pl = 15 + kl;
+    printf("%d\n", pl);
 }
