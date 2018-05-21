@@ -43,6 +43,7 @@ SIGN [-+]
 
 "if" {
     ch += yyleng;
+    hash_table->addChildScope();
     return IF;
 }
 

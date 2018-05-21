@@ -78,7 +78,7 @@ std::string AST::LogicExprAST::Generate_code()
 {
     std::string str = "\tpopl %ebx\n"
                       "\tpopl %eax\n"
-                      "\tcmp %eax, %ebx\n";
+                      "\tcmpl %eax, %ebx\n";
 
     std::string mtrue = Singleton<MarkGenerator>::getInstance()->Generate();
     std::string mend = Singleton<MarkGenerator>::getInstance()->Generate();
@@ -103,7 +103,7 @@ std::string AST::LogicExprAST::Generate_code()
            "\tjmp " + mend + "\n";
 
     str += mtrue + ":\n"; // true
-    str + "\tpushl $1\n" + mend + ":\n";
+    str += "\tpushl $1\n" + mend + ":\n";
 
     asmVars->IncStack(INT_SIZE);
     return str;

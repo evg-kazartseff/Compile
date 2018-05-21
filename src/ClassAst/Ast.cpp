@@ -53,10 +53,11 @@ void AST::LoopAST::Dfs()
     if (Def) this->Def->Dfs();
     this->write_adapter->Print(start_loop + ":\n");
 
-    this->If->Dfs(); // TODO do it
+    this->If->Dfs();
     this->write_adapter->Print("\tpopl %eax\n");
-    this->write_adapter->Print("cmpl %eax, $1\n");
-    this->write_adapter->Print("\tjnz " + end_loop + "\n");
+    this->write_adapter->Print("\tmovl $1, %ebx\n");
+    this->write_adapter->Print("\tcmpl %eax, %ebx\n");
+    this->write_adapter->Print("\tjz " + end_loop + "\n");
     this->asmVars->DecStack(INT_SIZE);
 
     this->Body->Dfs();
@@ -65,9 +66,9 @@ void AST::LoopAST::Dfs()
     this->write_adapter->Print("\tjmp " + start_loop + "\n");
     this->write_adapter->Print(end_loop + ":\n");
 
-    this->write_adapter->Print("\tmovl %ecx, %esp\n");
-    this->write_adapter->Print("\tpopl %ecx\n");
-    this->asmVars->setStack(stack);
+    int new_stack = asmVars->getStack();
+    this->write_adapter->Print("\taddl $" + std::to_string(new_stack - stack) + ", %esp\n");
+    this->asmVars->DecStack(new_stack - stack);
 
     hashTable->deleteThisScope();
 }

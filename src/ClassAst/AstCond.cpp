@@ -37,14 +37,11 @@ void AST::IfAST::Dfs()
     std::string end_true = Singleton<MarkGenerator>::getInstance()->Generate();
     int stack = this->asmVars->getStack();
 
-    this->write_adapter->Print("\tpushl %ecx\n");
-    asmVars->IncStack(INT_SIZE);
-    this->write_adapter->Print("\tmovl %esp, %ecx\n");
-
     this->Statement->Dfs(); // a > 2 + 3 ==> reslut ==> stack (1/0)
     this->write_adapter->Print("\tpopl %eax\n");
-    this->write_adapter->Print("cmpl %eax, $1\n");
-    this->write_adapter->Print("\tjnz " + end_true + "\n");
+    this->write_adapter->Print("\tmovl $1, %ebx\n");
+    this->write_adapter->Print("\tcmpl %eax, %ebx\n");
+    this->write_adapter->Print("\tjz " + end_true + "\n");
     this->asmVars->DecStack(INT_SIZE);
 
     this->Body->Dfs();
@@ -54,9 +51,9 @@ void AST::IfAST::Dfs()
         this->Else->Dfs();
     }
 
-    this->write_adapter->Print("\tmovl %ecx, %esp\n");
-    this->write_adapter->Print("\tpopl %ecx\n");
-    this->asmVars->setStack(stack);
+    int new_stack = asmVars->getStack();
+    this->write_adapter->Print("\taddl $" + std::to_string(new_stack - stack) + ", %esp\n");
+    this->asmVars->DecStack(new_stack - stack);
 
     hashTable->deleteThisScope();
 }

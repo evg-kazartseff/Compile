@@ -17,6 +17,7 @@
     extern HashTable* hash_table;
     extern int yylex();
     AST::Ast* ast;
+    bool valid = true;
 %}
 
 %token INT VOID STRING FUNCTION
@@ -35,7 +36,7 @@
 %type <type> INT VOID FUNCTION FUNC_T
 %type <expr> EXPR2 EXPR1 EXPR0 EXPR CONST DEFVAR UNDEFVAR VAR EVAL
 %type <expr> MARK GOTO ATOM CALL ARGS ARG RET
-%type <expr> ANYVAR LOOP ATOMLLIST IFELSE ELSEIF BODY LEVAL
+%type <expr> ANYVAR LOOP ATOMLLIST IFELSE ELSEIF BODY
 %type <expr> PROTO
 
 %%
@@ -47,25 +48,25 @@ BODY: ATOMLLIST { $$ = ast->GetBody($1); }
 ATOMLLIST:   ATOM { $$ = ast->GetBodyLList(nullptr, $1); }
         | ATOM BODY { $$ = ast->GetBodyLList($2, $1); }
 
-ATOM:   DEFVAR { $$ = $1; }
-        | UNDEFVAR { $$ = $1; }
+ATOM:   DEFVAR ';' { $$ = $1; }
+        | UNDEFVAR ';' { $$ = $1; }
         | LOOP { $$ = $1; hash_table->gotoParent(); }
-        | GOTO { $$ = $1; }
+        | GOTO ';' { $$ = $1; }
         | MARK { $$ = $1; }
         | IFELSE { $$ = $1; hash_table->gotoParent(); }
-        | EVAL { $$ = $1; }
-        | CALL { $$ = $1; }
-        | RET { $$ = $1; }
-        | PROTO { $$ = $1; }
+        | EVAL ';' { $$ = $1; }
+        | CALL ';' { $$ = $1; }
+        | RET ';' { $$ = $1; }
+        | PROTO ';' { $$ = $1; }
 
-PROTO:  FUNCTION FUNC_T ID ';' { hash_table->CreateEntry($2, $3); $$ = ast->GetPrototypeFunc($2, $3); }
+PROTO:  FUNCTION FUNC_T ID { hash_table->CreateEntry($2, $3); $$ = ast->GetPrototypeFunc($2, $3); }
 
 FUNC_T: INT { $$ = $1; }
         | VOID { $$ = $1; }
 
-RET: RETURN VAR ';' { $$ = ast->GetReturn($2); }
+RET: RETURN VAR  { $$ = ast->GetReturn($2); }
 
-CALL:   ID_REC  '(' ARGS ')'  ';' { $$ = ast->GetCallFunc($1, ast->GetArgs($3));}
+CALL:   ID_REC  '(' ARGS ')' { $$ = ast->GetCallFunc($1, ast->GetArgs($3));}
 
 ARGS:   ARG { $$ = ast->GetArgList(nullptr, $1); }
         | ARG ',' ARGS { $$ = ast->GetArgList($3, $1); }
@@ -77,23 +78,22 @@ ARG: EXPR { $$ = $1; }
                         $$ = ast->GetString(str_name, $1);
                  }
 
-DEFVAR: INT ID_LOC '=' EXPR ';' { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableDef($1, $2, $4); }
+DEFVAR: INT ID_LOC '=' EXPR  { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableDef($1, $2, $4); }
 
-UNDEFVAR: INT ID_LOC ';' { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableUndef($1, $2); }
+UNDEFVAR: INT ID_LOC  { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableUndef($1, $2); }
 
 ANYVAR: DEFVAR { $$ = $1; }
         | EVAL { $$ = $1; }
         | ';' { $$ = nullptr; }
 
-LOOP:   FOR '(' ANYVAR  EXPR ';'  LEVAL ')' ATOM { $$ = ast->GetLoop($3, $4, $6, $8); }
-        | FOR '(' ANYVAR  EXPR ';' LEVAL ')' '{' BODY '}' { $$ = ast->GetLoop($3, $4, $6, $9); }
-LEVAL:  ID '=' EXPR { $$ = ast->GetEval($1, $3); }
+LOOP:   FOR '(' ANYVAR ';' EXPR ';'  EVAL ')' ATOM { $$ = ast->GetLoop($3, $5, $7, $9); }
+        | FOR '(' ANYVAR ';' EXPR ';' EVAL ')' '{' BODY '}' { $$ = ast->GetLoop($3, $5, $7, $10); }
 
 MARK:   ID ':' { if (hash_table->LookupEntry($1) == nullptr) {
                     hash_table->CreateEntry(MARK_TOK, $1); $$ = ast->GetMark($1);
                  } else { yyerror("Identificator already created", $1); $$ = nullptr; } }
 
-GOTO:   JUMP ID ';' { if ($2) { $$ = ast->GetJump($2); } else { $$ = nullptr; } }
+GOTO:   JUMP ID  { if ($2) { $$ = ast->GetJump($2); } else { $$ = nullptr; } }
 
 IFELSE: IF '(' EXPR ')' ATOM { $$ = ast->GetIf($3, $5, nullptr); }
         | IF '(' EXPR ')' '{' BODY '}' { $$ = ast->GetIf($3, $6, nullptr); }
@@ -102,7 +102,7 @@ IFELSE: IF '(' EXPR ')' ATOM { $$ = ast->GetIf($3, $5, nullptr); }
 ELSEIF: ELSE '{' BODY '}' { $$ = ast->GetElse($3); }
         | ELSE ATOM  { $$ = ast->GetElse($2); }
 
-EVAL: ID '=' EXPR ';'  { if ($1) $$ = ast->GetEval($1, $3); else $$ = nullptr; }
+EVAL: ID '=' EXPR   { if ($1) $$ = ast->GetEval($1, $3); else $$ = nullptr; }
 
 EXPR:   EXPR0 { $$ = $1; }
         | EXPR0 '&' EXPR { $$ = ast->GetBinaryExpr('&', $1, $3); }
@@ -125,6 +125,7 @@ EXPR2:  VAR { $$ = $1; }
         | '(' EXPR ')' { $$ = $2;}
         | '~' EXPR { $$ = ast->GetUnary('~', $2); }
         | '!' EXPR { $$ = ast->GetUnary('!', $2); }
+        | CALL { $$ = $1; }
 
 VAR:    CONST { $$ = $1; }
         | ID_REC { $$ = ast->GetVariableExpr(std::string($1)); }
@@ -140,11 +141,13 @@ CONST:  CONST_INT { $$ = ast->GetIntNumberExpr(atoi($1)); }
 void yyerror(const char *errmsg)
 {
     fprintf(stderr, "Position (%d, %d): [%s] %s\n", yylineno, ch, yytext, errmsg);
+    valid = false;
 }
 
 void yyerror(const char *errmsg, const char *msg)
 {
     fprintf(stderr, "Position (%d, %d): [%s] %s\n", yylineno, ch, msg, errmsg);
+    valid = false;
 }
 
 int main(int argc, char** argv)
@@ -168,9 +171,9 @@ int main(int argc, char** argv)
 
     yyparse();
 
-
     ASM_GEN* AsmGen = new ASM_GEN(argv[2], ast);
-    AsmGen->Generate();
+    if (valid)
+        AsmGen->Generate();
 
     fclose(yyin);
     delete hash_table;
