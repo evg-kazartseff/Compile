@@ -102,7 +102,13 @@ size_t HashTable::GetHash(const char *key)
 HashNode *HashTable::LookupEntry(const std::string &value)
 {
     size_t hash = this->GetHash(value.c_str());
-    return this->table[hash].LookupValueNode(value);
+    HashNode* node = this->table[hash].LookupValueNode(value);
+    if (!node) {
+        HashTable* parent = this->getParent();
+        if (parent)
+           node = parent->LookupEntry(value);
+    }
+    return node;
 }
 
 void HashTable::DeleteEntry(const std::string &value)
