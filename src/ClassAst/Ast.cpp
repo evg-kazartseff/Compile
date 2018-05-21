@@ -46,10 +46,6 @@ void AST::LoopAST::Dfs()
     std::string end_loop = Singleton<MarkGenerator>::getInstance()->Generate();
     int stack = this->asmVars->getStack();
 
-    this->write_adapter->Print("\tpushl %ecx\n");
-    asmVars->IncStack(INT_SIZE);
-    this->write_adapter->Print("\tmovl %esp, %ecx\n");
-
     if (Def) this->Def->Dfs();
     this->write_adapter->Print(start_loop + ":\n");
 

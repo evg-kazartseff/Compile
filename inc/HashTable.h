@@ -6,6 +6,7 @@
 #define LAB2_HASHTABLE_H
 
 #include <string>
+#include <iostream>
 #include <queue>
 #include <utility>
 

@@ -36,9 +36,40 @@ SIGN [-+]
     return STRING;
 }
 
-"return" {
+"++" {
     ch += yyleng;
-    return RETURN;
+    return INC;
+}
+
+"--" {
+    ch += yyleng;
+    return DEC;
+}
+
+"==" {
+    ch += yyleng;
+    return EQ;
+}
+
+"!=" {
+    ch += yyleng;
+    return NEQ;
+}
+
+"&&" {
+    ch += yyleng;
+    return AND;
+}
+
+
+">=" {
+    ch += yyleng;
+    return GEQ;
+}
+
+"<=" {
+    ch += yyleng;
+    return LEQ;
 }
 
 "if" {

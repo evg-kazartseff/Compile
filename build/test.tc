@@ -1,18 +1,14 @@
 function void printf;
 function int sum;
 function int sqr;
+// TODO  break, continue
+int kl;
+kl = 15;
 
+if ((1 && 0) + (1 && 1)) {
+    printf("%d\n", kl++);
+    printf("%d\n\n", kl);
 
-int a = 2;
-int b = 4;
-int c;
-int r;
-
-if ((a < b) & (b < 3)) {
-    printf("ll\n");
-} else {
-    int kl;
-    kl = 15;
-    int pl = 15 + kl;
-    printf("%d\n", pl);
+    printf("%d\n", ++kl);
+    printf("%d\n", kl);
 }

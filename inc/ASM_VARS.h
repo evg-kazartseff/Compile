@@ -9,9 +9,12 @@
 #define INT_SIZE 4
 
 enum {
-    LEQ = -66,
-    GEQ,
-    DEC
+    oLEQ = -66,
+    oGEQ,
+    oDEC,
+    oIDEC,
+    oINC,
+    oIINC,
 };
 
 typedef struct {

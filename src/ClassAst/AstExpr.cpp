@@ -2,6 +2,7 @@
 // Created by direnol on 20.05.18.
 //
 #include "../../inc/Ast.h"
+//#include "../../inc/parser.h"
 
 std::string AST::BinaryExprAST::Generate_code()
 {
@@ -74,12 +75,22 @@ std::string AST::UnaryAST::Generate_code()
         case '-':
             str += "\tnegl %eax\n";
             break;
-        case '+':
+        case oINC:
+            str += "\tpushl (%eax)\n"
+                   "\tincl (%eax)\n"
+                   "\tpopl %eax\n";
+            break;
+        case oIINC:
             str += "\tincl (%eax)\n"
                    "\tmovl (%eax), %ebx\n"
                    "\tmovl %ebx, %eax\n";
             break;
-        case DEC:
+        case oDEC:
+            str += "\tpushl (%eax)\n"
+                   "\tdecl (%eax)\n"
+                   "\tpopl %eax\n";
+            break;
+        case oIDEC:
             str += "\tdecl (%eax)\n"
                    "\tmovl (%eax), %ebx\n"
                    "\tmovl %ebx, %eax\n";
@@ -130,19 +141,27 @@ std::string AST::LogicExprAST::Generate_code()
         case '=':
             operation = "\tjne ";
             break;
-        case LEQ:
+        case oLEQ:
             operation = "\tjg ";
             break;
-        case GEQ:
+        case oGEQ:
             operation = "\tjs ";
             break;
         case '!':
             operation = "\tje ";
             break;
+        case '&':
+            write_adapter->Print("\tcmpl $0, %eax\n");
+            write_adapter->Print("\tje " + mfalse + "\n");
+            write_adapter->Print("\tpopl %eax\n");
+            write_adapter->Print("\tcmpl $0, %eax\n");
+            write_adapter->Print("\tje " + mfalse + "\n");
+            break;
         default:
             break;
     }
-    str += operation + mfalse + "\n";
+    if (this->Op != '&')
+        str += operation + mfalse + "\n";
     str += "\tpushl $1\n" // false
            "\tjmp " + mend + "\n";
 

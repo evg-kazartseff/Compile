@@ -2,8 +2,6 @@
 // Created by evgenii on 06.03.18.
 //
 
-#include <utility>
-#include <iostream>
 #include "../inc/HashTable.h"
 
 void HashEntry::AddValueNode(int type, std::string value)

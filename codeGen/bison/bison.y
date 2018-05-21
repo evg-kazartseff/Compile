@@ -24,6 +24,7 @@
 %token IF ELSE PRINT FOR LEX_ERROR
 %token ID CONST_INT CONST_DOUBLE
 %token JUMP MARK_TOK RETURN
+%token DEC INC EQ LEQ GEQ NEQ AND
 
 
 %union {
@@ -116,32 +117,35 @@ EVAL: ID '=' EXPR   { if ($1) $$ = ast->GetEval($1, $3); else $$ = nullptr; }
 
 EXPR:   EXPR0 { $$ = $1; }
         | EXPR0 '&' EXPR { $$ = ast->GetBinaryExpr('&', $1, $3); }
-        | EXPR0 '^' EXPR { $$ = ast->GetBinaryExpr( '^', $1, $3); }
-        | EXPR0 '|' EXPR { $$ = ast->GetBinaryExpr( '|', $1, $3); }
+        | EXPR0 '^' EXPR { $$ = ast->GetBinaryExpr('^', $1, $3); }
+        | EXPR0 '|' EXPR { $$ = ast->GetBinaryExpr('|', $1, $3); }
         | EXPR0 '<' EXPR { $$ = ast->GetLogicExpr('<', $1, $3); }
-        | EXPR0 '<' '=' EXPR { $$ = ast->GetLogicExpr(LEQ, $1, $4); }
-        | EXPR0 '>' '=' EXPR { $$ = ast->GetLogicExpr(GEQ, $1, $4); }
-        | EXPR0 '>' EXPR { $$ = ast->GetLogicExpr('<', $1, $3); }
-        | EXPR0 '=' '=' EXPR { $$ = ast->GetLogicExpr('=', $1, $4); }
-        | EXPR0 '!' '=' EXPR { $$ = ast->GetLogicExpr('!', $1, $4); }
+        | EXPR0 LEQ EXPR { $$ = ast->GetLogicExpr(oLEQ, $1, $3); }
+        | EXPR0 GEQ EXPR { $$ = ast->GetLogicExpr(oGEQ, $1, $3); }
+        | EXPR0 '>' EXPR { $$ = ast->GetLogicExpr('>', $1, $3); }
+        | EXPR0 EQ EXPR { $$ = ast->GetLogicExpr('=', $1, $3); }
+        | EXPR0 NEQ EXPR { $$ = ast->GetLogicExpr('!', $1, $3); }
 
 
 EXPR0:   EXPR1 { $$ = $1; }
-        | EXPR1 '+' EXPR0 { $$ = ast->GetBinaryExpr( '+', $1, $3); }
-        | EXPR1 '-' EXPR0 { $$ = ast->GetBinaryExpr( '-', $1, $3); }
+        | EXPR1 '+' EXPR0 { $$ = ast->GetBinaryExpr('+', $1, $3); }
+        | EXPR1 '-' EXPR0 { $$ = ast->GetBinaryExpr('-', $1, $3); }
 
 EXPR1:  EXPR2 { $$ = $1; }
-        | EXPR2 '*' EXPR1 { $$ = ast->GetBinaryExpr( '*', $1, $3); }
-        | EXPR2 '/' EXPR1 { $$ = ast->GetBinaryExpr( '/', $1, $3); }
-        | EXPR2 '%' EXPR1 { $$ = ast->GetBinaryExpr( '%', $1, $3); }
+        | EXPR2 '*' EXPR1 { $$ = ast->GetBinaryExpr('*', $1, $3); }
+        | EXPR2 '/' EXPR1 { $$ = ast->GetBinaryExpr('/', $1, $3); }
+        | EXPR2 '%' EXPR1 { $$ = ast->GetBinaryExpr('%', $1, $3); }
+        | EXPR2 AND EXPR1 { $$ = ast->GetLogicExpr('&', $1, $3); }
 
 EXPR2:  VAR { $$ = $1; }
         | '(' EXPR ')' { $$ = $2;}
         | '~' EXPR %prec uminus { $$ = ast->GetUnary('~', $2); }
         | '-' EXPR %prec uminus { $$ = ast->GetUnary('-', $2); }
         | '!' EXPR %prec uminus { $$ = ast->GetUnary('!', $2); }
-        | '+' '+' VAR { reinterpret_cast<AST::VariableExprAST*>($3)->setAddr(); $$ = ast->GetUnary('+', $3); }
-        | VAR  '-' '-' { reinterpret_cast<AST::VariableExprAST*>($1)->setAddr(); $$ = ast->GetUnary(DEC, $1); }
+        | VAR INC { reinterpret_cast<AST::VariableExprAST*>($1)->setAddr(); $$ = ast->GetUnary(oINC,  $1); }
+        | INC VAR { reinterpret_cast<AST::VariableExprAST*>($2)->setAddr(); $$ = ast->GetUnary(oIINC,  $2); }
+        | VAR  DEC { reinterpret_cast<AST::VariableExprAST*>($1)->setAddr(); $$ = ast->GetUnary(oDEC, $1); }
+        | DEC VAR  { reinterpret_cast<AST::VariableExprAST*>($2)->setAddr(); $$ = ast->GetUnary(oIDEC, $2); }
         | CALL { $$ = $1; }
 
 
