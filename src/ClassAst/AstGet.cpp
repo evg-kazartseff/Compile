@@ -120,3 +120,7 @@ void AST::Ast::AddToLink(BaseAST *childe)
 AST::BaseAST* AST::Ast::GetString(const std::string& str, const std::string &format) {
     return new StringAST(str, format);
 }
+
+AST::BaseAST* AST::Ast::GetPrototypeFunc(int ret, const std::string &id) {
+    return new PrototypeFuncAST(ret, id);
+}

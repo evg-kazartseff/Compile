@@ -153,6 +153,17 @@ namespace AST
         void Dfs() final;
     };
 
+    class PrototypeFuncAST : public BaseAST {
+        int Ret;
+        std::string Id;
+    public:
+        PrototypeFuncAST(int ret, std::string id)
+                : Ret(ret), Id(id) {}
+        std::string Generate_code() final;
+        void Dfs() final;
+
+    };
+
     ///LinkAST - Связующий элемент в дереве
     class LinkAST : public BaseAST {
         std::vector<BaseAST*> *Childs = nullptr;
@@ -285,6 +296,7 @@ namespace AST
         BaseAST* GetArgList(BaseAST* next, BaseAST* attr);
         BaseAST* GetArgs(BaseAST* llist);
         BaseAST* GetCallFunc(std::string id, BaseAST* args);
+        BaseAST* GetPrototypeFunc(int ret, const std::string& id);
         BaseAST* GetIf(BaseAST *statement, BaseAST *body, BaseAST *els);
         BaseAST* GetElse(BaseAST *body);
         BaseAST* GetLoop(BaseAST *def, BaseAST *If, BaseAST *inc, BaseAST *body);
