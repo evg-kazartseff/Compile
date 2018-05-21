@@ -8,9 +8,10 @@ std::string AST::VariableExprAST::Generate_code()
     int addr = hashTable->getAddr(this->Name);
     std::string str = "-" + std::to_string(addr) + "(%ebp)";
     if (this->Is_addr) {
-        std::string eval_addr = "\tleal " + str + ", %eax\n";
-        this->write_adapter->Print(eval_addr);
-        str = "%eax";
+        str = "\tleal " + str + ", %eax\n";
+        str += "\tpushl %eax\n";
+    } else {
+        str = "\tpushl " + str + "\n";
     }
 
     return str;
@@ -24,7 +25,7 @@ void AST::VariableExprAST::Dfs()
 
 std::string AST::IntNumberExprAST::Generate_code()
 {
-    std::string str = "$" + std::to_string(Val);
+    std::string str = "\tpushl $" + std::to_string(Val) + "\n";
     return str;
 }
 
@@ -36,7 +37,7 @@ void AST::IntNumberExprAST::Dfs()
 
 std::string AST::DoubleNumberExprAST::Generate_code()
 {
-    std::string str = "$" + std::to_string(Val);
+    std::string str = "\tpushl $" + std::to_string(Val) + "\n";
     return str;
 }
 
@@ -60,24 +61,22 @@ std::string AST::VariableUndefAST::Generate_code()
 
 void AST::VariableUndefAST::Dfs()
 {
-    std::stringstream str;
 //    std::cout << "Undefvar " << this->Name.c_str() << std::endl;
-    str << this->Generate_code();
-    this->write_adapter->Print(str.str());
+    this->write_adapter->Print(VariableUndefAST::Generate_code());
 }
 
 std::string AST::VariableDefAST::Generate_code()
 {
-    return VariableUndefAST::Generate_code();
+    int shift = this->hashTable->getAddr(this->Name);
+    std::string pos = "-" + std::to_string(shift) + "(%ebp)\n";
+    std::string str = "\tpopl %eax\n"
+                      "\tmovl %eax, " + pos;
+    return str;
 }
 
 void AST::VariableDefAST::Dfs()
 {
-    std::stringstream str;
     VariableUndefAST::Dfs();
-    // new area
     this->Expr->Dfs();
-    // set result to var
-    // end area
-    this->write_adapter->Print(str.str());
+    this->write_adapter->Print(Generate_code());
 }

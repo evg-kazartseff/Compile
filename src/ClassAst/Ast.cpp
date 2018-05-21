@@ -80,9 +80,7 @@ void AST::LoopAST::Dfs()
 
 std::string AST::ReturnAST::Generate_code()
 {
-    std::string str = "\n\tmovl " +
-                      this->Val->Generate_code() +
-                      ", %eax\n"
+    std::string str = "\n\tmovl (%esp), %eax\n"
                       "\tmovl %ebp, %esp\n"
                       "\tpopl %ebp\n"
                       "\tret\n";
@@ -91,5 +89,6 @@ std::string AST::ReturnAST::Generate_code()
 
 void AST::ReturnAST::Dfs()
 {
+    this->Val->Dfs();
     this->write_adapter->Print(Generate_code());
 }

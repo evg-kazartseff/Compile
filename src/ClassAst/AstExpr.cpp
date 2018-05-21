@@ -6,32 +6,50 @@
 
 std::string AST::BinaryExprAST::Generate_code()
 {
-    // set result
-    return std::__cxx11::string();
+    std::string str = "\tpopl %ebx\n"
+                      "\tpopl %eax\n";
+    std::string operation;
+    switch (this->Op) {
+        case '+':
+            operation = "\taddl %ebx, %eax\n";
+            break;
+        case '*':
+            operation = "\tmull %ebx\n";
+            break;
+        case '-':
+            operation = "\tsubl %ebx, %eax\n";
+            break;
+        case '/':
+            operation = "\tmovl $0, %edx\n"
+                        "\tidiv %ebx\n";
+            break;
+        default:
+            break;
+    }
+    str += operation + "\tpushl %eax\n";
+    return str;
 }
 
 void AST::BinaryExprAST::Dfs()
 {
-    std::cout << "(";
     this->LHS->Dfs();
-    // result left
-
     this->RHS->Dfs();
-    std::cout << this->Op << " " ;
-    // result right
-    std::cout << ")";
+    write_adapter->Print(Generate_code());
 }
 
 std::string AST::EvalAST::Generate_code()
 {
-    return std::__cxx11::string();
+    int addr = hashTable->getAddr(this->Id);
+    std::string pos = "-" + std::to_string(addr) + "(%ebp)\n";
+    std::string str = "\tpopl %eax\n"
+                      "\tmovl %eax, " + pos;
+    return str;
 }
 
 void AST::EvalAST::Dfs()
 {
-    std::cout << this->Id << " = ";
     this->Expr->Dfs();
-    std::cout << std::endl;
+    write_adapter->Print(Generate_code());
 }
 
 std::string AST::UnaryAST::Generate_code()
