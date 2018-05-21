@@ -1,4 +1,4 @@
-int k = 1 + 2;
-int b;
-b = k + 1;
-printf("%d\n", b);
+for (int a = 2; a < 3; a = a + 1) {
+
+    printf("%d\n", a);
+}

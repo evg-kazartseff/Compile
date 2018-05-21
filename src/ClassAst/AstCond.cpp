@@ -25,3 +25,29 @@ void AST::MarkAST::Dfs()
     write_adapter->Print(Generate_code());
 }
 
+std::string AST::IfAST::Generate_code()
+{
+    return std::__cxx11::string();
+}
+
+void AST::IfAST::Dfs()
+{
+    std::cout << "if (";
+    this->Statement->Dfs();
+    std::cout << ") {\n";
+    this->Body->Dfs();
+    std::cout << "}";
+    if (this->Else) this->Else->Dfs();
+}
+
+std::string AST::ElseAST::Generate_code()
+{
+    return std::__cxx11::string();
+}
+
+void AST::ElseAST::Dfs()
+{
+    std::cout << " else {\n";
+    this->Body->Dfs();
+    std::cout << "}\n";
+}

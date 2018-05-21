@@ -33,32 +33,6 @@ void AST::BodyLListAST::Dfs()
         this->Next->Dfs();
 }
 
-std::string AST::IfAST::Generate_code()
-{
-    return std::__cxx11::string();
-}
-
-void AST::IfAST::Dfs()
-{
-    std::cout << "if (";
-    this->Statement->Dfs();
-    std::cout << ") {\n";
-    this->Body->Dfs();
-    std::cout << "}";
-    if (this->Else) this->Else->Dfs();
-}
-
-std::string AST::ElseAST::Generate_code()
-{
-    return std::__cxx11::string();
-}
-
-void AST::ElseAST::Dfs()
-{
-    std::cout << " else {\n";
-    this->Body->Dfs();
-    std::cout << "}\n";
-}
 
 std::string AST::LoopAST::Generate_code()
 {
@@ -67,20 +41,32 @@ std::string AST::LoopAST::Generate_code()
 
 void AST::LoopAST::Dfs()
 {
-    std::cout << "for (";
-    this->Def->Dfs();
-    std::cout << "; ";
-    this->If->Dfs();
-    std::cout << "; ";
-    this->Inc->Dfs();
-    std::cout << ") {\n";
+    // TODO change hash_table
+    std::string start_loop = "LOOP0";
+    std::string end_loop = "LOOP1";
+
+    this->write_adapter->Print("\tpushl %ecx\n");
+    this->write_adapter->Print("\tmovl %esp, %ecx\n");
+
+    if (Def) this->Def->Dfs();
+    this->write_adapter->Print(start_loop + ":\n");
+
+    this->If->Dfs(); // + get mark name
+//    this->write_adapter->Print("\tjmp " + end_loop + "\n");
+
     this->Body->Dfs();
-    std::cout << "}\n";
+    this->Inc->Dfs();
+    this->write_adapter->Print("\tjmp " + start_loop + "\n");
+
+    this->write_adapter->Print(end_loop + ":\n");
+
+    this->write_adapter->Print("\tmovl %ecx, %esp\n");
+    this->write_adapter->Print("\tpopl %ecx\n");
 }
 
 std::string AST::ReturnAST::Generate_code()
 {
-    std::string str = "\n\tmovl (%esp), %eax\n"
+    std::string str = "\n\tpopl %eax\n"
                       "\tmovl %ebp, %esp\n"
                       "\tpopl %ebp\n"
                       "\tret\n";

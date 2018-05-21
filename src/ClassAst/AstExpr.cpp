@@ -66,12 +66,29 @@ void AST::UnaryAST::Dfs()
 
 std::string AST::LogicExprAST::Generate_code()
 {
-    return std::__cxx11::string();
+    std::string str = "\tpopl %ebx\n"
+                      "\tpopl %eax\n";
+    std::string operation;
+    switch (this->Op) {
+        case '<':
+            operation = "\taddl %ebx, %eax\n";
+            break;
+        case '>':
+            operation = "\tmull %ebx\n";
+            break;
+        case '=':
+            operation = "\tsubl %ebx, %eax\n";
+            break;
+        default:
+            break;
+    }
+    str += operation + "\tpushl %eax\n";
+    return str;
 }
 
 void AST::LogicExprAST::Dfs()
 {
-    std::cout << this->Op << " ";
     this->LHS->Dfs();
     this->RHS->Dfs();
+    write_adapter->Print(Generate_code());
 }

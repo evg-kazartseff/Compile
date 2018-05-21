@@ -64,7 +64,7 @@ CALL:   ID  '(' ARGS ')'  ';' { $$ = ast->GetCallFunc($1, ast->GetArgs($3));}
 ARGS:   ARG { $$ = ast->GetArgList(nullptr, $1); }
         | ARG ',' ARGS { $$ = ast->GetArgList($3, $1); }
 
-ARG: VAR { $$ = $1; }
+ARG: EXPR { $$ = $1; }
         | '&' VAR { reinterpret_cast<AST::VariableExprAST*>($2)->setAddr(); $$ = $2; }
         | STRING {      std::string str_name = Singleton<StringNameGenerator>::getInstance()->Generate();
                         Singleton<FormatAcum>::getInstance()->Add(str_name, $1);
