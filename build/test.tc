@@ -1,4 +1,5 @@
-for (int a = 2; a < 3; a = a + 1) {
+function void printf;
 
+int a = 22 - 3;
     printf("%d\n", a);
-}
+int a;

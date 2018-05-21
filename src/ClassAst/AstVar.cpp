@@ -31,19 +31,19 @@ std::string AST::IntNumberExprAST::Generate_code()
 
 void AST::IntNumberExprAST::Dfs()
 {
-    std::cout << ' ' << this->Val << ' ';
+//    std::cout << ' ' << this->Val << ' ';
     this->write_adapter->Print(this->Generate_code());
 }
 
 std::string AST::DoubleNumberExprAST::Generate_code()
 {
-    std::string str = "\tpushl $" + std::to_string(Val) + "\n";
+    std::string str; //= "\tpushl $" + std::to_string(Val) + "\n";
     return str;
 }
 
 void AST::DoubleNumberExprAST::Dfs()
 {
-    std::cout << ' ' << this->Val << ' ';
+//    std::cout << ' ' << this->Val << ' ';
     this->write_adapter->Print(this->Generate_code());
 }
 

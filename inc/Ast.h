@@ -14,6 +14,8 @@
 #include "Singleton.h"
 #include "ASM_VARS.h"
 #include "HashTable.h"
+#include "StringGenerator.h"
+
 
 
 namespace AST

@@ -3,7 +3,6 @@
 //
 
 #include "../../inc/Ast.h"
-#include "../../inc/StringGenerator.h"
 
 AST::BaseAST::BaseAST()
 {
@@ -34,7 +33,6 @@ void AST::BodyLListAST::Dfs()
         this->Next->Dfs();
 }
 
-
 std::string AST::LoopAST::Generate_code()
 {
     return std::__cxx11::string();
@@ -45,6 +43,7 @@ void AST::LoopAST::Dfs()
     // TODO change hash_table
     std::string start_loop = Singleton<MarkGenerator>::getInstance()->Generate();
     std::string end_loop = Singleton<MarkGenerator>::getInstance()->Generate();
+    int stack = this->asmVars->getStack();
 
     this->write_adapter->Print("\tpushl %ecx\n");
     this->write_adapter->Print("\tmovl %esp, %ecx\n");
@@ -63,6 +62,7 @@ void AST::LoopAST::Dfs()
 
     this->write_adapter->Print("\tmovl %ecx, %esp\n");
     this->write_adapter->Print("\tpopl %ecx\n");
+    this->asmVars->setStack(stack);
 }
 
 std::string AST::ReturnAST::Generate_code()

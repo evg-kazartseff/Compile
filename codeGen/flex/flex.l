@@ -6,6 +6,7 @@
 #include "../inc/Ast.h"
 #include "../inc/parser.h"
     int ch = 1;
+    HashTable* hash_table = Singleton<HashTable>::getInstance();
 %}
 
 DIGIT[0-9]
@@ -57,7 +58,14 @@ SIGN [-+]
 
 "for" {
     ch += yyleng;
+    // hash_table->addChildScope();
     return FOR;
+}
+
+"function" {
+    ch += yyleng;
+    return FUNCTION;
+
 }
 
 "int" {
@@ -66,16 +74,10 @@ SIGN [-+]
     return INT;
 }
 
-"char" {
+"void" {
     ch += yyleng;
-    yylval.type = CHAR;
-    return CHAR;
-}
-
-"double" {
-    ch += yyleng;
-    yylval.type = DOUBLE;
-    return DOUBLE;
+    yylval.type = VOID;
+    return VOID;
 }
 
 "goto" {
@@ -87,12 +89,6 @@ SIGN [-+]
     ch += yyleng;
     yylval.str = strdup(yytext);
     return CONST_INT;
-}
-
-{SIGN}?({DIGIT}+\.{DIGIT}+|{DIGIT}+\.|{DIGIT}+)([eE]{SIGN}?{DIGIT}+)? {
-    ch += yyleng;
-    yylval.str = strdup(yytext);
-    return CONST_DOUBLE;
 }
 
 {ID} {

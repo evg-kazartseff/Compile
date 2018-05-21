@@ -14,12 +14,12 @@
     extern char *yytext;
     extern void yyerror(const char *);
     extern void yyerror(const char *, const char *);
-    HashTable* hash_table = Singleton<HashTable>::getInstance();
+    extern HashTable* hash_table;
     extern int yylex();
     AST::Ast* ast;
 %}
 
-%token INT CHAR DOUBLE STRING
+%token INT VOID STRING FUNCTION
 %token IF ELSE PRINT FOR LEX_ERROR
 %token ID CONST_INT CONST_DOUBLE
 %token JUMP MARK_TOK RETURN
@@ -29,14 +29,14 @@
     char* str;
     AST::BaseAST* expr;
     // TODO Fix unary priority
-
 }
 
-%type <str> ID CONST_INT CONST_DOUBLE ID_TOK STRING
-%type <type> INT CHAR DOUBLE TYPE
+%type <str> ID CONST_INT ID_REC STRING ID_LOC
+%type <type> INT VOID FUNCTION FUNC_T
 %type <expr> EXPR2 EXPR1 EXPR0 EXPR CONST DEFVAR UNDEFVAR VAR EVAL
 %type <expr> MARK GOTO ATOM CALL ARGS ARG RET
 %type <expr> ANYVAR LOOP ATOMLLIST COND IFELSE ELSEIF BODY LEVAL
+%type <expr> PROTO
 
 %%
 START:  ATOM { ast->AddToLink($1); }
@@ -56,10 +56,16 @@ ATOM:   DEFVAR { $$ = $1; }
         | EVAL { $$ = $1; }
         | CALL { $$ = $1; }
         | RET { $$ = $1; }
+        | PROTO { $$ = $1; }
+
+PROTO:  FUNCTION FUNC_T ID ';' { hash_table->CreateEntry($2, $3); $$ = ast->GetPrototypeFunc($2, $3); }
+
+FUNC_T: INT { $$ = $1; }
+        | VOID { $$ = $1; }
 
 RET: RETURN VAR ';' { $$ = ast->GetReturn($2); }
 
-CALL:   ID  '(' ARGS ')'  ';' { $$ = ast->GetCallFunc($1, ast->GetArgs($3));}
+CALL:   ID_REC  '(' ARGS ')'  ';' { $$ = ast->GetCallFunc($1, ast->GetArgs($3));}
 
 ARGS:   ARG { $$ = ast->GetArgList(nullptr, $1); }
         | ARG ',' ARGS { $$ = ast->GetArgList($3, $1); }
@@ -71,9 +77,9 @@ ARG: EXPR { $$ = $1; }
                         $$ = ast->GetString(str_name, $1);
                  }
 
-DEFVAR: TYPE ID '=' EXPR ';' { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableDef($1, $2, $4); }
+DEFVAR: INT ID_LOC '=' EXPR ';' { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableDef($1, $2, $4); }
 
-UNDEFVAR: TYPE ID ';' { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableUndef($1, $2); }
+UNDEFVAR: INT ID_LOC ';' { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableUndef($1, $2); }
 
 ANYVAR: DEFVAR { $$ = $1; }
         | EVAL { $$ = $1; }
@@ -124,16 +130,14 @@ EXPR2:  VAR { $$ = $1; }
         | '!' EXPR { $$ = ast->GetUnary('!', $2); }
 
 VAR:    CONST { $$ = $1; }
-        | ID_TOK { $$ = ast->GetVariableExpr(std::string($1)); }
+        | ID_REC { $$ = ast->GetVariableExpr(std::string($1)); }
 
-ID_TOK: ID { if (hash_table->LookupEntry($1) != nullptr) { $$ = $1; } else { yyerror("Var not declaration"); $$ = (char*)""; } }
+ID_REC: ID { if (hash_table->LookupEntry($1) != nullptr) { $$ = $1; } else { yyerror("Var not declaration", $1); $$ = (char*)""; } }
+
+ID_LOC: ID { if (hash_table->LookupEntry($1) == nullptr) { $$ = $1; } else { yyerror("Var already has definition", $1); $$ = (char*)""; } }
 
 CONST:  CONST_INT { $$ = ast->GetIntNumberExpr(atoi($1)); }
-        | CONST_DOUBLE { $$ = ast->GetDoubleNumberExpr(atof($1)); }
 
-TYPE:   INT { $$ = $1; }
-        | CHAR { $$ = $1; }
-        | DOUBLE { $$ = $1; }
 %%
 
 void yyerror(const char *errmsg)
@@ -161,20 +165,22 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
     ast = new AST::Ast();
-    ch = 1;
+    AsmVars* asmVars = Singleton<AsmVars>::getInstance();
+    asmVars->setIntType(INT);
     yylineno = 1;
 
     yyparse();
-    AsmVars* asmVars = Singleton<AsmVars>::getInstance();
-    asmVars->setDoubleType(DOUBLE);
-    asmVars->setIntType(INT);
+
+
     ASM_GEN* AsmGen = new ASM_GEN(argv[2], ast);
     AsmGen->Generate();
+
     fclose(yyin);
     delete hash_table;
     delete ast;
     delete AsmGen;
     WriteAdapter* writeAdapter = Singleton<WriteAdapter>::getInstance();
     delete writeAdapter;
+
     return EXIT_SUCCESS;
 }

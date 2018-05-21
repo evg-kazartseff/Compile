@@ -5,7 +5,13 @@
 
 std::string AST::CallFuncAST::Generate_code()
 {
-    return "\tcall " + this->Id + "\n\n";
+    std::string str = "\tcall " + this->Id + "\n";
+    auto it = this->hashTable->LookupEntry(this->Id);
+    if ((it != nullptr) && (it->getType() == asmVars->getIntType())) {
+        str += "\tpushl %eax\n";
+        asmVars->IncStack(static_cast<int>(asmVars->getIntType()));
+    }
+    return str;
 }
 
 void AST::CallFuncAST::Dfs()

@@ -32,12 +32,25 @@ std::string AST::IfAST::Generate_code()
 
 void AST::IfAST::Dfs()
 {
-    std::cout << "if (";
+    std::string start_else = Singleton<MarkGenerator>::getInstance()->Generate();
+    std::string end_if = Singleton<MarkGenerator>::getInstance()->Generate();
+    int stack = this->asmVars->getStack();
+
+    this->write_adapter->Print("\tpushl %ecx\n");
+    this->write_adapter->Print("\tmovl %esp, %ecx\n");
+
     this->Statement->Dfs();
-    std::cout << ") {\n";
     this->Body->Dfs();
-    std::cout << "}";
-    if (this->Else) this->Else->Dfs();
+
+    if (this->Else) {
+        this->write_adapter->Print(start_else + ":\n");
+        this->Else->Dfs();
+    }
+
+    this->write_adapter->Print(end_if + ":\n");
+    this->write_adapter->Print("\tmovl %ecx, %esp\n");
+    this->write_adapter->Print("\tpopl %ecx\n");
+    this->asmVars->setStack(stack);
 }
 
 std::string AST::ElseAST::Generate_code()
@@ -47,7 +60,5 @@ std::string AST::ElseAST::Generate_code()
 
 void AST::ElseAST::Dfs()
 {
-    std::cout << " else {\n";
     this->Body->Dfs();
-    std::cout << "}\n";
 }
