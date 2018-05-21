@@ -75,20 +75,20 @@ HashEntry::~HashEntry()
     }
 }
 
-HashTable::HashTable(size_t size)
+Table::Table(size_t size)
 {
     this->size = size;
     this->parent = nullptr;
     this->table = new HashEntry[this->size];
 }
 
-void HashTable::CreateEntry(int type, std::string value)
+void Table::CreateEntry(int type, std::string value)
 {
     size_t hash = this->GetHash(value.c_str());
     this->table[hash].AddValueNode(type, std::move(value));
 }
 
-size_t HashTable::GetHash(const char *key)
+size_t Table::GetHash(const char *key)
 {
     unsigned long hash = 5381;
     int c;
@@ -99,73 +99,72 @@ size_t HashTable::GetHash(const char *key)
     return hash % this->size;
 }
 
-HashNode *HashTable::LookupEntry(const std::string &value)
+HashNode *Table::LookupEntry(const std::string &value)
 {
     size_t hash = this->GetHash(value.c_str());
     HashNode* node = this->table[hash].LookupValueNode(value);
     if (!node) {
-        HashTable* parent = this->getParent();
+        Table* parent = this->getParent();
         if (parent)
            node = parent->LookupEntry(value);
     }
     return node;
 }
 
-void HashTable::DeleteEntry(const std::string &value)
+HashNode* Table::LookupEntryNotRecur(const std::string &value) {
+    size_t hash = this->GetHash(value.c_str());
+    return this->table[hash].LookupValueNode(value);
+}
+
+void Table::DeleteEntry(const std::string &value)
 {
     size_t hash = this->GetHash(value.c_str());
     this->table[hash].DeleteValueNode(value);
 }
 
-HashTable::~HashTable()
+Table::~Table()
 {
 }
 
-void HashTable::addChildScope()
-{
-    HashTable *NewScope = new HashTable(this->getSize());
-    this->addChildScope(NewScope);
-}
-
-void HashTable::setParent(HashTable *table)
+void Table::setParent(Table *table)
 {
     this->parent = table;
 }
 
-size_t HashTable::getSize()
+size_t Table::getSize()
 {
     return this->size;
 }
 
-void HashTable::addChildScope(HashTable *scope)
+void Table::addChildScope(Table *scope)
 {
     scope->setParent(this);
     this->childs.push(scope);
 }
 
-HashTable *HashTable::getChlidScope()
+Table *Table::getChlidScope()
 {
     return this->childs.front();
 }
 
-void HashTable::popChildScope()
+void Table::popChildScope()
 {
     if (!this->childs.empty())
         this->childs.pop();
 }
 
-void HashTable::deleteAllChildScope()
+void Table::deleteAllChildScope()
 {
     while (!this->childs.empty())
         this->childs.pop();
 }
 
-HashTable *HashTable::getParent()
+Table* Table::getParent()
 {
     return this->parent;
 }
 
-void HashTable::setAddr(const std::string& name, int addr) {
+void Table::setAddr(const std::string& name, int addr) {
     HashNode* node = this->LookupEntry(name);
     if(!node) {
         std::cerr << "Undefine vareable: " << name << std::endl;
@@ -174,7 +173,7 @@ void HashTable::setAddr(const std::string& name, int addr) {
     node->setAddr(addr);
 }
 
-int HashTable::getAddr(const std::string &name) {
+int Table::getAddr(const std::string &name) {
     HashNode* node = this->LookupEntry(name);
     if(!node) {
         std::cerr << "Undefine vareable: " << name << std::endl;
@@ -240,4 +239,8 @@ void HashNode::setAddr(int addr) {
 
 int HashNode::getAddr() {
     return this->addr;
+}
+
+HashTable::HashTable() {
+    this->table = new Table();
 }

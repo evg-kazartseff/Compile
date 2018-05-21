@@ -7,6 +7,7 @@
 
 #include <string>
 #include <queue>
+#include <utility>
 
 class Ast;
 
@@ -30,7 +31,6 @@ public:
     void setType(int type);
     void setAddr(int addr);
     int getAddr();
-
 };
 
 class HashEntry {
@@ -41,43 +41,106 @@ private:
 
 public:
     HashEntry() = default;
-
     ~HashEntry();
-
     void AddValueNode(int type, std::string value);
-
     HashNode *LookupValueNode(const std::string &value);
-
     void DeleteValueNode(const std::string &value);
 };
 
-class HashTable {
+class Table {
     friend Ast;
 private:
     size_t size;
     HashEntry *table;
-    HashTable *parent;
-    std::queue<HashTable *> childs;
+    Table *parent;
+    std::queue<Table *> childs;
     size_t GetHash(const char *key);
     size_t getSize();
 public:
-    explicit HashTable(size_t size = 128);
-    ~HashTable();
+    explicit Table(size_t size = 128);
+    ~Table();
     void CreateEntry(int type, std::string value);
     HashNode *LookupEntry(const std::string &value);
+    HashNode *LookupEntryNotRecur(const std::string &value);
     void DeleteEntry(const std::string &value);
 
-    void setParent(HashTable *table);
-    HashTable *getParent();
+    void setParent(Table *table);
+    Table *getParent();
 
-    void addChildScope();
-    void addChildScope(HashTable *scope);
-    HashTable *getChlidScope();
+    void addChildScope(Table *scope);
+    Table *getChlidScope();
     void popChildScope();
     void deleteAllChildScope();
 
     void setAddr(const std::string& name, int addr);
     int getAddr(const std::string& name);
+};
+
+class HashTable {
+    Table* table;
+public:
+    HashTable();
+    void CreateEntry(int type, std::string value) {
+        this->table->CreateEntry(type, std::move(value));
+    }
+
+    HashNode *LookupEntry(const std::string &value) {
+        return this->table->LookupEntry(value);
+    }
+
+    HashNode *LookupEntryNotReсur(const std::string &value) {
+        return this->table->LookupEntryNotRecur(value);
+    }
+
+    void DeleteEntry(const std::string &value) {
+        this->table->DeleteEntry(value);
+    }
+
+    void setParent(Table *table) {
+        this->table->setParent(table);
+    }
+
+    Table *getParent() {
+        return this->table->getParent();
+    }
+
+    void addChildScope() {
+        Table* newScope = new Table();
+        this->table->addChildScope(newScope);
+        this->table = newScope;
+    }
+
+    Table *getChlidScope() {
+        return this->table->getChlidScope();
+    }
+
+    void popChildScope() {
+       this->table->popChildScope();
+    }
+
+    void deleteAllChildScope() {
+        this->table->deleteAllChildScope();
+    }
+
+    void deleteThisScope() {
+        Table* parent = this->table->getParent();
+        delete this->table;
+        this->table = parent;
+    }
+
+    void gotoParent() {
+        Table* parent = this->table->getParent();
+        if(parent)
+            this->table = parent;
+    }
+
+    void setAddr(const std::string& name, int addr) {
+        this->table->setAddr(name, addr);
+    }
+
+    int getAddr(const std::string& name) {
+        return this->table->getAddr(name);
+    }
 };
 
 #endif //LAB2_HASHTABLE_H
