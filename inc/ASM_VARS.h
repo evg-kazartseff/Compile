@@ -8,6 +8,12 @@
 
 #define INT_SIZE 4
 
+enum {
+    LEQ = -66,
+    GEQ,
+    DEC
+};
+
 typedef struct {
     size_t Int;
     size_t Double;

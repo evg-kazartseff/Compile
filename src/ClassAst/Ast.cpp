@@ -55,9 +55,9 @@ void AST::LoopAST::Dfs()
 
     this->If->Dfs();
     this->write_adapter->Print("\tpopl %eax\n");
-    this->write_adapter->Print("\tmovl $1, %ebx\n");
+    this->write_adapter->Print("\tmovl $0, %ebx\n");
     this->write_adapter->Print("\tcmpl %eax, %ebx\n");
-    this->write_adapter->Print("\tjz " + end_loop + "\n");
+    this->write_adapter->Print("\tje " + end_loop + "\n");
     this->asmVars->DecStack(INT_SIZE);
 
     this->Body->Dfs();

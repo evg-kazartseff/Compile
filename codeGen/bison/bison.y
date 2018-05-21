@@ -25,6 +25,7 @@
 %token ID CONST_INT CONST_DOUBLE
 %token JUMP MARK_TOK RETURN
 
+
 %union {
     int type;
     char* str;
@@ -37,7 +38,12 @@
 %type <expr> EXPR2 EXPR1 EXPR0 EXPR CONST DEFVAR UNDEFVAR VAR EVAL
 %type <expr> MARK GOTO ATOM CALL ARGS ARG RET
 %type <expr> ANYVAR LOOP ATOMLLIST IFELSE ELSEIF BODY
-%type <expr> PROTO
+%type <expr> PROTO LEVAL
+
+%left '+' '-'
+%left '*' '/' '%'
+%left uminus
+%left uplus
 
 %%
 START:  ATOM { ast->AddToLink($1); }
@@ -58,6 +64,7 @@ ATOM:   DEFVAR ';' { $$ = $1; }
         | CALL ';' { $$ = $1; }
         | RET ';' { $$ = $1; }
         | PROTO ';' { $$ = $1; }
+        | EXPR ';' { $$ = $1; }
 
 PROTO:  FUNCTION FUNC_T ID { hash_table->CreateEntry($2, $3); $$ = ast->GetPrototypeFunc($2, $3); }
 
@@ -86,8 +93,11 @@ ANYVAR: DEFVAR { $$ = $1; }
         | EVAL { $$ = $1; }
         | ';' { $$ = nullptr; }
 
-LOOP:   FOR '(' ANYVAR ';' EXPR ';'  EVAL ')' ATOM { $$ = ast->GetLoop($3, $5, $7, $9); }
-        | FOR '(' ANYVAR ';' EXPR ';' EVAL ')' '{' BODY '}' { $$ = ast->GetLoop($3, $5, $7, $10); }
+LOOP:   FOR '(' ANYVAR ';' EXPR ';'  LEVAL ')' ATOM { $$ = ast->GetLoop($3, $5, $7, $9); }
+        | FOR '(' ANYVAR ';' EXPR ';' LEVAL ')' '{' BODY '}' { $$ = ast->GetLoop($3, $5, $7, $10); }
+
+LEVAL:  EVAL { $$ = $1; }
+        | EXPR { $$ =$1; }
 
 MARK:   ID ':' { if (hash_table->LookupEntry($1) == nullptr) {
                     hash_table->CreateEntry(MARK_TOK, $1); $$ = ast->GetMark($1);
@@ -109,8 +119,12 @@ EXPR:   EXPR0 { $$ = $1; }
         | EXPR0 '^' EXPR { $$ = ast->GetBinaryExpr( '^', $1, $3); }
         | EXPR0 '|' EXPR { $$ = ast->GetBinaryExpr( '|', $1, $3); }
         | EXPR0 '<' EXPR { $$ = ast->GetLogicExpr('<', $1, $3); }
+        | EXPR0 '<' '=' EXPR { $$ = ast->GetLogicExpr(LEQ, $1, $4); }
+        | EXPR0 '>' '=' EXPR { $$ = ast->GetLogicExpr(GEQ, $1, $4); }
         | EXPR0 '>' EXPR { $$ = ast->GetLogicExpr('<', $1, $3); }
-        | EXPR0 "==" EXPR { $$ = ast->GetLogicExpr('=', $1, $3); }
+        | EXPR0 '=' '=' EXPR { $$ = ast->GetLogicExpr('=', $1, $4); }
+        | EXPR0 '!' '=' EXPR { $$ = ast->GetLogicExpr('!', $1, $4); }
+
 
 EXPR0:   EXPR1 { $$ = $1; }
         | EXPR1 '+' EXPR0 { $$ = ast->GetBinaryExpr( '+', $1, $3); }
@@ -123,9 +137,13 @@ EXPR1:  EXPR2 { $$ = $1; }
 
 EXPR2:  VAR { $$ = $1; }
         | '(' EXPR ')' { $$ = $2;}
-        | '~' EXPR { $$ = ast->GetUnary('~', $2); }
-        | '!' EXPR { $$ = ast->GetUnary('!', $2); }
+        | '~' EXPR %prec uminus { $$ = ast->GetUnary('~', $2); }
+        | '-' EXPR %prec uminus { $$ = ast->GetUnary('-', $2); }
+        | '!' EXPR %prec uminus { $$ = ast->GetUnary('!', $2); }
+        | '+' '+' VAR { reinterpret_cast<AST::VariableExprAST*>($3)->setAddr(); $$ = ast->GetUnary('+', $3); }
+        | VAR  '-' '-' { reinterpret_cast<AST::VariableExprAST*>($1)->setAddr(); $$ = ast->GetUnary(DEC, $1); }
         | CALL { $$ = $1; }
+
 
 VAR:    CONST { $$ = $1; }
         | ID_REC { $$ = ast->GetVariableExpr(std::string($1)); }
