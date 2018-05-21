@@ -1,7 +1,7 @@
 function void printf;
 function int sum;
 function int sqr;
-// TODO  break, continue
+// TODO  break, continue, ERROR WITH MEMORY
 int kl;
 kl = 15;
 
@@ -11,4 +11,9 @@ if ((1 && 0) + (1 && 1)) {
 
     printf("%d\n", ++kl);
     printf("%d\n", kl);
+}
+
+for (int i = 5; i >= 0; i--) {
+
+    printf("%d ", i);
 }

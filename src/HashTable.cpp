@@ -122,6 +122,7 @@ void Table::DeleteEntry(const std::string &value)
 
 Table::~Table()
 {
+    // TODO DO FREE
 }
 
 void Table::setParent(Table *table)
