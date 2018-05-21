@@ -2,6 +2,7 @@ function void printf;
 function int sum;
 function int sqr;
 // TODO  break, continue, ERROR WITH MEMORY
+// TODO Add flag in call for get ret
 int kl;
 kl = 15;
 kl += 5 * 2;
