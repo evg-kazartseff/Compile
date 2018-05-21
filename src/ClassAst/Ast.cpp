@@ -3,6 +3,7 @@
 //
 
 #include "../../inc/Ast.h"
+#include "../../inc/StringGenerator.h"
 
 AST::BaseAST::BaseAST()
 {
@@ -42,8 +43,8 @@ std::string AST::LoopAST::Generate_code()
 void AST::LoopAST::Dfs()
 {
     // TODO change hash_table
-    std::string start_loop = "LOOP0";
-    std::string end_loop = "LOOP1";
+    std::string start_loop = Singleton<MarkGenerator>::getInstance()->Generate();
+    std::string end_loop = Singleton<MarkGenerator>::getInstance()->Generate();
 
     this->write_adapter->Print("\tpushl %ecx\n");
     this->write_adapter->Print("\tmovl %esp, %ecx\n");

@@ -6,7 +6,7 @@
     #include "../inc/Singleton.h"
     #include "../inc/WriteAdapter.h"
     #include "../inc/ASM_VARS.h"
-    #include "../inc/StringNameGenerator.h"
+    #include "../inc/StringGenerator.h"
 
     extern FILE *yyin;
     extern int yylineno;
@@ -66,7 +66,7 @@ ARGS:   ARG { $$ = ast->GetArgList(nullptr, $1); }
 
 ARG: EXPR { $$ = $1; }
         | '&' VAR { reinterpret_cast<AST::VariableExprAST*>($2)->setAddr(); $$ = $2; }
-        | STRING {      std::string str_name = Singleton<StringNameGenerator>::getInstance()->Generate();
+        | STRING {      std::string str_name = Singleton<StringGenerator>::getInstance()->Generate();
                         Singleton<FormatAcum>::getInstance()->Add(str_name, $1);
                         $$ = ast->GetString(str_name, $1);
                  }

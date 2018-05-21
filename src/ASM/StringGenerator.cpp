@@ -22,5 +22,5 @@ std::vector<std::pair<std::string, std::string>> FormatAcum::GetAcum() {
 }
 
 MarkGenerator::MarkGenerator() {
-    this->prefix = "Mark";
+    this->prefix = "MARK";
 }
