@@ -32,26 +32,33 @@ std::string AST::IfAST::Generate_code()
 
 void AST::IfAST::Dfs()
 {
-    std::string start_else = Singleton<MarkGenerator>::getInstance()->Generate();
-    std::string end_if = Singleton<MarkGenerator>::getInstance()->Generate();
+    hashTable->getChlidScope();
+
+    std::string end_true = Singleton<MarkGenerator>::getInstance()->Generate();
     int stack = this->asmVars->getStack();
 
     this->write_adapter->Print("\tpushl %ecx\n");
     asmVars->IncStack(INT_SIZE);
     this->write_adapter->Print("\tmovl %esp, %ecx\n");
 
-    this->Statement->Dfs();
+    this->Statement->Dfs(); // a > 2 + 3 ==> reslut ==> stack (1/0)
+    this->write_adapter->Print("\tpopl %eax\n");
+    this->write_adapter->Print("cmpl %eax, $1\n");
+    this->write_adapter->Print("\tjnz " + end_true + "\n");
+    this->asmVars->DecStack(INT_SIZE);
+
     this->Body->Dfs();
 
+    this->write_adapter->Print(end_true + ":\n");
     if (this->Else) {
-        this->write_adapter->Print(start_else + ":\n");
         this->Else->Dfs();
     }
 
-    this->write_adapter->Print(end_if + ":\n");
     this->write_adapter->Print("\tmovl %ecx, %esp\n");
     this->write_adapter->Print("\tpopl %ecx\n");
     this->asmVars->setStack(stack);
+
+    hashTable->deleteThisScope();
 }
 
 std::string AST::ElseAST::Generate_code()

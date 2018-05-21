@@ -35,7 +35,7 @@
 %type <type> INT VOID FUNCTION FUNC_T
 %type <expr> EXPR2 EXPR1 EXPR0 EXPR CONST DEFVAR UNDEFVAR VAR EVAL
 %type <expr> MARK GOTO ATOM CALL ARGS ARG RET
-%type <expr> ANYVAR LOOP ATOMLLIST COND IFELSE ELSEIF BODY LEVAL
+%type <expr> ANYVAR LOOP ATOMLLIST IFELSE ELSEIF BODY LEVAL
 %type <expr> PROTO
 
 %%
@@ -49,10 +49,10 @@ ATOMLLIST:   ATOM { $$ = ast->GetBodyLList(nullptr, $1); }
 
 ATOM:   DEFVAR { $$ = $1; }
         | UNDEFVAR { $$ = $1; }
-        | LOOP { $$ = $1; }
+        | LOOP { $$ = $1; hash_table->gotoParent(); }
         | GOTO { $$ = $1; }
         | MARK { $$ = $1; }
-        | IFELSE { $$ = $1; }
+        | IFELSE { $$ = $1; hash_table->gotoParent(); }
         | EVAL { $$ = $1; }
         | CALL { $$ = $1; }
         | RET { $$ = $1; }
@@ -85,14 +85,9 @@ ANYVAR: DEFVAR { $$ = $1; }
         | EVAL { $$ = $1; }
         | ';' { $$ = nullptr; }
 
-LOOP:   FOR '(' ANYVAR  COND ';'  LEVAL ')' ATOM { $$ = ast->GetLoop($3, $4, $6, $8); }
-        | FOR '(' ANYVAR  COND ';' LEVAL ')' '{' BODY '}' { $$ = ast->GetLoop($3, $4, $6, $9); }
+LOOP:   FOR '(' ANYVAR  EXPR ';'  LEVAL ')' ATOM { $$ = ast->GetLoop($3, $4, $6, $8); }
+        | FOR '(' ANYVAR  EXPR ';' LEVAL ')' '{' BODY '}' { $$ = ast->GetLoop($3, $4, $6, $9); }
 LEVAL:  ID '=' EXPR { $$ = ast->GetEval($1, $3); }
-
-COND:   VAR { $$ = $1; }
-        | VAR '<' COND { $$ = ast->GetLogicExpr('<', $1, $3); }
-        | VAR '>' COND { $$ = ast->GetLogicExpr('>', $1, $3); }
-        | VAR "==" COND {$$ = ast->GetLogicExpr('=', $1, $3); }
 
 MARK:   ID ':' { if (hash_table->LookupEntry($1) == nullptr) {
                     hash_table->CreateEntry(MARK_TOK, $1); $$ = ast->GetMark($1);
@@ -100,9 +95,9 @@ MARK:   ID ':' { if (hash_table->LookupEntry($1) == nullptr) {
 
 GOTO:   JUMP ID ';' { if ($2) { $$ = ast->GetJump($2); } else { $$ = nullptr; } }
 
-IFELSE: IF '(' COND ')' ATOM { $$ = ast->GetIf($3, $5, nullptr); }
-        | IF '(' COND ')' '{' BODY '}' { $$ = ast->GetIf($3, $6, nullptr); }
-        | IF '(' COND ')' '{' BODY '}' ELSEIF { $$ = ast->GetIf($3, $6, $8); }
+IFELSE: IF '(' EXPR ')' ATOM { $$ = ast->GetIf($3, $5, nullptr); }
+        | IF '(' EXPR ')' '{' BODY '}' { $$ = ast->GetIf($3, $6, nullptr); }
+        | IF '(' EXPR ')' '{' BODY '}' ELSEIF { $$ = ast->GetIf($3, $6, $8); }
 
 ELSEIF: ELSE '{' BODY '}' { $$ = ast->GetElse($3); }
         | ELSE ATOM  { $$ = ast->GetElse($2); }
@@ -113,7 +108,9 @@ EXPR:   EXPR0 { $$ = $1; }
         | EXPR0 '&' EXPR { $$ = ast->GetBinaryExpr('&', $1, $3); }
         | EXPR0 '^' EXPR { $$ = ast->GetBinaryExpr( '^', $1, $3); }
         | EXPR0 '|' EXPR { $$ = ast->GetBinaryExpr( '|', $1, $3); }
-
+        | EXPR0 '<' EXPR { $$ = ast->GetLogicExpr('<', $1, $3); }
+        | EXPR0 '>' EXPR { $$ = ast->GetLogicExpr('<', $1, $3); }
+        | EXPR0 "==" EXPR { $$ = ast->GetLogicExpr('=', $1, $3); }
 
 EXPR0:   EXPR1 { $$ = $1; }
         | EXPR1 '+' EXPR0 { $$ = ast->GetBinaryExpr( '+', $1, $3); }
@@ -134,7 +131,7 @@ VAR:    CONST { $$ = $1; }
 
 ID_REC: ID { if (hash_table->LookupEntry($1) != nullptr) { $$ = $1; } else { yyerror("Var not declaration", $1); $$ = (char*)""; } }
 
-ID_LOC: ID { if (hash_table->LookupEntry($1) == nullptr) { $$ = $1; } else { yyerror("Var already has definition", $1); $$ = (char*)""; } }
+ID_LOC: ID { if (hash_table->LookupEntryNotRecur($1) == nullptr) { $$ = $1; } else { yyerror("Var already has definition", $1); $$ = (char*)""; } }
 
 CONST:  CONST_INT { $$ = ast->GetIntNumberExpr(atoi($1)); }
 

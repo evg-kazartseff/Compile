@@ -48,7 +48,6 @@ void AST::DoubleNumberExprAST::Dfs()
     this->write_adapter->Print(this->Generate_code());
 }
 
-
 std::string AST::VariableUndefAST::Generate_code()
 {
     int size = this->Type == this->asmVars->getIntType() ? INT_SIZE : 8;

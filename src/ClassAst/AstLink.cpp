@@ -1,9 +1,7 @@
 //
 // Created by direnol on 20.05.18.
 //
-
 #include "../../inc/Ast.h"
-
 
 void AST::LinkAST::AddChild(BaseAST *child)
 {

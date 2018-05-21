@@ -1,7 +1,6 @@
 //
 // Created by direnol on 20.05.18.
 //
-
 #include "../../inc/Ast.h"
 
 std::string AST::BinaryExprAST::Generate_code()
@@ -57,36 +56,55 @@ void AST::EvalAST::Dfs()
 
 std::string AST::UnaryAST::Generate_code()
 {
-    return std::__cxx11::string();
+    std::string str = "";
+    switch (this->Operation) {
+        case '~':
+            break;
+        case '!':
+            break;
+        default:
+            break;
+    }
+    return str;
 }
 
 void AST::UnaryAST::Dfs()
 {
-    std::cout << "(" << this->Operation;
     this->Operand->Dfs();
-    std::cout << ")";
+    this->write_adapter->Print(Generate_code());
 }
 
 std::string AST::LogicExprAST::Generate_code()
 {
     std::string str = "\tpopl %ebx\n"
-                      "\tpopl %eax\n";
+                      "\tpopl %eax\n"
+                      "\tcmp %eax, %ebx\n";
+
+    std::string mtrue = Singleton<MarkGenerator>::getInstance()->Generate();
+    std::string mend = Singleton<MarkGenerator>::getInstance()->Generate();
+
     asmVars->DecStack(INT_SIZE * 2);
     std::string operation;
     switch (this->Op) {
         case '<':
-            operation = "\taddl %ebx, %eax\n";
+            operation = "\tjl ";
             break;
         case '>':
-            operation = "\tmull %ebx\n";
+            operation = "\tja ";
             break;
         case '=':
-            operation = "\tsubl %ebx, %eax\n";
+            operation = "\tje ";
             break;
         default:
             break;
     }
-    str += operation + "\tpushl %eax\n";
+    str += operation + mtrue + "\n";
+    str += "\tpushl $0\n" // false
+           "\tjmp " + mend + "\n";
+
+    str += mtrue + ":\n"; // true
+    str + "\tpushl $1\n" + mend + ":\n";
+
     asmVars->IncStack(INT_SIZE);
     return str;
 }

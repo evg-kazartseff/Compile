@@ -38,7 +38,6 @@ AST::BaseAST *AST::Ast::GetMark(std::string id)
     return new MarkAST(std::move(id));
 }
 
-
 AST::BaseAST *AST::Ast::GetVariableDef(int type, std::string name, BaseAST *expr)
 {
     return new VariableDefAST(type, std::move(name), expr);

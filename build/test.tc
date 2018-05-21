@@ -1,10 +1,6 @@
 function void printf;
 
-int a;
-a = 3;
+int a = 3;
+int b = 4;
 
-int b = a + 1;
-
-printf("%d\n", a + b);
-int k = a + b;
-printf("[%d]\n", k);
+if (1 < 2) printf("a\n");

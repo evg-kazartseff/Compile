@@ -88,7 +88,8 @@ public:
         return this->table->LookupEntry(value);
     }
 
-    HashNode *LookupEntryNotReсur(const std::string &value) {
+    HashNode *LookupEntryNotRecur(const std::string &value)
+    {
         return this->table->LookupEntryNotRecur(value);
     }
 
@@ -110,8 +111,10 @@ public:
         this->table = newScope;
     }
 
-    Table *getChlidScope() {
-        return this->table->getChlidScope();
+    void getChlidScope()
+    {
+        Table *tmp_table = this->table->getChlidScope();
+        this->table = tmp_table;
     }
 
     void popChildScope() {

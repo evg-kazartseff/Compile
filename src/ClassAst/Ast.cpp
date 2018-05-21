@@ -40,7 +40,8 @@ std::string AST::LoopAST::Generate_code()
 
 void AST::LoopAST::Dfs()
 {
-    // TODO change hash_table
+    hashTable->getChlidScope();
+
     std::string start_loop = Singleton<MarkGenerator>::getInstance()->Generate();
     std::string end_loop = Singleton<MarkGenerator>::getInstance()->Generate();
     int stack = this->asmVars->getStack();
@@ -52,18 +53,23 @@ void AST::LoopAST::Dfs()
     if (Def) this->Def->Dfs();
     this->write_adapter->Print(start_loop + ":\n");
 
-    this->If->Dfs(); // + get mark name
-//    this->write_adapter->Print("\tjmp " + end_loop + "\n");
+    this->If->Dfs(); // TODO do it
+    this->write_adapter->Print("\tpopl %eax\n");
+    this->write_adapter->Print("cmpl %eax, $1\n");
+    this->write_adapter->Print("\tjnz " + end_loop + "\n");
+    this->asmVars->DecStack(INT_SIZE);
 
     this->Body->Dfs();
     this->Inc->Dfs();
-    this->write_adapter->Print("\tjmp " + start_loop + "\n");
 
+    this->write_adapter->Print("\tjmp " + start_loop + "\n");
     this->write_adapter->Print(end_loop + ":\n");
 
     this->write_adapter->Print("\tmovl %ecx, %esp\n");
     this->write_adapter->Print("\tpopl %ecx\n");
     this->asmVars->setStack(stack);
+
+    hashTable->deleteThisScope();
 }
 
 std::string AST::ReturnAST::Generate_code()

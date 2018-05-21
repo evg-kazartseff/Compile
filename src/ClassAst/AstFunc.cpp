@@ -20,7 +20,6 @@ void AST::CallFuncAST::Dfs()
     this->write_adapter->Print(Generate_code());
 }
 
-
 std::string AST::ArgListAST::Generate_code()
 {
 //    return "\tpushl ";
@@ -46,20 +45,23 @@ void AST::ArgsAST::Dfs()
     if (this->LList) this->LList->Dfs();
 }
 
-
-std::string AST::StringAST::Generate_code() {
+std::string AST::StringAST::Generate_code()
+{
     asmVars->IncStack(INT_SIZE);
     return "\tpushl $" + this->Str + "\n";
 }
 
-void AST::StringAST::Dfs() {
+void AST::StringAST::Dfs()
+{
     this->write_adapter->Print(this->Generate_code());
 }
 
-std::string AST::PrototypeFuncAST::Generate_code() {
+std::string AST::PrototypeFuncAST::Generate_code()
+{
     return std::__cxx11::string();
 }
 
-void AST::PrototypeFuncAST::Dfs() {
-
+void AST::PrototypeFuncAST::Dfs()
+{
+    // TODO maybe add check when call
 }

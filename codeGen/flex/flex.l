@@ -58,7 +58,7 @@ SIGN [-+]
 
 "for" {
     ch += yyleng;
-    // hash_table->addChildScope();
+    hash_table->addChildScope();
     return FOR;
 }
 
