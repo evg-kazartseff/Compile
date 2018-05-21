@@ -9,14 +9,20 @@
 #include <string>
 #include <vector>
 
-class StringNameGenerator {
+class StringGenerator {
 private:
     size_t inc;
+protected:
     std::string prefix;
 public:
-    StringNameGenerator();
-    ~StringNameGenerator() = default;
+    StringGenerator();
+    ~StringGenerator() = default;
     std::string Generate();
+};
+
+class MarkGenerator : public StringGenerator {
+public:
+    MarkGenerator();
 };
 
 class FormatAcum {

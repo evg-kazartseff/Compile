@@ -8,7 +8,7 @@
 #include <fstream>
 #include "Ast.h"
 #include "WriteAdapter.h"
-#include "StringNameGenerator.h"
+#include "StringGenerator.h"
 
 class ASM_GEN {
 private:

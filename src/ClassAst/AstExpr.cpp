@@ -12,11 +12,14 @@ std::string AST::BinaryExprAST::Generate_code()
 
 void AST::BinaryExprAST::Dfs()
 {
+    std::cout << "(";
     this->LHS->Dfs();
     // result left
 
     this->RHS->Dfs();
+    std::cout << this->Op << " " ;
     // result right
+    std::cout << ")";
 }
 
 std::string AST::EvalAST::Generate_code()

@@ -36,7 +36,7 @@ set(SRC src/HashTable.cpp
         src/ClassAst/AstExpr.cpp
         src/ASM/ASM_VARS.cpp
         src/ClassAst/AstFunc.cpp
-        src/ASM/StringNameGenerator.cpp
+        src/ASM/StringGenerator.cpp
         src/ClassAst/AstCond.cpp)
 
 set(INC inc/HashTable.h
@@ -44,7 +44,7 @@ set(INC inc/HashTable.h
         inc/WriteAdapter.h
         inc/Singleton.h
         inc/ASM_VARS.h
-        inc/StringNameGenerator.h)
+        inc/StringGenerator.h)
 
 add_executable(compile ${SRC} ${INC} ${BISON_parser_OUTPUTS} ${FLEX_lexer_OUTPUTS})
 target_link_libraries(compile fl y m)
