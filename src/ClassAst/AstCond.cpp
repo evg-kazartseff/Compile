@@ -37,6 +37,7 @@ void AST::IfAST::Dfs()
     int stack = this->asmVars->getStack();
 
     this->write_adapter->Print("\tpushl %ecx\n");
+    asmVars->IncStack(INT_SIZE);
     this->write_adapter->Print("\tmovl %esp, %ecx\n");
 
     this->Statement->Dfs();

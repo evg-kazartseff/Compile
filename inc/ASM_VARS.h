@@ -4,9 +4,9 @@
 
 #ifndef COMPILE_ASM_VARS_H
 #define COMPILE_ASM_VARS_H
-
-
 #include <cstddef>
+
+#define INT_SIZE 4
 
 typedef struct {
     size_t Int;

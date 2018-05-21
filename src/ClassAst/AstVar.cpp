@@ -13,7 +13,7 @@ std::string AST::VariableExprAST::Generate_code()
     } else {
         str = "\tpushl " + str + "\n";
     }
-
+    asmVars->IncStack(INT_SIZE);
     return str;
 }
 
@@ -26,6 +26,7 @@ void AST::VariableExprAST::Dfs()
 std::string AST::IntNumberExprAST::Generate_code()
 {
     std::string str = "\tpushl $" + std::to_string(Val) + "\n";
+    asmVars->IncStack(INT_SIZE);
     return str;
 }
 
@@ -50,11 +51,11 @@ void AST::DoubleNumberExprAST::Dfs()
 
 std::string AST::VariableUndefAST::Generate_code()
 {
-    int size = this->Type == this->asmVars->getIntType() ? 4 : 8;
+    int size = this->Type == this->asmVars->getIntType() ? INT_SIZE : 8;
     this->asmVars->IncStack(size);
     int pos = this->asmVars->getStack();
     this->hashTable->setAddr(this->Name, pos);
-    std::string code = "\tsubl $" + std::to_string(size) + ", %esp\n";
+    std::string code = "\n\tsubl $" + std::to_string(size) + ", %esp\n";
     code += "\tmovl $0, -" + std::to_string(pos) + "(%ebp)\n";
     return code;
 }
@@ -71,6 +72,7 @@ std::string AST::VariableDefAST::Generate_code()
     std::string pos = "-" + std::to_string(shift) + "(%ebp)\n";
     std::string str = "\tpopl %eax\n"
                       "\tmovl %eax, " + pos;
+    asmVars->DecStack(INT_SIZE);
     return str;
 }
 

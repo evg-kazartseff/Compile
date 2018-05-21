@@ -8,6 +8,7 @@ std::string AST::BinaryExprAST::Generate_code()
 {
     std::string str = "\tpopl %ebx\n"
                       "\tpopl %eax\n";
+    asmVars->DecStack(INT_SIZE * 2);
     std::string operation;
     switch (this->Op) {
         case '+':
@@ -27,6 +28,7 @@ std::string AST::BinaryExprAST::Generate_code()
             break;
     }
     str += operation + "\tpushl %eax\n";
+    asmVars->IncStack(INT_SIZE);
     return str;
 }
 
@@ -43,6 +45,7 @@ std::string AST::EvalAST::Generate_code()
     std::string pos = "-" + std::to_string(addr) + "(%ebp)\n";
     std::string str = "\tpopl %eax\n"
                       "\tmovl %eax, " + pos;
+    asmVars->DecStack(INT_SIZE);
     return str;
 }
 
@@ -68,6 +71,7 @@ std::string AST::LogicExprAST::Generate_code()
 {
     std::string str = "\tpopl %ebx\n"
                       "\tpopl %eax\n";
+    asmVars->DecStack(INT_SIZE * 2);
     std::string operation;
     switch (this->Op) {
         case '<':
@@ -83,6 +87,7 @@ std::string AST::LogicExprAST::Generate_code()
             break;
     }
     str += operation + "\tpushl %eax\n";
+    asmVars->IncStack(INT_SIZE);
     return str;
 }
 

@@ -46,6 +46,7 @@ void AST::LoopAST::Dfs()
     int stack = this->asmVars->getStack();
 
     this->write_adapter->Print("\tpushl %ecx\n");
+    asmVars->IncStack(INT_SIZE);
     this->write_adapter->Print("\tmovl %esp, %ecx\n");
 
     if (Def) this->Def->Dfs();

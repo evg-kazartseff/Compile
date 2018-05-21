@@ -9,7 +9,7 @@ std::string AST::CallFuncAST::Generate_code()
     auto it = this->hashTable->LookupEntry(this->Id);
     if ((it != nullptr) && (it->getType() == asmVars->getIntType())) {
         str += "\tpushl %eax\n";
-        asmVars->IncStack(static_cast<int>(asmVars->getIntType()));
+        asmVars->IncStack(INT_SIZE);
     }
     return str;
 }
@@ -30,7 +30,7 @@ void AST::ArgListAST::Dfs()
 {
     if (this->Next)
         this->Next->Dfs();
-
+    asmVars->DecStack(INT_SIZE);
     if (this->Attr) {
         this->Attr->Dfs();
     }
@@ -48,6 +48,7 @@ void AST::ArgsAST::Dfs()
 
 
 std::string AST::StringAST::Generate_code() {
+    asmVars->IncStack(INT_SIZE);
     return "\tpushl $" + this->Str + "\n";
 }
 
