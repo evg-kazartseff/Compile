@@ -91,8 +91,8 @@ size_t Table::GetHash(const char *key)
     unsigned long hash = 5381;
     int c;
 
-    while ((c = *key++))
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    while ((c = *(key++)))
+        hash = ((hash << 6) + hash) + c; /* hash * 33 + c */
 
     return hash % this->size;
 }
@@ -166,7 +166,7 @@ Table* Table::getParent()
 void Table::setAddr(const std::string& name, int addr) {
     HashNode* node = this->LookupEntry(name);
     if(!node) {
-        std::cerr << "Undefine vareable: " << name << std::endl;
+        std::cerr << "Undefined variable: " << name << std::endl;
         return;
     }
     node->setAddr(addr);
@@ -175,7 +175,7 @@ void Table::setAddr(const std::string& name, int addr) {
 int Table::getAddr(const std::string &name) {
     HashNode* node = this->LookupEntry(name);
     if(!node) {
-        std::cerr << "Undefine vareable: " << name << std::endl;
+        std::cerr << "Undefined variable: " << name << std::endl;
         return -1;
     }
     return node->getAddr();

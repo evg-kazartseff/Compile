@@ -4,5 +4,8 @@
 
 echo Compile $1 to a.out
 
-./bin/compile $1 out.s
+cd ../cmake-build-debug/
+make
+cd -
+./bin/compile ./test.tc out.s
 ./PostRun.sh

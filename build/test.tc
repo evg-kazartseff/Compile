@@ -1,16 +1,7 @@
-function void printf;
-function void scanf;
-int kl;
-kl = 15;
-scanf("%d", &kl);
-printf("%d\n", kl);
-if (1) {
-    int kl = 2;
-    printf("%d\n", kl);
-}
-else {
-    int kl = 5;
-    for(int p = kl; p < 10; p++) {
-        printf("%d ", p);
-    }
-}
+int a;
+int b;
+int c;
+int d;
+int e;
+int g;
+int h;
