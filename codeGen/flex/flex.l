@@ -90,6 +90,8 @@ SIGN [-+]
 
 "else" {
     ch += yyleng;
+    hash_table->closeScope();
+    hash_table->addChildScope();
     return ELSE;
 }
 

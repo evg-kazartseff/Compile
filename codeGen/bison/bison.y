@@ -57,10 +57,10 @@ ATOMLLIST:   ATOM { $$ = ast->GetBodyLList(nullptr, $1); }
 
 ATOM:   DEFVAR ';' { $$ = $1; }
         | UNDEFVAR ';' { $$ = $1; }
-        | LOOP { $$ = $1; hash_table->gotoParent(); }
+        | LOOP { $$ = $1; }
         | GOTO ';' { $$ = $1; }
         | MARK { $$ = $1; }
-        | IFELSE { $$ = $1; hash_table->gotoParent(); }
+        | IFELSE { $$ = $1; }
         | EVAL ';' { $$ = $1; }
         | CALL ';' { $$ = $1; }
         | RET ';' { $$ = $1; }
@@ -95,8 +95,8 @@ ANYVAR: DEFVAR { $$ = $1; }
         | EVAL { $$ = $1; }
         | ';' { $$ = nullptr; }
 
-LOOP:   FOR '(' ANYVAR ';' EXPR ';'  LEVAL ')' ATOM { $$ = ast->GetLoop($3, $5, $7, $9); }
-        | FOR '(' ANYVAR ';' EXPR ';' LEVAL ')' '{' BODY '}' { $$ = ast->GetLoop($3, $5, $7, $10); }
+LOOP:   FOR '(' ANYVAR ';' EXPR ';'  LEVAL ')' ATOM { $$ = ast->GetLoop($3, $5, $7, $9); hash_table->closeScope(); }
+        | FOR '(' ANYVAR ';' EXPR ';' LEVAL ')' '{' BODY '}' { $$ = ast->GetLoop($3, $5, $7, $10); hash_table->closeScope(); }
 
 LEVAL:  EVAL { $$ = $1; }
         | EXPR { $$ = $1; }
@@ -107,12 +107,12 @@ MARK:   ID ':' { if (hash_table->LookupEntry($1) == nullptr) {
 
 GOTO:   JUMP ID  { if ($2) { $$ = ast->GetJump($2); } else { $$ = nullptr; } }
 
-IFELSE: IF '(' EXPR ')' ATOM { $$ = ast->GetIf($3, $5, nullptr); }
-        | IF '(' EXPR ')' '{' BODY '}' { $$ = ast->GetIf($3, $6, nullptr); }
+IFELSE: IF '(' EXPR ')' ATOM { $$ = ast->GetIf($3, $5, nullptr); hash_table->closeScope(); }
+        | IF '(' EXPR ')' '{' BODY '}' { $$ = ast->GetIf($3, $6, nullptr); hash_table->closeScope(); }
         | IF '(' EXPR ')' '{' BODY '}' ELSEIF { $$ = ast->GetIf($3, $6, $8); }
 
-ELSEIF: ELSE '{' BODY '}' { $$ = ast->GetElse($3); }
-        | ELSE ATOM  { $$ = ast->GetElse($2); }
+ELSEIF: ELSE '{' BODY '}' { $$ = ast->GetElse($3); hash_table->closeScope(); }
+        | ELSE ATOM  { $$ = ast->GetElse($2); hash_table->closeScope(); }
 
 EVAL:   ID_REC '=' EXPR   { if ($1) $$ = ast->GetEval($1, $3); else $$ = nullptr; }
         | ID_REC OPME EXPR { if ($1) $$ = ast->GetEval($1,
