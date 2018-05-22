@@ -49,6 +49,7 @@ void AST::IfAST::Dfs()
     this->write_adapter->Print("\tjmp " + end_if + "\n");
     this->write_adapter->Print(end_true + ":\n");
     if (this->Else) {
+        hashTable->deleteThisScope();
         this->Else->Dfs();
     }
 
@@ -56,8 +57,8 @@ void AST::IfAST::Dfs()
     int new_stack = asmVars->getStack();
     this->write_adapter->Print("\taddl $" + std::to_string(new_stack - stack) + ", %esp\n");
     this->asmVars->DecStack(new_stack - stack);
-
-    hashTable->deleteThisScope();
+    if (!this->Else)
+        hashTable->deleteThisScope();
 }
 
 std::string AST::ElseAST::Generate_code()
@@ -67,5 +68,6 @@ std::string AST::ElseAST::Generate_code()
 
 void AST::ElseAST::Dfs()
 {
+    hashTable->getChlidScope();
     this->Body->Dfs();
 }

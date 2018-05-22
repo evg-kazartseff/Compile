@@ -112,6 +112,11 @@ public:
         this->table = newScope;
     }
 
+    void closeScope() {
+        Table* parent = this->table->getParent();
+        this->table = parent;
+    }
+
     void getChlidScope()
     {
         Table *tmp_table = this->table->getChlidScope();
@@ -128,14 +133,10 @@ public:
 
     void deleteThisScope() {
         Table* parent = this->table->getParent();
+        if (parent)
+            parent->popChildScope();
         delete this->table;
         this->table = parent;
-    }
-
-    void gotoParent() {
-        Table* parent = this->table->getParent();
-        if(parent)
-            this->table = parent;
     }
 
     void setAddr(const std::string& name, int addr) {

@@ -1,7 +1,14 @@
 function void printf;
-function int sum;
-function int sqr;
-// TODO  break, continue, ERROR WITH MEMORY
-// TODO Add flag in call for get ret
-int kl = 3;
-printf("%d\n", -kl + 2);
+int kl;
+kl = 15;
+printf("%d\n", kl);
+if (1) {
+    int kl = 2;
+    printf("%d\n", kl);
+}
+else {
+    int kl = 5;
+    for(int p = kl; p < 10; p++) {
+        printf("%d ", p);
+    }
+}
