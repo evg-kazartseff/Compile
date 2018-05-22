@@ -1,6 +1,8 @@
 function void printf;
+function void scanf;
 int kl;
 kl = 15;
+scanf("%d", &kl);
 printf("%d\n", kl);
 if (1) {
     int kl = 2;

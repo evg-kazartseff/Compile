@@ -80,7 +80,6 @@ ARGS:   ARG { $$ = ast->Getter<AST::ArgListAST>(nullptr, $1); }
         | ARG ',' ARGS { $$ = ast->Getter<AST::ArgListAST>($3, $1); }
 
 ARG: EXPR { $$ = $1; }
-        | '&' VAR { reinterpret_cast<AST::VariableExprAST*>($2)->setAddr(); $$ = $2; }
         | STRING {      std::string str_name = Singleton<StringGenerator>::getInstance()->Generate();
                         Singleton<FormatAcum>::getInstance()->Add(str_name, $1);
                         $$ = ast->Getter<AST::StringAST>(str_name, $1);
@@ -146,7 +145,7 @@ EXPR2:  VAR { $$ = $1; }
         | '~' EXPR2 { $$ = ast->Getter<AST::UnaryAST>('~', $2); }
         | '-' EXPR2 { $$ = ast->Getter<AST::UnaryAST>('-', $2); }
         | '!' EXPR2  { $$ = ast->Getter<AST::UnaryAST>('!', $2); }
-        | '&' EXPR2  { $$ = ast->Getter<AST::UnaryAST>('&', $2); }
+        | '&' VAR  { reinterpret_cast<AST::VariableExprAST*>($2)->setAddr(); $$ = $2; }
         | VAR INC { reinterpret_cast<AST::VariableExprAST*>($1)->setAddr(); $$ = ast->Getter<AST::UnaryAST>(oINC,  $1); }
         | INC VAR { reinterpret_cast<AST::VariableExprAST*>($2)->setAddr(); $$ = ast->Getter<AST::UnaryAST>(oIINC,  $2); }
         | VAR  DEC { reinterpret_cast<AST::VariableExprAST*>($1)->setAddr(); $$ = ast->Getter<AST::UnaryAST>(oDEC, $1); }
