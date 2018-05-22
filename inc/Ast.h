@@ -287,28 +287,12 @@ namespace AST
     public:
         Ast() = default;
 
-        BaseAST* GetIntNumberExpr(int val);
-        BaseAST* GetDoubleNumberExpr(double val);
-        BaseAST* GetVariableExpr(std::string name);
-        BaseAST* GetBinaryExpr(char op, BaseAST *lhs, BaseAST *rhs);
-        BaseAST* GetLogicExpr(char op, BaseAST *lhs, BaseAST *rhs);
-        BaseAST* GetEval(std::string id, BaseAST *expr);
-        BaseAST* GetJump(std::string id);
-        BaseAST* GetMark(std::string id);
-        BaseAST* GetVariableDef(int type, std::string name, BaseAST* expr);
-        BaseAST* GetVariableUndef(int type, std::string name);
-        BaseAST* GetBodyLList(BaseAST *next, BaseAST *attr);
-        BaseAST* GetBody(BaseAST *llist);
-        BaseAST* GetArgList(BaseAST* next, BaseAST* attr);
-        BaseAST* GetArgs(BaseAST* llist);
-        BaseAST* GetCallFunc(std::string id, BaseAST* args);
-        BaseAST* GetPrototypeFunc(int ret, const std::string& id);
-        BaseAST* GetIf(BaseAST *statement, BaseAST *body, BaseAST *els);
-        BaseAST* GetElse(BaseAST *body);
-        BaseAST* GetLoop(BaseAST *def, BaseAST *If, BaseAST *inc, BaseAST *body);
-        BaseAST* GetUnary(char operation, BaseAST* id);
-        BaseAST* GetReturn(BaseAST* val);
-        AST::BaseAST* GetString(const std::string& str, const std::string& format);
+        template <class Node, class ...Args>
+        BaseAST* Getter(Args... args)
+        {
+            return new Node(std::forward<Args>(args)...);
+        }
+
         void AddToLink(BaseAST *childe);
         void DFS();
     };

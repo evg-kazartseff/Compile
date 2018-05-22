@@ -50,10 +50,10 @@
 START:  ATOM { ast->AddToLink($1); }
         | START ATOM { ast->AddToLink($2); }
 
-BODY: ATOMLLIST { $$ = ast->GetBody($1); }
+BODY: ATOMLLIST { $$ = ast->Getter<AST::BodyAST>($1); }
 
-ATOMLLIST:   ATOM { $$ = ast->GetBodyLList(nullptr, $1); }
-        | ATOM BODY { $$ = ast->GetBodyLList($2, $1); }
+ATOMLLIST:   ATOM { $$ = ast->Getter<AST::BodyLListAST>(nullptr, $1); }
+        | ATOM BODY { $$ = ast->Getter<AST::BodyLListAST>($2, $1); }
 
 ATOM:   DEFVAR ';' { $$ = $1; }
         | UNDEFVAR ';' { $$ = $1; }
@@ -67,100 +67,101 @@ ATOM:   DEFVAR ';' { $$ = $1; }
         | PROTO ';' { $$ = $1; }
         | EXPR ';' { $$ = $1; }
 
-PROTO:  FUNCTION FUNC_T ID { hash_table->CreateEntry($2, $3); $$ = ast->GetPrototypeFunc($2, $3); }
+PROTO:  FUNCTION FUNC_T ID { hash_table->CreateEntry($2, $3); $$ = ast->Getter<AST::PrototypeFuncAST>($2, $3); }
 
 FUNC_T: INT { $$ = $1; }
         | VOID { $$ = $1; }
 
-RET: RETURN VAR  { $$ = ast->GetReturn($2); }
+RET: RETURN VAR  { $$ = ast->Getter<AST::ReturnAST>($2); }
 
-CALL:   ID_REC  '(' ARGS ')' { $$ = ast->GetCallFunc($1, ast->GetArgs($3));}
+CALL:   ID_REC  '(' ARGS ')' { $$ = ast->Getter<AST::CallFuncAST>($1, ast->Getter<AST::ArgsAST>($3));}
 
-ARGS:   ARG { $$ = ast->GetArgList(nullptr, $1); }
-        | ARG ',' ARGS { $$ = ast->GetArgList($3, $1); }
+ARGS:   ARG { $$ = ast->Getter<AST::ArgListAST>(nullptr, $1); }
+        | ARG ',' ARGS { $$ = ast->Getter<AST::ArgListAST>($3, $1); }
 
 ARG: EXPR { $$ = $1; }
         | '&' VAR { reinterpret_cast<AST::VariableExprAST*>($2)->setAddr(); $$ = $2; }
         | STRING {      std::string str_name = Singleton<StringGenerator>::getInstance()->Generate();
                         Singleton<FormatAcum>::getInstance()->Add(str_name, $1);
-                        $$ = ast->GetString(str_name, $1);
+                        $$ = ast->Getter<AST::StringAST>(str_name, $1);
                  }
         | EVAL { reinterpret_cast<AST::EvalAST*>($1)->SetNeed(); $$ = $1; }
 
-DEFVAR: INT ID_LOC '=' EXPR  { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableDef($1, $2, $4); }
+DEFVAR: INT ID_LOC '=' EXPR  { hash_table->CreateEntry($1, $2); $$ = ast->Getter<AST::VariableDefAST>($1, $2, $4); }
 
-UNDEFVAR: INT ID_LOC  { hash_table->CreateEntry($1, $2); $$ = ast->GetVariableUndef($1, $2); }
+UNDEFVAR: INT ID_LOC  { hash_table->CreateEntry($1, $2); $$ = ast->Getter<AST::VariableUndefAST>($1, $2); }
 
 ANYVAR: DEFVAR { $$ = $1; }
         | EVAL { $$ = $1; }
         | ';' { $$ = nullptr; }
 
-LOOP:   FOR '(' ANYVAR ';' EXPR ';'  LEVAL ')' ATOM { $$ = ast->GetLoop($3, $5, $7, $9); }
-        | FOR '(' ANYVAR ';' EXPR ';' LEVAL ')' '{' BODY '}' { $$ = ast->GetLoop($3, $5, $7, $10); }
+LOOP:   FOR '(' ANYVAR ';' EXPR ';'  LEVAL ')' ATOM { $$ = ast->Getter<AST::LoopAST>($3, $5, $7, $9); }
+        | FOR '(' ANYVAR ';' EXPR ';' LEVAL ')' '{' BODY '}' { $$ = ast->Getter<AST::LoopAST>($3, $5, $7, $10); }
 
 LEVAL:  EVAL { $$ = $1; }
         | EXPR { $$ = $1; }
 
 MARK:   ID ':' { if (hash_table->LookupEntry($1) == nullptr) {
-                    hash_table->CreateEntry(MARK_TOK, $1); $$ = ast->GetMark($1);
+                    hash_table->CreateEntry(MARK_TOK, $1); $$ = ast->Getter<AST::MarkAST>($1);
                  } else { yyerror("Identificator already created", $1); $$ = nullptr; } }
 
-GOTO:   JUMP ID  { if ($2) { $$ = ast->GetJump($2); } else { $$ = nullptr; } }
+GOTO:   JUMP ID  { if ($2) { $$ = ast->Getter<AST::JumpAST>($2); } else { $$ = nullptr; } }
 
-IFELSE: IF '(' EXPR ')' ATOM { $$ = ast->GetIf($3, $5, nullptr); }
-        | IF '(' EXPR ')' '{' BODY '}' { $$ = ast->GetIf($3, $6, nullptr); }
-        | IF '(' EXPR ')' '{' BODY '}' ELSEIF { $$ = ast->GetIf($3, $6, $8); }
+IFELSE: IF '(' EXPR ')' ATOM { $$ = ast->Getter<AST::IfAST>($3, $5, nullptr); }
+        | IF '(' EXPR ')' '{' BODY '}' { $$ = ast->Getter<AST::IfAST>($3, $6, nullptr); }
+        | IF '(' EXPR ')' '{' BODY '}' ELSEIF { $$ = ast->Getter<AST::IfAST>($3, $6, $8); }
 
-ELSEIF: ELSE '{' BODY '}' { $$ = ast->GetElse($3); }
-        | ELSE ATOM  { $$ = ast->GetElse($2); }
+ELSEIF: ELSE '{' BODY '}' { $$ = ast->Getter<AST::ElseAST>($3); }
+        | ELSE ATOM  { $$ = ast->Getter<AST::ElseAST>($2); }
 
-EVAL:   ID_REC '=' EXPR   { if ($1) $$ = ast->GetEval($1, $3); else $$ = nullptr; }
-        | ID_REC OPME EXPR { if ($1) $$ = ast->GetEval($1,
-                ast->GetBinaryExpr($2, ast->GetVariableExpr(std::string($1)), $3));
+EVAL:   ID_REC '=' EXPR   { if ($1) $$ = ast->Getter<AST::EvalAST>($1, $3); else $$ = nullptr; }
+        | ID_REC OPME EXPR { if ($1) $$ = ast->Getter<AST::EvalAST>($1,
+                ast->Getter<AST::BinaryExprAST>($2, ast->Getter<AST::VariableExprAST>(std::string($1)), $3));
             else $$ = nullptr; }
 
 EXPR:   EXPR0 { $$ = $1; }
-        | EXPR0 '&' EXPR { $$ = ast->GetBinaryExpr('&', $1, $3); }
-        | EXPR0 '^' EXPR { $$ = ast->GetBinaryExpr('^', $1, $3); }
-        | EXPR0 '|' EXPR { $$ = ast->GetBinaryExpr('|', $1, $3); }
-        | EXPR0 '<' EXPR { $$ = ast->GetLogicExpr('<', $1, $3); }
-        | EXPR0 LEQ EXPR { $$ = ast->GetLogicExpr(oLEQ, $1, $3); }
-        | EXPR0 GEQ EXPR { $$ = ast->GetLogicExpr(oGEQ, $1, $3); }
-        | EXPR0 '>' EXPR { $$ = ast->GetLogicExpr('>', $1, $3); }
-        | EXPR0 EQ EXPR { $$ = ast->GetLogicExpr('=', $1, $3); }
-        | EXPR0 NEQ EXPR { $$ = ast->GetLogicExpr('!', $1, $3); }
+        | EXPR0 '&' EXPR { $$ = ast->Getter<AST::BinaryExprAST>('&', $1, $3); }
+        | EXPR0 '^' EXPR { $$ = ast->Getter<AST::BinaryExprAST>('^', $1, $3); }
+        | EXPR0 '|' EXPR { $$ = ast->Getter<AST::BinaryExprAST>('|', $1, $3); }
+        | EXPR0 '<' EXPR { $$ = ast->Getter<AST::LogicExprAST>('<', $1, $3); }
+        | EXPR0 LEQ EXPR { $$ = ast->Getter<AST::LogicExprAST>(oLEQ, $1, $3); }
+        | EXPR0 GEQ EXPR { $$ = ast->Getter<AST::LogicExprAST>(oGEQ, $1, $3); }
+        | EXPR0 '>' EXPR { $$ = ast->Getter<AST::LogicExprAST>('>', $1, $3); }
+        | EXPR0 EQ EXPR { $$ = ast->Getter<AST::LogicExprAST>('=', $1, $3); }
+        | EXPR0 NEQ EXPR { $$ = ast->Getter<AST::LogicExprAST>('!', $1, $3); }
 
 
 EXPR0:   EXPR1 { $$ = $1; }
-        | EXPR1 '+' EXPR0 { $$ = ast->GetBinaryExpr('+', $1, $3); }
-        | EXPR1 '-' EXPR0 { $$ = ast->GetBinaryExpr('-', $1, $3); }
+        | EXPR1 '+' EXPR0 { $$ = ast->Getter<AST::BinaryExprAST>('+', $1, $3); }
+        | EXPR1 '-' EXPR0 { $$ = ast->Getter<AST::BinaryExprAST>('-', $1, $3); }
 
 EXPR1:  EXPR2 { $$ = $1; }
-        | EXPR2 '*' EXPR1 { $$ = ast->GetBinaryExpr('*', $1, $3); }
-        | EXPR2 '/' EXPR1 { $$ = ast->GetBinaryExpr('/', $1, $3); }
-        | EXPR2 '%' EXPR1 { $$ = ast->GetBinaryExpr('%', $1, $3); }
-        | EXPR2 AND EXPR1 { $$ = ast->GetLogicExpr('&', $1, $3); }
+        | EXPR2 '*' EXPR1 { $$ = ast->Getter<AST::BinaryExprAST>('*', $1, $3); }
+        | EXPR2 '/' EXPR1 { $$ = ast->Getter<AST::BinaryExprAST>('/', $1, $3); }
+        | EXPR2 '%' EXPR1 { $$ = ast->Getter<AST::BinaryExprAST>('%', $1, $3); }
+        | EXPR2 AND EXPR1 { $$ = ast->Getter<AST::LogicExprAST>('&', $1, $3); }
 
 EXPR2:  VAR { $$ = $1; }
         | '(' EXPR ')' { $$ = $2;}
-        | '~' EXPR2 %prec uminus { $$ = ast->GetUnary('~', $2); }
-        | '-' EXPR2 %prec uminus { $$ = ast->GetUnary('-', $2); }
-        | '!' EXPR2 %prec uminus { $$ = ast->GetUnary('!', $2); }
-        | VAR INC { reinterpret_cast<AST::VariableExprAST*>($1)->setAddr(); $$ = ast->GetUnary(oINC,  $1); }
-        | INC VAR { reinterpret_cast<AST::VariableExprAST*>($2)->setAddr(); $$ = ast->GetUnary(oIINC,  $2); }
-        | VAR  DEC { reinterpret_cast<AST::VariableExprAST*>($1)->setAddr(); $$ = ast->GetUnary(oDEC, $1); }
-        | DEC VAR  { reinterpret_cast<AST::VariableExprAST*>($2)->setAddr(); $$ = ast->GetUnary(oIDEC, $2); }
+        | '~' EXPR2 { $$ = ast->Getter<AST::UnaryAST>('~', $2); }
+        | '-' EXPR2 { $$ = ast->Getter<AST::UnaryAST>('-', $2); }
+        | '!' EXPR2  { $$ = ast->Getter<AST::UnaryAST>('!', $2); }
+        | '&' EXPR2  { $$ = ast->Getter<AST::UnaryAST>('&', $2); }
+        | VAR INC { reinterpret_cast<AST::VariableExprAST*>($1)->setAddr(); $$ = ast->Getter<AST::UnaryAST>(oINC,  $1); }
+        | INC VAR { reinterpret_cast<AST::VariableExprAST*>($2)->setAddr(); $$ = ast->Getter<AST::UnaryAST>(oIINC,  $2); }
+        | VAR  DEC { reinterpret_cast<AST::VariableExprAST*>($1)->setAddr(); $$ = ast->Getter<AST::UnaryAST>(oDEC, $1); }
+        | DEC VAR  { reinterpret_cast<AST::VariableExprAST*>($2)->setAddr(); $$ = ast->Getter<AST::UnaryAST>(oIDEC, $2); }
         | CALL { $$ = $1; }
 
 
 VAR:    CONST { $$ = $1; }
-        | ID_REC { $$ = ast->GetVariableExpr(std::string($1)); }
+        | ID_REC { $$ = ast->Getter<AST::VariableExprAST>(std::string($1)); }
 
 ID_REC: ID { if (hash_table->LookupEntry($1) != nullptr) { $$ = $1; } else { yyerror("Var not declaration", $1); $$ = (char*)""; } }
 
 ID_LOC: ID { if (hash_table->LookupEntryNotRecur($1) == nullptr) { $$ = $1; } else { yyerror("Var already has definition", $1); $$ = (char*)""; } }
 
-CONST:  CONST_INT { $$ = ast->GetIntNumberExpr(atoi($1)); }
+CONST:  CONST_INT { $$ = ast->Getter<AST::IntNumberExprAST>(atoi($1)); }
 
 %%
 

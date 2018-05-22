@@ -3,16 +3,5 @@ function int sum;
 function int sqr;
 // TODO  break, continue, ERROR WITH MEMORY
 // TODO Add flag in call for get ret
-int kl;
-kl = 15;
-kl += 5 * 2;
-printf("%d\n", kl -= 1);
-int l = kl;
-printf("%d l\n", l *= 2);
-//if ((1 && 0) + (1 && 1)) {
-//    printf("%d\n", kl++);
-//    printf("%d\n\n", kl);
-//
-//    printf("%d\n", ++kl);
-//    printf("%d\n", kl);
-//}
+int kl = 3;
+printf("%d\n", -kl + 2);
