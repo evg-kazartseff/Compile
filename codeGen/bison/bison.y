@@ -143,9 +143,9 @@ EXPR1:  EXPR2 { $$ = $1; }
 
 EXPR2:  VAR { $$ = $1; }
         | '(' EXPR ')' { $$ = $2;}
-        | '~' EXPR %prec uminus { $$ = ast->GetUnary('~', $2); }
-        | '-' EXPR %prec uminus { $$ = ast->GetUnary('-', $2); }
-        | '!' EXPR %prec uminus { $$ = ast->GetUnary('!', $2); }
+        | '~' EXPR2 %prec uminus { $$ = ast->GetUnary('~', $2); }
+        | '-' EXPR2 %prec uminus { $$ = ast->GetUnary('-', $2); }
+        | '!' EXPR2 %prec uminus { $$ = ast->GetUnary('!', $2); }
         | VAR INC { reinterpret_cast<AST::VariableExprAST*>($1)->setAddr(); $$ = ast->GetUnary(oINC,  $1); }
         | INC VAR { reinterpret_cast<AST::VariableExprAST*>($2)->setAddr(); $$ = ast->GetUnary(oIINC,  $2); }
         | VAR  DEC { reinterpret_cast<AST::VariableExprAST*>($1)->setAddr(); $$ = ast->GetUnary(oDEC, $1); }
