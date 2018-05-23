@@ -8,6 +8,8 @@
     #include "../inc/ASM_VARS.h"
     #include "../inc/StringGenerator.h"
 
+    #include "../test.h"
+
     extern FILE *yyin;
     extern int yylineno;
     extern int ch;
@@ -18,7 +20,7 @@
     extern int yylex();
     AST::Ast* ast;
     bool valid = true;
-    int debug = 1;
+    int debug = 0;
 %}
 
 %token INT VOID STRING FUNCTION
@@ -178,6 +180,8 @@ void yyerror(const char *errmsg, const char *msg)
 
 int main(int argc, char** argv)
 {
+    test();
+//    return 0;
     if(argc < 3) {
         fprintf(stderr, "\nNot enough arguments. Please specify filename.\n");
         return EXIT_FAILURE;

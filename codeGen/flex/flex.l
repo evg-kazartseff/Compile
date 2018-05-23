@@ -20,15 +20,11 @@ SIGN [-+]
 
 %%
 
-"/*".*"*/" {
-    ch += yyleng;
-}
-
 "\n" {
     ch = 1;
 }
 
-"//"(.|[ \t])*\n {
+"//".*('\n'|$) {
     ch += yyleng;
 }
 
@@ -93,11 +89,6 @@ SIGN [-+]
     hash_table->closeScope();
     hash_table->addChildScope();
     return ELSE;
-}
-
-"print" {
-    ch += yyleng;
-    return PRINT;
 }
 
 "for" {

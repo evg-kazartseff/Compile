@@ -65,10 +65,13 @@ void HashEntry::DeleteNode(HashNode *node)
 HashEntry::~HashEntry()
 {
     HashNode *node = this->list;
-    HashNode *next;
-    while (node) {
-        next = node->getNext();
+    if (node) {
+        delete node->getNext();
         delete node;
-        node = next;
     }
+}
+
+HashEntry::HashEntry()
+{
+    this->list = nullptr;
 }

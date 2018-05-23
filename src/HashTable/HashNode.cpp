@@ -6,6 +6,7 @@
 
 HashNode::HashNode(int type, std::string &Value)
 {
+    this->next = this->prev = nullptr;
     this->type = type;
     this->value = Value;
 }
