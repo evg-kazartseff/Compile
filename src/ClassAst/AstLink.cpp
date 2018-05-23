@@ -19,3 +19,14 @@ void AST::LinkAST::Dfs()
         if (it) it->Dfs();
     }
 }
+
+AST::LinkAST::~LinkAST()
+{
+    if (this->Childs) {
+        for (auto it: *this->Childs) {
+            delete it;
+        }
+        delete Childs;
+        Childs = nullptr;
+    }
+}

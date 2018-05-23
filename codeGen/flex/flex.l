@@ -131,9 +131,8 @@ SIGN [-+]
 
 "return" {
     ch += yyleng;
-    yylval.type = RETURN;
     return RETURN;
-}
+ }
 
 {SIGN}?{DIGIT}+ {
     ch += yyleng;

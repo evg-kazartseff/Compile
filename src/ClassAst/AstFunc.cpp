@@ -20,6 +20,14 @@ void AST::CallFuncAST::Dfs()
     this->write_adapter->Print(Generate_code());
 }
 
+AST::CallFuncAST::~CallFuncAST()
+{
+    if (this->Args) {
+        delete Args;
+        Args = nullptr;
+    }
+}
+
 std::string AST::ArgListAST::Generate_code()
 {
 //    return "\tpushl ";
@@ -35,6 +43,18 @@ void AST::ArgListAST::Dfs()
     }
 }
 
+AST::ArgListAST::~ArgListAST()
+{
+    if (this->Attr) {
+        delete Attr;
+        Attr = nullptr;
+    }
+    if (this->Next) {
+        delete Next;
+        Next = nullptr;
+    }
+}
+
 std::string AST::ArgsAST::Generate_code()
 {
     return std::__cxx11::string();
@@ -43,6 +63,14 @@ std::string AST::ArgsAST::Generate_code()
 void AST::ArgsAST::Dfs()
 {
     if (this->LList) this->LList->Dfs();
+}
+
+AST::ArgsAST::~ArgsAST()
+{
+    if (this->LList) {
+        delete LList;
+        LList = nullptr;
+    }
 }
 
 std::string AST::StringAST::Generate_code()
@@ -65,3 +93,7 @@ void AST::PrototypeFuncAST::Dfs()
 {
     // TODO maybe add check when call
 }
+
+AST::PrototypeFuncAST::PrototypeFuncAST(int ret, std::string id)
+        : Ret(ret), Id(std::move(std::move(id)))
+{}
