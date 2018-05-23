@@ -47,5 +47,5 @@ set(INC inc/HashTable.h
         inc/ASM_VARS.h
         inc/StringGenerator.h inc/HashNode.h inc/HashEntry.h)
 
-add_executable(compile ${SRC} ${INC} ${BISON_parser_OUTPUTS} ${FLEX_lexer_OUTPUTS})
+add_executable(compile ${SRC} ${INC} ${BISON_parser_OUTPUTS} ${FLEX_lexer_OUTPUTS} test.cpp test.h)
 target_link_libraries(compile fl y m)

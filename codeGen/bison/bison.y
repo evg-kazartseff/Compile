@@ -156,7 +156,7 @@ EXPR2:  VAR { $$ = $1; }
 
 
 VAR:    CONST { $$ = $1; }
-        | ID_REC { $$ = ast->Getter<AST::VariableExprAST>(std::string($1)); free($1); }
+        | ID_REC { if ($1) $$ = ast->Getter<AST::VariableExprAST>(std::string($1)); else $$ = nullptr; free($1); }
 
 ID_REC: ID { if (hash_table->LookupEntry($1) != nullptr) { $$ = $1; } else { yyerror("Var not declaration", $1); $$ = nullptr; free($1); } }
 
