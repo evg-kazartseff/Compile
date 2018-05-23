@@ -47,6 +47,10 @@ Table::~Table()
         delete childs.front();
         childs.pop();
     }
+    if (this->table) {
+        delete [] table;
+        table = nullptr;
+    }
 }
 
 void Table::setParent(Table *table)

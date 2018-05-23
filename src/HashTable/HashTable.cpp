@@ -39,7 +39,7 @@ HashNode *HashTable::LookupEntryNotRecur(const std::string &value)
 
 void HashTable::addChildScope()
 {
-    Table *newScope = new Table();
+    auto *newScope = new Table();
 
     this->table->addChildScope(newScope);
     this->table = newScope;
@@ -88,4 +88,12 @@ void HashTable::setAddr(const std::string &name, int addr)
 int HashTable::getAddr(const std::string &name)
 {
     return this->table->getAddr(name);
+}
+
+HashTable::~HashTable()
+{
+    if (this->table) {
+        delete table;
+        table = nullptr;
+    }
 }

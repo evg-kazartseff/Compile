@@ -53,6 +53,8 @@ public:
 
     HashTable();
 
+    ~HashTable();
+
     void CreateEntry(int type, std::string value);
 
     HashNode *LookupEntry(const std::string &value);
