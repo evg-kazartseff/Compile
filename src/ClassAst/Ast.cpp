@@ -21,6 +21,14 @@ void AST::BodyAST::Dfs()
     if (this->LList) this->LList->Dfs();
 }
 
+AST::BodyAST::~BodyAST()
+{
+    if (LList) {
+        delete LList;
+        LList = nullptr;
+    }
+}
+
 std::string AST::BodyLListAST::Generate_code()
 {
     return std::__cxx11::string();
@@ -31,6 +39,18 @@ void AST::BodyLListAST::Dfs()
     this->Attr->Dfs();
     if (this->Next)
         this->Next->Dfs();
+}
+
+AST::BodyLListAST::~BodyLListAST()
+{
+    if (this->Attr) {
+        delete Attr;
+        Attr = nullptr;
+    }
+    if (this->Next) {
+        delete Next;
+        Next = nullptr;
+    }
 }
 
 std::string AST::LoopAST::Generate_code()
@@ -69,6 +89,27 @@ void AST::LoopAST::Dfs()
     hashTable->deleteThisScope();
 }
 
+AST::LoopAST::~LoopAST()
+{
+    if (Body) {
+        delete Body;
+        Body = nullptr;
+    }
+    if (this->Def) {
+        delete Def;
+        Def = nullptr;
+    }
+    if (this->If) {
+        delete If;
+        If = nullptr;
+    }
+    if (this->Inc) {
+        delete Inc;
+        Inc = nullptr;
+    }
+
+}
+
 std::string AST::ReturnAST::Generate_code()
 {
     std::string str = "\n\tpopl %eax\n"
@@ -82,4 +123,12 @@ void AST::ReturnAST::Dfs()
 {
     this->Val->Dfs();
     this->write_adapter->Print(Generate_code());
+}
+
+AST::ReturnAST::~ReturnAST()
+{
+    if (this->Val) {
+        delete Val;
+        Val = nullptr;
+    }
 }

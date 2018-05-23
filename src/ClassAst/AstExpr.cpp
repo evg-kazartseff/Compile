@@ -48,6 +48,18 @@ void AST::BinaryExprAST::Dfs()
     write_adapter->Print(Generate_code());
 }
 
+AST::BinaryExprAST::~BinaryExprAST()
+{
+    if (this->LHS) {
+        delete LHS;
+        LHS = nullptr;
+    }
+    if (this->RHS) {
+        delete RHS;
+        RHS = nullptr;
+    }
+}
+
 std::string AST::EvalAST::Generate_code()
 {
     int addr = hashTable->getAddr(this->Id);
@@ -71,6 +83,14 @@ void AST::EvalAST::Dfs()
 void AST::EvalAST::SetNeed()
 {
     this->need_ret = true;
+}
+
+AST::EvalAST::~EvalAST()
+{
+    if (Expr) {
+        delete Expr;
+        Expr = nullptr;
+    }
 }
 
 std::string AST::UnaryAST::Generate_code()
@@ -127,6 +147,15 @@ void AST::UnaryAST::Dfs()
 {
     this->Operand->Dfs();
     this->write_adapter->Print(Generate_code());
+}
+
+AST::UnaryAST::~UnaryAST()
+{
+    if (this->Operand) {
+        delete Operand;
+        Operand = nullptr;
+    }
+
 }
 
 std::string AST::LogicExprAST::Generate_code()
@@ -187,4 +216,16 @@ void AST::LogicExprAST::Dfs()
     this->LHS->Dfs();
     this->RHS->Dfs();
     write_adapter->Print(Generate_code());
+}
+
+AST::LogicExprAST::~LogicExprAST()
+{
+    if (this->LHS) {
+        delete LHS;
+        LHS = nullptr;
+    }
+    if (this->RHS) {
+        delete RHS;
+        RHS = nullptr;
+    }
 }

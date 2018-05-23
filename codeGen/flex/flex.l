@@ -129,6 +129,11 @@ SIGN [-+]
     return JUMP;
 }
 
+"return" {
+    ch += yyleng;
+    return RETURN;
+ }
+
 {SIGN}?{DIGIT}+ {
     ch += yyleng;
     yylval.str = strdup(yytext);

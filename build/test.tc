@@ -1,7 +1,25 @@
-int a;
-int b;
-int c;
-int d;
-int e;
-int g;
-int h;
+function void scanf;
+function void printf;
+
+int fact = 0;
+
+int st;
+
+scanf("%d", &st);
+
+if (st <= 0) { // не бывает факториала отрицательных чисел
+return -1;
+}
+
+if (st == 1) {
+printf("n! = 1");
+return 0;
+}
+
+fact = st;
+
+for(int i = st - 1; i > 1; i--) {
+fact = fact * i;
+}
+
+printf("Fact: %d", fact);

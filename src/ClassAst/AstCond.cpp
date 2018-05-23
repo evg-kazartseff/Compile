@@ -61,6 +61,22 @@ void AST::IfAST::Dfs()
         hashTable->deleteThisScope();
 }
 
+AST::IfAST::~IfAST()
+{
+    if (this->Body) {
+        delete Body;
+        Body = nullptr;
+    }
+    if (this->Statement) {
+        delete Statement;
+        Statement = nullptr;
+    }
+    if (this->Else) {
+        delete Else;
+        Else = nullptr;
+    }
+}
+
 std::string AST::ElseAST::Generate_code()
 {
     return std::__cxx11::string();
@@ -70,4 +86,12 @@ void AST::ElseAST::Dfs()
 {
     hashTable->getChlidScope();
     this->Body->Dfs();
+}
+
+AST::ElseAST::~ElseAST()
+{
+    if (Body) {
+        delete Body;
+        Body = nullptr;
+    }
 }

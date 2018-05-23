@@ -81,3 +81,11 @@ void AST::VariableDefAST::Dfs()
     this->Expr->Dfs();
     this->write_adapter->Print(Generate_code());
 }
+
+AST::VariableDefAST::~VariableDefAST()
+{
+    if (this->Expr) {
+        delete(this->Expr);
+        this->Expr = nullptr;
+    }
+}

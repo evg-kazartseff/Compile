@@ -16,3 +16,12 @@ void AST::Ast::AddToLink(BaseAST *childe)
     this->tree->AddChild(childe);
 }
 
+AST::Ast::~Ast()
+{
+    if (tree) {
+        delete tree;
+        tree = nullptr;
+    }
+
+}
+
