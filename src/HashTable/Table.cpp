@@ -3,7 +3,8 @@
 //
 
 
-#include "../../inc/HashTable.h"
+#include <utility>
+#include "../../inc/HashTable/HashTable.h"
 
 Table::Table(size_t size)
 {
@@ -27,16 +28,17 @@ size_t Table::GetHash(const std::string &key)
 HashNode *Table::LookupEntry(const std::string &value)
 {
     size_t hash = this->GetHash(value);
-    HashNode* node = this->table[hash].LookupValueNode(value);
+    HashNode *node = this->table[hash].LookupValueNode(value);
     if (!node) {
-        Table* parent = this->getParent();
+        Table *parent = this->getParent();
         if (parent)
             node = parent->LookupEntry(value);
     }
     return node;
 }
 
-HashNode* Table::LookupEntryNotRecur(const std::string &value) {
+HashNode *Table::LookupEntryNotRecur(const std::string &value)
+{
     size_t hash = this->GetHash(value);
     return this->table[hash].LookupValueNode(value);
 }
@@ -48,7 +50,7 @@ Table::~Table()
         childs.pop();
     }
     if (this->table) {
-        delete [] table;
+        delete[] table;
         table = nullptr;
     }
 }
@@ -69,32 +71,36 @@ Table *Table::getChlidScope()
     return this->childs.front();
 }
 
-void Table::popChildScope()
-{
-    if (!this->childs.empty())
-        this->childs.pop();
-}
-
-Table* Table::getParent()
+Table *Table::getParent()
 {
     return this->parent;
 }
 
-void Table::setAddr(const std::string& name, int addr) {
-    HashNode* node = this->LookupEntry(name);
-    if(!node) {
-        std::cerr << "Undefined variable: " << name << std::endl;
+void Table::setAddr(const std::string &name, int addr)
+{
+    HashNode *node = this->LookupEntry(name);
+    if (!node) {
+        std::cerr << "set Addr Undefined variable: " << name << std::endl;
         return;
     }
     node->setAddr(addr);
 }
 
-int Table::getAddr(const std::string &name) {
-    HashNode* node = this->LookupEntry(name);
-    if(!node) {
-        std::cerr << "Undefined variable: " << name << std::endl;
+int Table::getAddr(const std::string &name)
+{
+    HashNode *node = this->LookupEntry(name);
+    if (!node) {
+        std::cerr << "get Addr Undefined variable: " << name << std::endl;
         return -1;
     }
     return node->getAddr();
 }
+
+void Table::popChlidScope()
+{
+    auto tabl = this->childs.front();
+    delete tabl;
+    this->childs.pop();
+}
+
 
