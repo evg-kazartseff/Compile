@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+.idea
+build/bin
+build/out.s
+cmake-build-debug
+inc/parser.h
+src/lexer.cpp
+src/parser.cpp
