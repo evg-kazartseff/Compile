@@ -14,7 +14,7 @@ private:
     void DeleteNode(HashNode *node);
 
 public:
-    HashEntry() = default;
+    HashEntry();
 
     ~HashEntry();
 
