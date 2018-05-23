@@ -95,6 +95,12 @@ SIGN [-+]
     return ELSE;
 }
 
+"}" {
+    ch += yyleng;
+    hash_table->closeScope();
+
+}
+
 "print" {
     ch += yyleng;
     return PRINT;
@@ -127,6 +133,12 @@ SIGN [-+]
 "goto" {
     ch += yyleng;
     return JUMP;
+}
+
+"return" {
+    ch += yyleng;
+    yylval.type = RETURN;
+    return RETURN;
 }
 
 {SIGN}?{DIGIT}+ {
