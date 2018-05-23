@@ -73,6 +73,10 @@ void HashTable::getChlidScope()
 
 void HashTable::deleteThisScope()
 {
+    if (!table) {
+        std::cerr << "Table not exist" << std::endl;
+        return;
+    }
     Table *parent = this->table->getParent();
     if (parent)
         parent->popChildScope();
@@ -82,11 +86,19 @@ void HashTable::deleteThisScope()
 
 void HashTable::setAddr(const std::string &name, int addr)
 {
+    if (!table) {
+        std::cerr << "Table not exist" << std::endl;
+        return;
+    }
     this->table->setAddr(name, addr);
 }
 
 int HashTable::getAddr(const std::string &name)
 {
+    if (!table) {
+        std::cerr << "Table not exist" << std::endl;
+        return -1;
+    }
     return this->table->getAddr(name);
 }
 

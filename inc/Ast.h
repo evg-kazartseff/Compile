@@ -408,7 +408,7 @@ namespace AST {
         ~Ast();
 
         template<class Node, class ...Args>
-        Node *Getter(Args... args)
+        BaseAST *Getter(Args... args)
         {
             return new Node(std::forward<Args>(args)...);
         }
