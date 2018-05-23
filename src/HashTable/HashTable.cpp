@@ -2,9 +2,10 @@
 // Created by evgenii on 06.03.18.
 //
 
-#include "../../inc/HashTable.h"
+#include "../../inc/HashTable/HashTable.h"
 
-HashTable::HashTable() {
+HashTable::HashTable()
+{
     this->table = new Table();
     if (!table) {
         std::cerr << "Error malloc HashTable" << std::endl;
@@ -64,25 +65,27 @@ void HashTable::getChlidScope()
         std::cerr << "HashTable is Null" << std::endl;
     }
     Table *tmp_table = this->table->getChlidScope();
-    if (!table) {
+    if (!tmp_table) {
         std::cerr << "Child HashTable is Null" << std::endl;
     }
 
     this->table = tmp_table;
 }
 
-void HashTable::deleteThisScope()
+void HashTable::popScope()
 {
     if (!table) {
-        std::cerr << "Table not exist" << std::endl;
-        return;
+        std::cerr << "HashTable is Null" << std::endl;
     }
-    Table *parent = this->table->getParent();
-    if (parent)
-        parent->popChildScope();
-    delete this->table;
-    this->table = parent;
+    Table *tmp_table = this->table->getParent();
+    if (!tmp_table) {
+        std::cerr << "Child HashTable is Null" << std::endl;
+    }
+
+    this->table = tmp_table;
+    this->table->popChlidScope();
 }
+
 
 void HashTable::setAddr(const std::string &name, int addr)
 {
@@ -109,3 +112,4 @@ HashTable::~HashTable()
         table = nullptr;
     }
 }
+
