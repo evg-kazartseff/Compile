@@ -95,12 +95,6 @@ SIGN [-+]
     return ELSE;
 }
 
-"}" {
-    ch += yyleng;
-    hash_table->closeScope();
-
-}
-
 "print" {
     ch += yyleng;
     return PRINT;
