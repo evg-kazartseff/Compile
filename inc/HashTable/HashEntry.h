@@ -11,8 +11,6 @@ class HashEntry {
 private:
     HashNode *list;
 
-    void DeleteNode(HashNode *node);
-
 public:
     HashEntry();
 
@@ -22,7 +20,6 @@ public:
 
     HashNode *LookupValueNode(const std::string &value);
 
-    void DeleteValueNode(const std::string &value);
 };
 
 #endif //COMPILE_HASHENTRY_H

@@ -3,19 +3,22 @@
 //
 
 #include <iostream>
-#include "../../inc/WriteAdapter.h"
+#include "../../inc/helpers/WriteAdapter.h"
 
-void WriteAdapter::SetFile(const std::string& file) {
+void WriteAdapter::SetFile(const std::string &file)
+{
     this->file.open(file);
 }
 
-void WriteAdapter::Print(const std::string& str) {
+void WriteAdapter::Print(const std::string &str)
+{
     // std::cout << str;
     if (this->file.is_open())
         this->file.write(str.c_str(), str.length());
 }
 
-WriteAdapter::~WriteAdapter() {
+WriteAdapter::~WriteAdapter()
+{
     this->file.flush();
     this->file.close();
 }

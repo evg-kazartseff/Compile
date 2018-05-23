@@ -86,7 +86,7 @@ void AST::LoopAST::Dfs()
     this->write_adapter->Print("\taddl $" + std::to_string(new_stack - stack) + ", %esp\n");
     this->asmVars->DecStack(new_stack - stack);
 
-    hashTable->deleteThisScope();
+    hashTable->popScope();
 }
 
 AST::LoopAST::~LoopAST()

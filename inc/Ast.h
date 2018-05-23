@@ -10,11 +10,11 @@
 #include <utility>
 #include <vector>
 #include <sstream>
-#include "WriteAdapter.h"
-#include "Singleton.h"
-#include "ASM_VARS.h"
-#include "HashTable.h"
-#include "StringGenerator.h"
+#include "helpers/WriteAdapter.h"
+#include "helpers/Singleton.h"
+#include "asm/ASM_VARS.h"
+#include "HashTable/HashTable.h"
+#include "helpers/StringGenerator.h"
 #include <cstring>
 
 namespace AST {

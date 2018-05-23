@@ -1,8 +1,6 @@
 %option noyywrap yylineno
 
 %{
-#include <stdio.h>
-#include <string.h>
 #include "../inc/Ast.h"
 #include "../inc/parser.h"
     int ch = 1;
@@ -11,7 +9,7 @@
 
 DIGIT[0-9]
 LETTER[a-zA-Z]
-DELIM[();{},:]
+DELIM[();{,:]
 WS[ \t]
 ID ("_"|{LETTER})("_"|{LETTER}|{DIGIT})*
 OP [-+*/|%&]
@@ -81,6 +79,7 @@ SIGN [-+]
 "if" {
     ch += yyleng;
     hash_table->addChildScope();
+
     return IF;
 }
 
@@ -92,9 +91,15 @@ SIGN [-+]
 }
 
 "for" {
-    ch += yyleng;
     hash_table->addChildScope();
+    ch += yyleng;
     return FOR;
+}
+
+"}" {
+    ch += yyleng;
+    hash_table->closeScope();
+    return '}';
 }
 
 "function" {

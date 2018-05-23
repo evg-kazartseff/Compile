@@ -16,7 +16,6 @@ private:
     int type;
     int addr;
     HashNode *next;
-    HashNode *prev;
 public:
     explicit HashNode(int type, std::string &Value);
 
@@ -27,8 +26,6 @@ public:
     void setPrev(HashNode *prev);
 
     HashNode *getNext() const;
-
-    HashNode *getPrev() const;
 
     std::string &getValue();
 

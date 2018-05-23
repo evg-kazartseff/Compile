@@ -2,11 +2,11 @@
 // Created by direnol on 23.05.18.
 //
 
-#include "../../inc/HashNode.h"
+#include "../../inc/HashTable/HashNode.h"
 
 HashNode::HashNode(int type, std::string &Value)
 {
-    this->next = this->prev = nullptr;
+    this->next = nullptr;
     this->type = type;
     this->value = Value;
 }
@@ -26,14 +26,8 @@ void HashNode::setNext(HashNode *next)
     this->next = next;
 }
 
-HashNode *HashNode::getPrev() const
-{
-    return this->prev;
-}
-
 void HashNode::setPrev(HashNode *prev)
 {
-    this->prev = prev;
 }
 
 std::string &HashNode::getValue()
@@ -56,11 +50,13 @@ void HashNode::setType(int type)
     this->type = type;
 }
 
-void HashNode::setAddr(int addr) {
+void HashNode::setAddr(int addr)
+{
     this->addr = addr;
 }
 
-int HashNode::getAddr() {
+int HashNode::getAddr()
+{
     return this->addr;
 }
 

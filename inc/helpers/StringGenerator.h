@@ -16,7 +16,9 @@ protected:
     std::string prefix;
 public:
     StringGenerator();
+
     ~StringGenerator() = default;
+
     std::string Generate();
 };
 
@@ -30,8 +32,11 @@ private:
     std::vector<std::pair<std::string, std::string>> Acum;
 public:
     FormatAcum() = default;
+
     ~FormatAcum() = default;
+
     void Add(std::string str_name, std::string format);
+
     std::vector<std::pair<std::string, std::string>> GetAcum();
 };
 

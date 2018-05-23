@@ -85,7 +85,7 @@ void AST::VariableDefAST::Dfs()
 AST::VariableDefAST::~VariableDefAST()
 {
     if (this->Expr) {
-        delete(this->Expr);
+        delete (this->Expr);
         this->Expr = nullptr;
     }
 }

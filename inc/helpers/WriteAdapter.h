@@ -13,9 +13,12 @@ private:
     std::ofstream file;
 public:
     WriteAdapter() = default;
-    ~WriteAdapter ();
-    void SetFile(const std::string& file);
-    void Print(const std::string& str);
+
+    ~WriteAdapter();
+
+    void SetFile(const std::string &file);
+
+    void Print(const std::string &str);
 };
 
 #endif //COMPILE_WRITEADAPTER_H

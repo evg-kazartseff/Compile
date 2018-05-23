@@ -6,17 +6,18 @@
 #define COMPILE_ASM_H
 
 #include <fstream>
-#include "Ast.h"
-#include "WriteAdapter.h"
-#include "StringGenerator.h"
+#include "../Ast.h"
+#include "../helpers/WriteAdapter.h"
+#include "../helpers/StringGenerator.h"
 
 class ASM_GEN {
 private:
-    WriteAdapter* writeAdapter;
+    WriteAdapter *writeAdapter;
     std::string file_name;
     AST::Ast *ast;
 public:
     ASM_GEN(const std::string &filename, AST::Ast *ast);
+
     void Generate();
 };
 

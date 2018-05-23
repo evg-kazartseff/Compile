@@ -40,7 +40,7 @@ public:
 
     Table *getChlidScope();
 
-    void popChildScope();
+    void popChlidScope();
 
     void setAddr(const std::string &name, int addr);
 
@@ -65,9 +65,9 @@ public:
 
     void closeScope();
 
-    void getChlidScope();
+    void popScope();
 
-    void deleteThisScope();
+    void getChlidScope();
 
     void setAddr(const std::string &name, int addr);
 

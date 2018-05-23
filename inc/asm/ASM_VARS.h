@@ -4,6 +4,7 @@
 
 #ifndef COMPILE_ASM_VARS_H
 #define COMPILE_ASM_VARS_H
+
 #include <cstddef>
 
 #define INT_SIZE 4
@@ -30,17 +31,23 @@ private:
     VarType var_size;
 public:
     AsmVars() = default;
+
     ~AsmVars() = default;
 
-    void setDoubleType(size_t var);
     void setIntType(size_t var);
-    size_t getDoubletype();
+
     size_t getIntType();
+
     void setStack(int new_stack);
+
     int getStack();
+
     void IncStack(int size);
+
     void DecStack(int size);
+
     void setAddrResult(int AddrResult);
+
     int getAddrResult();
 };
 
