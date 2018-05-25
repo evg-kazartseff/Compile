@@ -19,6 +19,7 @@ public:
     void SetFile(const std::string &file);
 
     void Print(const std::string &str);
+
 };
 
 #endif //COMPILE_WRITEADAPTER_H

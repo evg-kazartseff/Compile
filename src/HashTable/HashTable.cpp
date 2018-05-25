@@ -40,6 +40,9 @@ HashNode *HashTable::LookupEntryNotRecur(const std::string &value)
 
 void HashTable::addChildScope()
 {
+#if debug
+    std::cout << "addChildScope" << std::endl;
+#endif
     auto *newScope = new Table();
 
     this->table->addChildScope(newScope);
@@ -48,6 +51,9 @@ void HashTable::addChildScope()
 
 void HashTable::closeScope()
 {
+#if debug
+    std::cout << "closeScope" << std::endl;
+#endif
     if (!table) {
         std::cerr << "HashTable is Null" << std::endl;
     }
@@ -61,6 +67,9 @@ void HashTable::closeScope()
 
 void HashTable::getChlidScope()
 {
+#if debug
+    std::cout << "getChildScope" << std::endl;
+#endif
     if (!table) {
         std::cerr << "HashTable is Null" << std::endl;
     }
@@ -74,12 +83,17 @@ void HashTable::getChlidScope()
 
 void HashTable::popScope()
 {
+#if debug
+    std::cout << "popScope" << std::endl;
+#endif
     if (!table) {
         std::cerr << "HashTable is Null" << std::endl;
+        return;
     }
     Table *tmp_table = this->table->getParent();
     if (!tmp_table) {
         std::cerr << "Child HashTable is Null" << std::endl;
+        return;
     }
 
     this->table = tmp_table;

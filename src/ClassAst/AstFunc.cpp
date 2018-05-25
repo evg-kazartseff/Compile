@@ -16,8 +16,10 @@ std::string AST::CallFuncAST::Generate_code()
 
 void AST::CallFuncAST::Dfs()
 {
+    this->write_adapter->Print("\t#Call " + this->Id + " start\n");
     this->Args->Dfs();
     this->write_adapter->Print(Generate_code());
+    this->write_adapter->Print("\t#Call " + this->Id + " end\n");
 }
 
 AST::CallFuncAST::~CallFuncAST()

@@ -9,6 +9,12 @@ AST::BaseAST::BaseAST()
     this->write_adapter = Singleton<WriteAdapter>::getInstance();
     this->asmVars = Singleton<AsmVars>::getInstance();
     this->hashTable = Singleton<HashTable>::getInstance();
+    this->needed = false;
+}
+
+void AST::BaseAST::setNeed()
+{
+    needed = true;
 }
 
 std::string AST::BodyAST::Generate_code()
@@ -61,7 +67,7 @@ std::string AST::LoopAST::Generate_code()
 void AST::LoopAST::Dfs()
 {
     hashTable->getChlidScope();
-
+    write_adapter->Print("\t#Loop start\n");
     std::string start_loop = Singleton<MarkGenerator>::getInstance()->Generate();
     std::string end_loop = Singleton<MarkGenerator>::getInstance()->Generate();
     int stack = this->asmVars->getStack();
@@ -87,6 +93,7 @@ void AST::LoopAST::Dfs()
     this->asmVars->DecStack(new_stack - stack);
 
     hashTable->popScope();
+    write_adapter->Print("\t#Loop end\n");
 }
 
 AST::LoopAST::~LoopAST()
@@ -121,8 +128,10 @@ std::string AST::ReturnAST::Generate_code()
 
 void AST::ReturnAST::Dfs()
 {
+    write_adapter->Print("\t#Return start\n");
     this->Val->Dfs();
     this->write_adapter->Print(Generate_code());
+    write_adapter->Print("\t#Return end\n");
 }
 
 AST::ReturnAST::~ReturnAST()

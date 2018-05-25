@@ -11,9 +11,7 @@ void AST::Ast::DFS()
 
 void AST::Ast::AddToLink(BaseAST *childe)
 {
-    if (!this->tree)
-        this->tree = new LinkAST(); /// используем синглтон для однократной инициализации
-    this->tree->AddChild(childe);
+    this->tree = childe;
 }
 
 AST::Ast::~Ast()

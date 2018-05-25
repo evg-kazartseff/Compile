@@ -11,7 +11,10 @@ std::string AST::JumpAST::Generate_code()
 void AST::JumpAST::Dfs()
 {
 //    std::cout << "Goto " << Id << std::endl;
+    write_adapter->Print("\t#Jump start\n");
+
     write_adapter->Print(Generate_code());
+    write_adapter->Print("\t#Jump end\n");
 }
 
 std::string AST::MarkAST::Generate_code()
@@ -22,7 +25,9 @@ std::string AST::MarkAST::Generate_code()
 void AST::MarkAST::Dfs()
 {
 //    std::cout << "Set " + Id << std::endl;
+    write_adapter->Print("\t#Mark set start\n");
     write_adapter->Print(Generate_code());
+    write_adapter->Print("\t#Mark set end\n");
 }
 
 std::string AST::IfAST::Generate_code()
@@ -32,6 +37,7 @@ std::string AST::IfAST::Generate_code()
 
 void AST::IfAST::Dfs()
 {
+    write_adapter->Print("\t#If start\n");
     hashTable->getChlidScope();
 
     std::string end_true = Singleton<MarkGenerator>::getInstance()->Generate();
@@ -59,6 +65,7 @@ void AST::IfAST::Dfs()
     this->asmVars->DecStack(new_stack - stack);
     if (!this->Else)
         hashTable->popScope();
+    write_adapter->Print("\t#If end\n");
 }
 
 AST::IfAST::~IfAST()
@@ -84,8 +91,10 @@ std::string AST::ElseAST::Generate_code()
 
 void AST::ElseAST::Dfs()
 {
+    write_adapter->Print("\t#Else start\n");
     hashTable->getChlidScope();
     this->Body->Dfs();
+    write_adapter->Print("\t#Else end\n");
 }
 
 AST::ElseAST::~ElseAST()

@@ -34,6 +34,8 @@ std::string AST::BinaryExprAST::Generate_code()
             operation = "\torl %ebx, %eax\n";
             break;
         default:
+            str += "\t# This is error operation " + std::string(1, Op) + "\n";
+
             break;
     }
     str += operation + "\tpushl %eax\n";
@@ -67,7 +69,7 @@ std::string AST::EvalAST::Generate_code()
     std::string str = "\tpopl %eax\n"
                       "\tmovl %eax, " + pos;
     asmVars->DecStack(INT_SIZE);
-    if (this->need_ret) {
+    if (this->needed) {
         str += "\tpushl %eax\n";
         asmVars->IncStack(INT_SIZE);
     }
@@ -76,13 +78,10 @@ std::string AST::EvalAST::Generate_code()
 
 void AST::EvalAST::Dfs()
 {
+    write_adapter->Print("\t#Eval " + this->Id + " start\n");
     this->Expr->Dfs();
     write_adapter->Print(Generate_code());
-}
-
-void AST::EvalAST::SetNeed()
-{
-    this->need_ret = true;
+    write_adapter->Print("\t#Eval " + this->Id + " end\n");
 }
 
 AST::EvalAST::~EvalAST()
@@ -136,7 +135,12 @@ std::string AST::UnaryAST::Generate_code()
             str += "\tmovl $1, %eax\n" +
                    mend + ":\n";
             break;
+        case '*':
+            str += "\tmovl (%eax), %ebx\n"
+                   "\tmovl %ebx, %eax\n";
+            break;
         default:
+            str += "\t# This is error operation " + std::string(1, Operation) + "\n";
             break;
     }
     str += "\tpushl %eax\n";
@@ -145,8 +149,10 @@ std::string AST::UnaryAST::Generate_code()
 
 void AST::UnaryAST::Dfs()
 {
+    this->write_adapter->Print("\t#Unary " + std::string(1, this->Operation) + " start\n");
     this->Operand->Dfs();
     this->write_adapter->Print(Generate_code());
+    this->write_adapter->Print("\t#Unary " + std::string(1, this->Operation) + " end\n");
 }
 
 AST::UnaryAST::~UnaryAST()

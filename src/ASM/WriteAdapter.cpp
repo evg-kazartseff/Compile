@@ -22,3 +22,4 @@ WriteAdapter::~WriteAdapter()
     this->file.flush();
     this->file.close();
 }
+

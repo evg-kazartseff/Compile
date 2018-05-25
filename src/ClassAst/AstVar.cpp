@@ -7,7 +7,7 @@ std::string AST::VariableExprAST::Generate_code()
 {
     int addr = hashTable->getAddr(this->Name);
     std::string str = "-" + std::to_string(addr) + "(%ebp)";
-    if (this->Is_addr) {
+    if (this->needed) {
         str = "\tleal " + str + ", %eax\n";
         str += "\tpushl %eax\n";
     } else {
@@ -19,8 +19,18 @@ std::string AST::VariableExprAST::Generate_code()
 
 void AST::VariableExprAST::Dfs()
 {
+    if (!needed)
+        write_adapter->Print("\t#Variable start\n");
+    else
+        write_adapter->Print("\t#Unary & start\n");
+
 //    std::cout << ' ' << this->Name << ' ';
     this->write_adapter->Print(this->Generate_code());
+
+    if (!needed)
+        write_adapter->Print("\t#Variable end\n");
+    else
+        write_adapter->Print("\t#Unary & end\n");
 }
 
 std::string AST::IntNumberExprAST::Generate_code()
@@ -32,8 +42,10 @@ std::string AST::IntNumberExprAST::Generate_code()
 
 void AST::IntNumberExprAST::Dfs()
 {
+    write_adapter->Print("\t#Constant int start\n");
 //    std::cout << ' ' << this->Val << ' ';
     this->write_adapter->Print(this->Generate_code());
+    write_adapter->Print("\t#Constant int end\n");
 }
 
 std::string AST::DoubleNumberExprAST::Generate_code()
@@ -44,8 +56,10 @@ std::string AST::DoubleNumberExprAST::Generate_code()
 
 void AST::DoubleNumberExprAST::Dfs()
 {
+    write_adapter->Print("\t#Const double start\n");
 //    std::cout << ' ' << this->Val << ' ';
     this->write_adapter->Print(this->Generate_code());
+    write_adapter->Print("\t#Const double end\n");
 }
 
 std::string AST::VariableUndefAST::Generate_code()
@@ -61,8 +75,10 @@ std::string AST::VariableUndefAST::Generate_code()
 
 void AST::VariableUndefAST::Dfs()
 {
+    write_adapter->Print("\t#Variable undefined " + Name + " start \n");
 //    std::cout << "Undefvar " << this->Name.c_str() << std::endl;
     this->write_adapter->Print(VariableUndefAST::Generate_code());
+    write_adapter->Print("\t#Variable undefined " + Name + " end\n");
 }
 
 std::string AST::VariableDefAST::Generate_code()
@@ -77,9 +93,11 @@ std::string AST::VariableDefAST::Generate_code()
 
 void AST::VariableDefAST::Dfs()
 {
+    write_adapter->Print("\t#Variable defined start\n");
     VariableUndefAST::Dfs();
     this->Expr->Dfs();
     this->write_adapter->Print(Generate_code());
+    write_adapter->Print("\t#Variable defined end\n");
 }
 
 AST::VariableDefAST::~VariableDefAST()
